@@ -1,0 +1,38 @@
+{
+  "scope": "Execution-boundary self-review and safe planner diagnostics. No paid requests or external-site execution in this follow-up. Historical Flights evidence remains unchanged.",
+  "findings_fixed": [
+    "Malformed native input acknowledgments now stop remaining input and produce outcome_unknown.",
+    "Returned receipt copies prevent caller annotations from changing internal execution certainty.",
+    "Search-only Flights policy now validates both execute() and the legacy act() facade before input."
+  ],
+  "planner_diagnostics": {
+    "stages": ["configuration", "request", "transport", "envelope", "arguments", "plan_validation"],
+    "safe_fields": ["stage", "code", "path", "missing", "cause_type", "transport_attempted"],
+    "excluded": ["raw responses", "raw arguments", "credential values", "endpoint URLs", "exception messages"],
+    "transport_attempted_semantics": "Whether the HTTP helper was invoked, not proof of an HTTP request or paid inference."
+  },
+  "offline_current_process_preflight": {
+    "diagnostic": {
+      "stage": "configuration",
+      "code": "missing_configuration",
+      "transport_attempted": false,
+      "missing": ["PLANNER_API_KEY", "PLANNER_BASE_URL", "PLANNER_MODEL"]
+    },
+    "real_network_calls": 0,
+    "mock_transport_calls": 0,
+    "limitation": "Current plain uv invocation only. Does not establish the historical Bob process environment or explain the earlier IPC timeout."
+  },
+  "validation": {
+    "offline_tests": 189,
+    "local_comet_browser_guards": 30,
+    "local_guards_model_calls": 0,
+    "ruff": "passed",
+    "javascript_syntax": "passed",
+    "package_build": "passed"
+  },
+  "remaining": [
+    "Historical generic planner ValueError cannot be classified retrospectively without additional evidence.",
+    "Earlier complex Flights IPC timeout was not reproduced or attributed by this review.",
+    "A complete complex Flights search with the prepared-plan controller remains unverified."
+  ]
+}

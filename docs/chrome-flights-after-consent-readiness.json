@@ -1,0 +1,441 @@
+{
+  "scope": "User-approved optional-cookie rejection on existing isolated Chrome consent tab, then readonly actual-Flights probes; no search actions or paid models",
+  "product": "Chrome/154.0.8037.59",
+  "target": "207808AD46787B2E336A22C15B292FCC",
+  "paid_calls": 0,
+  "calls": [
+    {
+      "method": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 0.887
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 11.805
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.522
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.46
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "status": "returned",
+      "ms": 12.541
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "status": "returned",
+      "ms": 13.216
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.597
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 7.608
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 431.383
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.821
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.701
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.828
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 8.987
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.38
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.861
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 53.17
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.686
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.781
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.626
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 22.567
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.699
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 29.829
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.641
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.894
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.683
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.753
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.693
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.924
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 11.079
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.405
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 11.23
+    }
+  ],
+  "consent_attempts": [
+    {
+      "request_id": "a2dba095534e4b0e8748ba969f6ebb3b",
+      "action_id": "e5",
+      "status": "executed",
+      "phase": "mouseReleased",
+      "input_started": true,
+      "calls": [
+        {
+          "method": "Runtime.evaluate",
+          "phase": "freshness",
+          "status": "returned",
+          "ms": 0.527
+        },
+        {
+          "method": "Runtime.evaluate",
+          "phase": "target_resolution",
+          "status": "returned",
+          "ms": 0.463
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mousePressed",
+          "status": "returned",
+          "ms": 12.548
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mouseReleased",
+          "status": "returned",
+          "ms": 13.225
+        }
+      ],
+      "elapsed_ms": 26.805
+    }
+  ],
+  "probes": [
+    {
+      "check": "simple",
+      "value": 2,
+      "ms": 1.435
+    },
+    {
+      "check": "snapshot",
+      "value": {
+        "actions": 74,
+        "controls": 72,
+        "ready_state": "complete",
+        "modal_open": false
+      },
+      "ms": 11.319
+    }
+  ],
+  "readiness": {
+    "host": "www.google.com",
+    "path": "/travel/flights",
+    "ready": "complete"
+  },
+  "passed": true,
+  "retained_target": "207808AD46787B2E336A22C15B292FCC",
+  "execution_receipts": [
+    {
+      "request_id": "a2dba095534e4b0e8748ba969f6ebb3b",
+      "action_id": "e5",
+      "status": "executed",
+      "phase": "mouseReleased",
+      "input_started": true,
+      "calls": [
+        {
+          "method": "Runtime.evaluate",
+          "phase": "freshness",
+          "status": "returned",
+          "ms": 0.527
+        },
+        {
+          "method": "Runtime.evaluate",
+          "phase": "target_resolution",
+          "status": "returned",
+          "ms": 0.463
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mousePressed",
+          "status": "returned",
+          "ms": 12.548
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mouseReleased",
+          "status": "returned",
+          "ms": 13.225
+        }
+      ],
+      "elapsed_ms": 26.805
+    }
+  ],
+  "browser_calls": [
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 11.812
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 0.527
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 0.463
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 12.548
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 13.225
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.609
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 7.619
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 431.416
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.698
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.724
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.848
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 9.008
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.405
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.881
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 53.194
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.708
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.804
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.642
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 22.596
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.754
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 29.85
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.658
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.927
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.697
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.769
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.71
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.942
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 11.098
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.418
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 11.242
+    }
+  ]
+}

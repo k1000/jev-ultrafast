@@ -1,0 +1,208 @@
+{
+  "scope": "Stock Chrome isolated fresh profile; direct CDP; same 1120x780 background/focus emulation as Comet. One navigation per owned target; read-only probes, zero models/search inputs. Fresh-profile consent may differ.",
+  "product": "Chrome/154.0.8037.59",
+  "paid_calls": 0,
+  "search_inputs": 0,
+  "viewport": [
+    1120,
+    780
+  ],
+  "snapshot_sha256": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+  "cases": [
+    {
+      "case": "local_control",
+      "calls": [
+        {
+          "method": "Target.createTarget",
+          "status": "returned",
+          "ms": 13.789
+        },
+        {
+          "method": "Target.attachToTarget",
+          "status": "returned",
+          "ms": 0.463
+        },
+        {
+          "method": "Emulation.setDeviceMetricsOverride",
+          "status": "returned",
+          "ms": 2.635
+        },
+        {
+          "method": "Emulation.setFocusEmulationEnabled",
+          "status": "returned",
+          "ms": 8.834
+        },
+        {
+          "method": "Page.navigate",
+          "status": "returned",
+          "ms": 2.332
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 4.617
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.547
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.375
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 2.46
+        }
+      ],
+      "readiness": {
+        "host": null,
+        "path": "(local fixture)",
+        "ready": "complete"
+      },
+      "simple": 2,
+      "snapshot": {
+        "actions": 4,
+        "controls": 2,
+        "modal_open": false,
+        "ready_state": "complete"
+      },
+      "passed": true,
+      "elapsed_ms": 58,
+      "retained_target": "A0BC921319C238DA61C88122EEA67E36"
+    },
+    {
+      "case": "google_flights",
+      "calls": [
+        {
+          "method": "Target.createTarget",
+          "status": "returned",
+          "ms": 4.934
+        },
+        {
+          "method": "Target.attachToTarget",
+          "status": "returned",
+          "ms": 0.393
+        },
+        {
+          "method": "Emulation.setDeviceMetricsOverride",
+          "status": "returned",
+          "ms": 1.833
+        },
+        {
+          "method": "Emulation.setFocusEmulationEnabled",
+          "status": "returned",
+          "ms": 0.319
+        },
+        {
+          "method": "Page.navigate",
+          "status": "returned",
+          "ms": 320.624
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 7.219
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 20.722
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.853
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.579
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.674
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 5.951
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 1.305
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 2.593
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.686
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 13.818
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.745
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.756
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.884
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 3.663
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 1.011
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 0.638
+        },
+        {
+          "method": "Runtime.evaluate",
+          "status": "returned",
+          "ms": 6.025
+        }
+      ],
+      "readiness": {
+        "host": "consent.google.com",
+        "path": "/m",
+        "ready": "complete"
+      },
+      "simple": 2,
+      "snapshot": {
+        "actions": 11,
+        "controls": 9,
+        "modal_open": false,
+        "ready_state": "complete"
+      },
+      "passed": true,
+      "elapsed_ms": 732,
+      "retained_target": "207808AD46787B2E336A22C15B292FCC"
+    }
+  ]
+}

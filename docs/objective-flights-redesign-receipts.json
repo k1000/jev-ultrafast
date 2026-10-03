@@ -1,0 +1,19 @@
+{
+  "goal": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+  "date": "2027-03-20",
+  "scope": "One live complex search, not a reliability benchmark. Consent rejection is separate setup. Timing includes planning and final verification, excludes initial navigation. Test-owned facts/verifier are read-only; no executor action plan or text values.",
+  "source_hashes": {
+    "/Volumes/T5 EVO/offloaded-from-macbook/Users/kamil/Development/_VENDOR/jev-ultrafast/scripts/objective_flights.py": "be0c8c1943e4c5850d7aef1ede568abfcba45c791c1b032349fbba24966a85c9",
+    "jev_ultrafast/__init__.py": "e40c0c3416ca3be20a72ded0fe32b66728c146820934fae73e19d72270e26c82",
+    "jev_ultrafast/agent.py": "17abe160d4e6071be5aa9146f82f3083dea6c9374e15a5cd51cbe8434add51bb",
+    "jev_ultrafast/browser.py": "c78a10aca2f09c1c78739b288078756be1a56a9fdd76a2a6bb695c2d573b4ed5",
+    "jev_ultrafast/demo.py": "a0cfb10909b370efb284cbbe16bdb4b7e7e06ba6385827404169027645a1d8a4",
+    "jev_ultrafast/model.py": "4f6e458d49bd5389afd31004f301233a023fe8f6eaf02d560d98f678fc0e09e5",
+    "jev_ultrafast/questions.py": "f7cf2e454276261de6557f7c916e460adc7bcddd8374618db0d0acb1f02a5ab7",
+    "jev_ultrafast/snapshot.js": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+    "jev_ultrafast/planning.py": "eb846856d6c73eb910707b50ed9d3514dafc0b4af42ce1af03105fe153ed3d95",
+    "jev_ultrafast/objective.py": "3723815993d481705d788f60ddea7e58bf8d9d1d1369482d214dd00235fa99db"
+  },
+  "error": "BrowserSetupError",
+  "passed": false
+}

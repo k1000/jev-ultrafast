@@ -1,0 +1,271 @@
+{
+  "scope": "Final-source local real Chrome controller fixture; planner/Jev stubbed; model APIs blocked. Base URL criterion is already met; extra readonly Status criterion owns completion. Not live inference/Flights.",
+  "source_hashes": {
+    "jev_ultrafast/objective.py": "c0f46afa6807cd12e9b187402194647cdfa9a2cb63256c0959f9d5324b730a5a",
+    "jev_ultrafast/browser.py": "2210baf641d40c0d086b43b7078d2a20043510f5d055718d41d751e2d7c76e75",
+    "jev_ultrafast/snapshot.js": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+    "scripts/objective_flights.py": "46c56f3b91dcda3e40cedf12ef4d451269c8ee0be5361b091faa38bf3530ef4f",
+    "tests/test_objective_settle.py": "bdd8f4a4dfcf03503e8709024563562b925cd45970c9a50e6eaf8224c551fdc5"
+  },
+  "fixture_sha256": "9f979215665ad569612516e9730fd79fe708aa32bea22ed80228c4f408516557",
+  "passed": true,
+  "status": "done",
+  "verification": [
+    true,
+    true
+  ],
+  "action_count": 1,
+  "jev_stub_decisions": 2,
+  "model_calls": 0,
+  "helper_calls": 0,
+  "planner_calls": [],
+  "elapsed_ms": 673,
+  "settling": {
+    "kind": "outcome_settled",
+    "generation": 1,
+    "status": "verified",
+    "reads": 7,
+    "elapsed_ms": 645.996,
+    "read_errors": []
+  },
+  "events": [
+    {
+      "kind": "outcome_settling",
+      "generation": 1,
+      "timeout": 5
+    },
+    {
+      "kind": "outcome_settled",
+      "generation": 1,
+      "status": "verified",
+      "reads": 7,
+      "elapsed_ms": 645.996,
+      "read_errors": []
+    }
+  ],
+  "execution_attempts": [
+    {
+      "choice": "e2",
+      "kind": "click",
+      "action": "Search",
+      "status": "executed",
+      "receipt": {
+        "executed": "e2",
+        "request_id": "a9a7cce064e8457d81550c6b54f89b99",
+        "action_id": "e2",
+        "status": "executed",
+        "phase": "mouseReleased",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 0.516
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 0.719
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 1.611
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 1.381
+          }
+        ],
+        "elapsed_ms": 4.276
+      }
+    }
+  ],
+  "browser_calls": [
+    {
+      "method": "Target.createTarget",
+      "phase": "Target.createTarget",
+      "status": "returned",
+      "ms": 7.556
+    },
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 2.043
+    },
+    {
+      "method": "Emulation.setDeviceMetricsOverride",
+      "phase": "Emulation.setDeviceMetricsOverride",
+      "status": "returned",
+      "ms": 1.337
+    },
+    {
+      "method": "Emulation.setFocusEmulationEnabled",
+      "phase": "Emulation.setFocusEmulationEnabled",
+      "status": "returned",
+      "ms": 1.16
+    },
+    {
+      "method": "Page.navigate",
+      "phase": "Page.navigate",
+      "status": "returned",
+      "ms": 2.489
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 12.755
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.362
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.331
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.443
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 0.516
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 0.719
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 1.611
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 1.381
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 13.325
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.394
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 0.909
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 0.834
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.963
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.203
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 0.864
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 0.848
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.593
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 4.211
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 3.174
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 4.439
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 5.595
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 3.19
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.298
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.316
+    },
+    {
+      "method": "Target.closeTarget",
+      "phase": "Target.closeTarget",
+      "status": "returned",
+      "ms": 0.748
+    }
+  ]
+}

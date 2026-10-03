@@ -1,0 +1,85 @@
+{
+  "scope": "Read-only paired transport isolation on retained Google Flights tab; zero paid calls, zero browser input",
+  "results": [
+    {
+      "check": "simple",
+      "route": "harness",
+      "calls": 10,
+      "median_ms": 0.3895,
+      "max_ms": 1.16,
+      "errors": []
+    },
+    {
+      "check": "simple",
+      "route": "direct_cdp",
+      "calls": 10,
+      "median_ms": 0.224,
+      "max_ms": 0.277,
+      "errors": []
+    },
+    {
+      "check": "snapshot",
+      "route": "harness",
+      "calls": 10,
+      "median_ms": 5.824999999999999,
+      "max_ms": 8.681,
+      "errors": []
+    },
+    {
+      "check": "snapshot",
+      "route": "direct_cdp",
+      "calls": 10,
+      "median_ms": 4.539,
+      "max_ms": 5.343,
+      "errors": []
+    },
+    {
+      "check": "custom_snapshot",
+      "route": "harness",
+      "calls": 10,
+      "median_ms": 5.923500000000001,
+      "max_ms": 6.678,
+      "errors": []
+    },
+    {
+      "check": "custom_snapshot",
+      "route": "direct_cdp",
+      "calls": 10,
+      "median_ms": 4.2485,
+      "max_ms": 4.79,
+      "errors": []
+    },
+    {
+      "check": "freshness",
+      "route": "harness",
+      "calls": 10,
+      "median_ms": 3.081,
+      "max_ms": 4.232,
+      "errors": []
+    },
+    {
+      "check": "freshness",
+      "route": "direct_cdp",
+      "calls": 10,
+      "median_ms": 2.6685,
+      "max_ms": 4.745,
+      "errors": []
+    },
+    {
+      "check": "action_guard",
+      "route": "harness",
+      "calls": 10,
+      "median_ms": 0.5685,
+      "max_ms": 1.359,
+      "errors": []
+    },
+    {
+      "check": "action_guard",
+      "route": "direct_cdp",
+      "calls": 10,
+      "median_ms": 0.2865,
+      "max_ms": 0.472,
+      "errors": []
+    }
+  ]
+}

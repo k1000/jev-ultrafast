@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contract: minimal declarative Jev policy</title>
+  <style>
+    body { max-width: 960px; margin: 2rem auto; padding: 0 1rem; font: 16px/1.55 system-ui, sans-serif; color: #182332; }
+    h1, h2, h3 { line-height: 1.2; }
+    pre { padding: 1rem; background: #f1f4f8; overflow: auto; }
+    code { font-family: ui-monospace, monospace; }
+    .callout { padding: .8rem 1rem; border-left: 4px solid #936b00; background: #fff8e2; }
+    dt { font-weight: 600; } dd { margin-bottom: .4rem; }
+    table { width: 100%; border-collapse: collapse; } th, td { text-align: left; vertical-align: top; padding: .5rem; border: 1px solid #ccd4de; }
+  </style>
+</head>
+<body data-plan-id="20261003-2121-declarative-policy-contract" data-status="complete" data-questionable="false"
+      data-created="2026-10-03T21:21:42Z" data-modified="2026-10-03T21:36:26Z"
+      data-agent-names="main-assistant" data-session-ids="not-exposed"
+      data-repo="jev-ultrafast-jev-policy" data-base-commit="1231850a0bf1a0c0341fe408ef1668dbbfdfac46"
+      data-head-commits="" data-back-refs="../README.md" data-forward-refs="../jev_ultrafast/planning.py,../jev_ultrafast/objective.py,../jev_ultrafast/model.py,../jev_ultrafast/browser.py,../jev_ultrafast/evaluation.py,../jev_ultrafast/policy.py,../tests/test_policy_contract.py"
+      data-source-prompt="Design a minimal declarative contract compatible with the existing browser loop; subsequently implement it after user approval.">
+<header id="top">
+  <h1>Minimal declarative Jev policy contract</h1>
+  <p class="callout"><strong>Implemented v1.</strong> A closed JSON parser and policy-file CLI path reuse ObjectiveAgent. No new interpreter, capability registry, or browser execution behavior was added.</p>
+  <dl class="metadata">
+    <dt>Status / scope</dt><dd>Complete; caller-authored data contract for the existing browser controller.</dd>
+    <dt>Created / modified</dt><dd>2026-10-03T21:21:42Z / 2026-10-03T21:36:26Z</dd>
+    <dt>Agent / session</dt><dd>Main assistant / session ID not exposed.</dd>
+    <dt>Repository / base commit</dt><dd><code>feature/jev-only-policy</code>, <code>1231850a0bf1a0c0341fe408ef1668dbbfdfac46</code>; includes copied, uncommitted controller work. No new head commits.</dd>
+    <dt>Source request</dt><dd>Option 1: design a minimal declarative contract compatible with the existing browser loop; subsequent user “proceed” approved implementation.</dd>
+    <dt>References</dt><dd><a href="../README.md">Current architecture and evidence</a>; source links below. No live execution or commits were requested.</dd>
+  </dl>
+</header>
+<nav><a href="#purpose">Purpose</a> · <a href="#problem">Constraints</a> · <a href="#solution">Contract</a> · <a href="#semantics">Semantics</a> · <a href="#files">Files</a> · <a href="#phases">Implementation</a> · <a href="#validation">Acceptance</a> · <a href="#risks">Risks</a></nav>
+<main>
+<section id="purpose">
+  <h2>Purpose</h2>
+  <p>Declare one objective, immutable caller-owned final checks, and optional prepared milestones/text. Reuse the current Jev decision loop and single-shot browser boundary. Success is a fresh verified outcome, never a model signal or execution acknowledgment.</p>
+  <pre>Caller policy data → validated envelope → ObjectiveAgent
+    fresh observation → Jev operation + observed target → Browser.execute
+    fresh caller verification → next decision or stop</pre>
+</section>
+<section id="problem">
+  <h2>Constraints and existing evidence</h2>
+  <ul>
+    <li><a href="../jev_ultrafast/planning.py">Check, Text, Step, Plan and parse_plan</a> already supply data-only predicates, bindings, and milestones.</li>
+    <li><a href="../jev_ultrafast/model.py">action_space and choose</a> already construct operation-specific target heads from observed elements in one TypeSafe request.</li>
+    <li><a href="../jev_ultrafast/objective.py">ObjectiveAgent</a> already owns fresh verification, bounded correction, and default zero runtime replans.</li>
+    <li><a href="../jev_ultrafast/browser.py">Browser.execute</a> already validates unique observed actions, checks freshness, records before input, and locks after uncertain execution.</li>
+  </ul>
+  <p>Do not replace these with YAML expressions, user-selected handlers, a second state machine, or multi-operation adapters such as <code>submit_login</code>.</p>
+</section>
+<section id="solution">
+  <h2>Closed v1 envelope</h2>
+  <p>Exactly four required keys. <code>version</code> is integer 1 (not boolean). <code>objective</code> is a nonempty, at-most-2,000-character string with no leading/trailing whitespace; reject rather than silently rewrite it. <code>checks</code> is a nonempty array of existing Check records. <code>prepared_plan</code> is either null or an existing closed <code>{objective, plan}</code> record with an exactly matching objective.</p>
+  <pre id="example-display"><code>{
+  "version": 1,
+  "objective": "Set Memo to Reviewed, submit, and verify Complete.",
+  "checks": [
+    {"kind": "value", "label": "Memo", "value": "Reviewed"},
+    {"kind": "text", "value": "Complete"}
+  ],
+  "prepared_plan": {
+    "objective": "Set Memo to Reviewed, submit, and verify Complete.",
+    "plan": [{
+      "goal": "Complete the requested memo flow",
+      "texts": [{"label": "Memo", "value": "Reviewed"}],
+      "checks": [{"kind": "text", "value": "Complete"}]
+    }]
+  }
+}</code></pre>
+  <p>This is public offline-fixture data, not a hardcoded executor value or a site-specific action sequence. The same envelope can express other caller objectives without changing the executor.</p>
+  <ul>
+    <li>Reuse Check kinds: <code>url</code>, <code>url_contains</code>, <code>title</code>, <code>text</code>, <code>value</code>, <code>checked</code>. Reuse existing binding/length/type rules; optional control disambiguation is <code>role</code>/<code>group</code>.</li>
+    <li>Reject extra keys at every object boundary, unsupported versions, malformed types, changed objectives, selector/code/capability execution fields, and final-check overrides. Do not dispatch arbitrary functions or evaluate expressions.</li>
+    <li>Copy accepted input before execution. Final checks remain caller-owned and independent of plan checks. A planner may supply only the existing plan contract, never this caller envelope.</li>
+    <li>A supplied plan makes zero planner calls by default; null permits at most one logical upfront planner invocation, and none if the initial outcome is already verified. Existing HTTP-helper retries do not become extra controller planner invocations; this is not a paid-request count. Jev still selects runtime actions. V1 sets <code>max_replans=0</code>; existing explicit replanning APIs remain separate.</li>
+  </ul>
+  <p><strong>Outside the policy:</strong> initial URL, API credentials/endpoints, browser/session handles, safety callbacks, model configuration, and execution budgets are trusted caller/server settings. Keep existing defaults: 24 decisions/actions, 90 seconds, two corrections per stable blocker, five-second outcome settling. Callers may lower limits or apply stricter trusted safety validation; the policy cannot raise them or authorize consequential actions.</p>
+</section>
+<section id="semantics">
+  <h2>Decision, execution, and state semantics</h2>
+  <table>
+    <thead><tr><th>Boundary</th><th>Contract</th></tr></thead>
+    <tbody>
+      <tr><td>Observation</td><td>One fresh snapshot supplies page facts, actionable elements, and final-check evidence. Missing, obscured, ambiguous, or unreadable facts are unknown, not success. Replace current facts on each observation; never merge stale facts into current proof.</td></tr>
+      <tr><td>Memory</td><td>Keep bounded recent actions, current preferred milestone, verified/deferred progress, and stable-blocker budgets separately. Historical progress is advisory and cannot authorize an input or prove a final outcome.</td></tr>
+      <tr><td>Decision</td><td>Fixed vocabulary: CLICK, TYPE_TEXT, SELECT, SCROLL_TO, SCROLL_UP, SCROLL_DOWN, WAIT, DONE, BLOCKED. Offer only supported observed choices plus terminal signals. Jev selects an operation and its operation-specific target; consume only that target head. Preserve current response validation, including membership and probability checks.</td></tr>
+      <tr><td>Resolution</td><td>Target indexes are observation-local references, never CSS selectors or callable names. Bind TYPE_TEXT only to a uniquely observed field with prepared text. SELECT uses an observed option. No model-generated text, coordinates, URLs, or code.</td></tr>
+      <tr><td>Authorization</td><td>The existing pre-input validation boundary must still accept the action and supplied text. Deployment-specific safety policy is trusted server code. A model confidence threshold is not authorization, and a policy cannot approve a purchase, submission, deletion, or message.</td></tr>
+      <tr><td>Execution</td><td>One logical observed operation per decision, issued once. It may require multiple CDP messages; “atomic” does not mean transactional or exactly-once network delivery. SCROLL_TO only reveals; any subsequent interaction needs another observation and decision.</td></tr>
+      <tr><td>Receipt</td><td>executed means acknowledgment, not goal success. rejected_before_input permits bounded read-only settling and a fresh decision, never replay. outcome_unknown stops input and preserves inspection access; neither a model retry judgment nor a later successful check unlocks the instance.</td></tr>
+      <tr><td>Completion</td><td>All caller checks must be freshly met on the same snapshot, together with any trusted additional verifier. DONE remains advisory; BLOCKED is not proof of impossibility. Loading waits and configured settling are read-only and cannot replay mutations.</td></tr>
+      <tr><td>Trace</td><td>Reuse the redacted evaluation export. Count acknowledged actions from the attempt ledger separately from rejected/uncertain attempts. Inconclusive/incomplete outcomes keep a null score and remain in the verified-rate denominator.</td></tr>
+    </tbody>
+  </table>
+  <p>The observation/history interface is POMDP-style. This design does not prove Markov sufficiency, train a policy, introduce reward learning, or treat calibrated probabilities as deterministic safety evidence.</p>
+</section>
+<section id="files">
+  <h2>Implementation surface</h2>
+  <ul>
+    <li><a href="../jev_ultrafast/policy.py">jev_ultrafast/policy.py</a>: parse_policy() returns a frozen Policy containing existing immutable Check/Plan records. agent_kwargs() returns defensive controller arguments with max_replans=0. No new runtime or registry.</li>
+    <li><a href="../tests/test_policy_contract.py">tests/test_policy_contract.py</a>: 65 offline boundary/composition cases, with HTTP/CDP transport blocked.</li>
+    <li><a href="../examples/objective.py">examples/objective.py</a>: a policy-file entry path that converts validated data into existing ObjectiveAgent arguments before browser setup. Preserve legacy flags as a separate path; reject mixing policy-owned goal/check/plan fields with competing CLI flags.</li>
+    <li>Existing <a href="../jev_ultrafast/objective.py">controller</a>, <a href="../jev_ultrafast/model.py">decision model</a>, <a href="../jev_ultrafast/browser.py">executor</a>, and <a href="../jev_ultrafast/evaluation.py">reporter</a>: reuse, not replace.</li>
+  </ul>
+</section>
+<section id="phases">
+  <h2>Completed implementation checklist</h2>
+  <section id="phase-1" class="phase" data-phase-status="done">
+    <h3>1. Closed data contract</h3>
+    <ol><li data-task-id="P1-T1" data-state="done">[x] Add parser tests for valid/null plans, immutable copies, invalid versions/types/keys, and exact objective identity; implement only this boundary.</li></ol>
+    <p>Evidence: 39 parser cases passed. Parsed records are immutable; agent_kwargs() returns fresh controller arguments with max_replans=0.</p>
+    <pre><code>UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv run pytest -q tests/test_policy_contract.py -k parser</code></pre>
+  </section>
+  <section id="phase-2" class="phase" data-phase-status="done">
+    <h3>2. Existing runtime composition</h3>
+    <ol><li data-task-id="P2-T1" data-state="done">[x] Add an offline policy-entry fixture and CLI checks; reuse the controller with max_replans=0. Ensure invalid data fails before browser setup and final-check ownership survives planning.</li></ol>
+    <p>Evidence: 27 runtime-selected cases passed, including prepared-policy execution, malformed/unreadable files, conflicting CLI flags, planner-check ownership, missing text, and legacy compatibility.</p>
+    <pre><code>UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv run pytest -q tests/test_policy_contract.py -k runtime</code></pre>
+  </section>
+  <section id="phase-3" class="phase" data-phase-status="done">
+    <h3>3. Preserve the existing boundary</h3>
+    <ol><li data-task-id="P3-T1" data-state="done">[x] Run offline prepared-text, stale/uncertain-input, receipt/report, and evidence-equality checks; document actual supported input, not a generic DSL.</li></ol>
+    <p>Evidence: 453 offline tests, source lint excluding AppleDouble metadata, both JavaScript syntax checks, diff whitespace check, and uv build passed. Historical basic/adversarial reports remain unchanged and match current fixtures.</p>
+    <pre><code>UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv run pytest -q tests/test_policy_contract.py tests/test_objective.py tests/test_objective_policy.py tests/test_evaluation.py tests/test_policy_fixtures.py</code></pre>
+  </section>
+</section>
+<section id="validation">
+  <h2>Acceptance assertions</h2>
+  <ul>
+    <li id="VA-001">Malformed or conflicting policy data causes zero browser setup, zero model calls, and zero inputs.</li>
+    <li id="VA-002">A supplied prepared plan and zero runtime replans yield zero planner/helper calls; a missing prepared value cannot synthesize text or invoke a runtime planner.</li>
+    <li id="VA-003">Jev cannot execute an unoffered operation/target or consume another operation's target head.</li>
+    <li id="VA-004">An unmet/unknown final check cannot be overridden by a milestone, DONE, cached progress, or acknowledgment.</li>
+    <li id="VA-005">Pre-input staleness requires a fresh decision; uncertain input issues no further mutation and remains inconclusive with inspection access retained.</li>
+    <li id="VA-006">Redacted reports retain categories/counters only; uncertain scroll attempts do not inflate confirmed action counts.</li>
+  </ul>
+  <p>Baseline: 388 offline tests passed before this contract. Implementation: 453 offline tests now pass, including 65 policy cases. Source lint, both JavaScript syntax checks, build, and historical fixture-equality checks pass. These validate local contracts, not live Jev reasoning or browser reliability.</p>
+  <pre><code>UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv run pytest -q
+UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv run ruff check . --extend-exclude '._*'
+node --check jev_ultrafast/static/app.js
+node --check jev_ultrafast/snapshot.js
+UV_PROJECT_ENVIRONMENT="$HOME/.venvs/jev-ultrafast" UV_LINK_MODE=copy uv build</code></pre>
+</section>
+<section id="risks">
+  <h2>Risks, limits, and rollback</h2>
+  <ul>
+    <li><strong>No confidentiality guarantee:</strong> current model context includes viewport text, ordinary field values, prepared text, and recent typed values. Password inputs are not offered, but other page content may still be sensitive. V1 is restricted to reviewed non-secret tasks; it provides no secret references, credential filling, redaction classifier, or login capability. A caller must not place secrets in policy data or expose sensitive pages. Supporting secrets requires a separately designed model-projection boundary.</li>
+    <li><strong>Weak predicates:</strong> a caller can choose a check already satisfied initially. This is a caller acceptance-design problem, not something the planner should repair or relax.</li>
+    <li><strong>Process-local safety:</strong> uncertain-input locking is not durable crash recovery or browser-side exactly-once delivery. Do not resume or recreate a run automatically.</li>
+    <li><strong>Scope:</strong> no YAML, expression evaluator, configurable transition graph, capability names, plugins, browser handles, secret store, arbitrary navigation, multi-action macros, or new Noul/Score calls.</li>
+    <li><strong>Rollback:</strong> remove the parser and policy-entry path; the existing ObjectiveAgent API and caller-owned checks remain the fallback. Do not modify or rewrite historical evidence.</li>
+  </ul>
+</section>
+<section id="notes">
+  <h2>Notes and decisions</h2>
+  <p>No blocking design questions. Assumptions: public reviewed task data, browser-only v1, existing fixed operations, trusted caller checks, and reuse of current local safety semantics. These are scope restrictions, not claims that a secret detector or new runtime is present.</p>
+  <p>Optional later work, not part of this contract: stronger confidential model-state projection, other environment adapters, or declarative subpolicy composition. Add these only for a demonstrated requirement, with their own deterministic tests.</p>
+</section>
+<section id="amendments">
+  <h2>Amendments</h2>
+  <ol>
+    <li><time datetime="2026-10-03T21:21:42Z">2026-10-03</time> — Initial design. JSON envelope chosen over a new DSL to preserve the existing controller and execution boundary.</li>
+    <li><time datetime="2026-10-03T21:36:26Z">2026-10-03</time> — User approved implementation. Added immutable parser records and defensive agent_kwargs(), --policy entry path, strict CLI conflict handling, and 65 offline cases. No live calls or commits; no changes to the decision/execution boundary or historical evidence.</li>
+  </ol>
+</section>
+</main>
+</body>
+</html>

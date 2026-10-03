@@ -1,0 +1,36 @@
+{
+  "scope": "Browser-level reads on the existing retained target only; no navigation/input/models",
+  "target": "7765C941521795F16E31AD45CD472D5B",
+  "calls": [
+    {
+      "method": "Browser.getVersion",
+      "ms": 4006.779,
+      "returned": true,
+      "product": "Chrome/153.0.8010.222"
+    },
+    {
+      "method": "Target.getTargetInfo",
+      "ms": 1.7,
+      "returned": true,
+      "type": "page",
+      "subtype": null,
+      "attached": true,
+      "host": "www.google.com",
+      "path": "/travel/flights",
+      "title_length": 64
+    },
+    {
+      "method": "Browser.getWindowForTarget",
+      "ms": 2.815,
+      "returned": true,
+      "bounds": {
+        "left": 273,
+        "top": 45,
+        "width": 1200,
+        "height": 1366,
+        "windowState": "normal"
+      }
+    }
+  ],
+  "process_info_error": "RuntimeError"
+}

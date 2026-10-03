@@ -1,0 +1,58 @@
+{
+  "scope": "Direct browser-root process reads only, no target attachment/navigation/input/models",
+  "calls": [
+    {
+      "method": "Browser.getVersion",
+      "ms": 0.252,
+      "has_error": false
+    },
+    {
+      "method": "SystemInfo.getProcessInfo",
+      "ms": 0.389,
+      "has_error": false
+    },
+    {
+      "method": "SystemInfo.getProcessInfo",
+      "ms": 1.517,
+      "has_error": false
+    }
+  ],
+  "product": "Chrome/153.0.8010.222",
+  "renderer_cpu": [
+    {
+      "pid": 63846,
+      "cpu_seconds": 0.052679,
+      "delta_seconds": 0.0
+    },
+    {
+      "pid": 63845,
+      "cpu_seconds": 4.362073,
+      "delta_seconds": 0.0073
+    },
+    {
+      "pid": 63839,
+      "cpu_seconds": 0.057259,
+      "delta_seconds": 0.0
+    },
+    {
+      "pid": 63831,
+      "cpu_seconds": 0.187392,
+      "delta_seconds": 0.0
+    },
+    {
+      "pid": 63830,
+      "cpu_seconds": 0.133808,
+      "delta_seconds": 0.0
+    },
+    {
+      "pid": 63829,
+      "cpu_seconds": 0.131511,
+      "delta_seconds": 0.0
+    },
+    {
+      "pid": 63828,
+      "cpu_seconds": 0.069117,
+      "delta_seconds": 0.0
+    }
+  ]
+}

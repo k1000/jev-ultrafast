@@ -78,13 +78,19 @@ function render() {
   const page = state.page,
     d =
       state.decision ||
-      (state.status === "done" ? state.decisions?.at(-1) : null);
+      (["done", "blocked"].includes(state.status) ? state.decisions?.at(-1) : null);
+  const stopLabels = {
+    model_blocked: "Jev chose BLOCKED · inspect the page",
+    no_progress: "Stopped · repeated action without page change",
+    action_budget: "Stopped · action budget reached",
+    model_budget: "Stopped · decision budget reached",
+  };
   const labels = {
     idle: "Ready to explore",
     ready: "Page observed · ready for a decision",
     predicted: "Choice ready · inspect or execute",
     done: "Jev reports complete · inspect the page",
-    blocked: "Stopped · no supported next action",
+    blocked: stopLabels[state.stop_reason] || "Stopped · reason unavailable",
   };
   $("status").textContent = labels[state.status] || state.status;
   if (!page) {

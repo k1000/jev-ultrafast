@@ -1,0 +1,815 @@
+{
+  "evidence_scope": "simulated_browser_and_stub_policies_not_live_jev",
+  "repeats": 2,
+  "schema_version": 1,
+  "variants": {
+    "blocked": {
+      "fixture_passes": 2,
+      "runs": [
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "BLOCKED",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        }
+      ],
+      "summary": {
+        "abandoned": 6,
+        "actions": 0,
+        "decisions": 18,
+        "incomplete": 0,
+        "inconclusive": 0,
+        "planner_calls": 0,
+        "runs": 6,
+        "runtime_replans": 0,
+        "text_calls": 0,
+        "verified": 0,
+        "verified_rate": 0.0
+      }
+    },
+    "premature_done": {
+      "fixture_passes": 2,
+      "runs": [
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "verified",
+          "fixture_pass": false,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 4,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 4,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 3,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "DONE",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 4,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        }
+      ],
+      "summary": {
+        "abandoned": 6,
+        "actions": 0,
+        "decisions": 24,
+        "incomplete": 0,
+        "inconclusive": 0,
+        "planner_calls": 0,
+        "runs": 6,
+        "runtime_replans": 0,
+        "text_calls": 0,
+        "verified": 0,
+        "verified_rate": 0.0
+      }
+    },
+    "progress": {
+      "fixture_passes": 6,
+      "runs": [
+        {
+          "actions": 2,
+          "decisions": 2,
+          "expected_outcome": "verified",
+          "fixture_pass": true,
+          "mutation_attempts": 2,
+          "outcome": "verified",
+          "planner_calls": 0,
+          "prediction_attempts": 2,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 1,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": "fill",
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": "click",
+              "operation": "CLICK",
+              "status": "done",
+              "stop_reason": "verified",
+              "tick": 2,
+              "verification": "met"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 2,
+          "decisions": 2,
+          "expected_outcome": "verified",
+          "fixture_pass": true,
+          "mutation_attempts": 2,
+          "outcome": "verified",
+          "planner_calls": 0,
+          "prediction_attempts": 2,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 1,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": "select",
+              "operation": "SELECT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": "click",
+              "operation": "CLICK",
+              "status": "done",
+              "stop_reason": "verified",
+              "tick": 2,
+              "verification": "met"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 2,
+          "decisions": 2,
+          "expected_outcome": "verified",
+          "fixture_pass": true,
+          "mutation_attempts": 2,
+          "outcome": "verified",
+          "planner_calls": 0,
+          "prediction_attempts": 2,
+          "runtime_replans": 0,
+          "scenario": "memo_submit",
+          "score": 1,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": "fill",
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": "click",
+              "operation": "CLICK",
+              "status": "done",
+              "stop_reason": "verified",
+              "tick": 2,
+              "verification": "met"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 2,
+          "decisions": 2,
+          "expected_outcome": "verified",
+          "fixture_pass": true,
+          "mutation_attempts": 2,
+          "outcome": "verified",
+          "planner_calls": 0,
+          "prediction_attempts": 2,
+          "runtime_replans": 0,
+          "scenario": "select_submit",
+          "score": 1,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": "select",
+              "operation": "SELECT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": "click",
+              "operation": "CLICK",
+              "status": "done",
+              "stop_reason": "verified",
+              "tick": 2,
+              "verification": "met"
+            }
+          ],
+          "uncertain_attempts": 0
+        },
+        {
+          "actions": 0,
+          "decisions": 3,
+          "expected_outcome": "abandoned",
+          "fixture_pass": true,
+          "mutation_attempts": 0,
+          "outcome": "abandoned",
+          "planner_calls": 0,
+          "prediction_attempts": 3,
+          "runtime_replans": 0,
+          "scenario": "missing_text",
+          "score": 0,
+          "text_calls": 0,
+          "transitions": [
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 1,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "ready",
+              "stop_reason": null,
+              "tick": 2,
+              "verification": "unmet"
+            },
+            {
+              "action": null,
+              "operation": "TYPE_TEXT",
+              "status": "abandoned",
+              "stop_reason": "replanning_exhausted",
+              "tick": 3,
+              "verification": "unmet"
+            }
+          ],
+          "uncertain_attempts": 0
+        }
+      ],
+      "summary": {
+        "abandoned": 2,
+        "actions": 8,
+        "decisions": 14,
+        "incomplete": 0,
+        "inconclusive": 0,
+        "planner_calls": 0,
+        "runs": 6,
+        "runtime_replans": 0,
+        "text_calls": 0,
+        "verified": 4,
+        "verified_rate": 0.6666666666666666
+      }
+    }
+  }
+}

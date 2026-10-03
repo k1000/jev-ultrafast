@@ -1,0 +1,50 @@
+{
+  "scope": "Read-only inspection after IPC timeout; no mutation replay",
+  "url": "https://www.google.com/travel/flights?hl=en",
+  "ticket_controls": [
+    {
+      "kind": "click",
+      "label": "Change ticket type. Round trip",
+      "value": "Round trip",
+      "role": "combobox"
+    },
+    {
+      "kind": "click",
+      "label": "1 passenger, change number of passengers.",
+      "value": "",
+      "role": "button"
+    },
+    {
+      "kind": "fill",
+      "label": "Return",
+      "value": "",
+      "role": "textbox"
+    },
+    {
+      "kind": "click",
+      "label": "Open Return",
+      "value": "",
+      "role": "textbox"
+    },
+    {
+      "kind": "scroll_to",
+      "label": "Reveal Track flight prices for a trip Not ready to book yet? Observe price changes for a route or flight and get notified when prices drop.",
+      "value": "",
+      "role": "tab"
+    },
+    {
+      "kind": "scroll_to",
+      "label": "Reveal Explore the best flight deals with AI Describe your ideal trip and let Google Flights find you the best deals",
+      "value": "",
+      "role": "tab"
+    },
+    {
+      "kind": "scroll_to",
+      "label": "Reveal How can I get flight alerts for my trip?",
+      "value": "",
+      "role": "button"
+    }
+  ],
+  "logged_actions_in_failed_run": 0,
+  "snapshot_ms": 17
+}

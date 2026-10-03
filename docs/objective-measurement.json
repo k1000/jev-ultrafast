@@ -1,0 +1,132 @@
+{
+  "scope": "Local fixture attempts, not a speed or reliability benchmark",
+  "timing": "Includes upfront planning and verification; excludes initial browser setup/navigation",
+  "counts": "Logical planning/accepted Jev calls; HTTP transport retries not separately instrumented",
+  "auxiliary_diagnostics": "A model catalog GET, a minimal Max completion, and a separate successful response-shape planning probe are excluded from fixture counts",
+  "attempts": [
+    {
+      "mode": "json_object",
+      "stop_reason": "planning_failed",
+      "error": "RuntimeError",
+      "elapsed_ms": 1292,
+      "planner_calls": 1,
+      "jev_calls": 0,
+      "helper_calls": 0,
+      "actions": 0,
+      "verified": false
+    },
+    {
+      "mode": "json_object_with_JSON_instruction",
+      "stop_reason": "planning_failed",
+      "error": "ValueError",
+      "elapsed_ms": 23109,
+      "planner_calls": 1,
+      "jev_calls": 0,
+      "helper_calls": 0,
+      "actions": 0,
+      "verified": false
+    },
+    {
+      "mode": "forced_function_call",
+      "scenario": "Local prepared-text confirmation fixture",
+      "status": "needs_attention",
+      "stop_reason": "planning_failed",
+      "verification": [
+        false,
+        false
+      ],
+      "independent_observation": {
+        "value": "",
+        "receipt": "Pending"
+      },
+      "elapsed_ms": 3021,
+      "planner_calls": [
+        {
+          "phase": "initial",
+          "reason": "initial",
+          "error": "ValueError"
+        }
+      ],
+      "jev_calls": 0,
+      "helper_calls": 0,
+      "actions": 0,
+      "text_sources": [],
+      "replans_used": 0,
+      "prepared_plan": null
+    },
+    {
+      "mode": "forced_function_call_with_explicit_check_guidance",
+      "status": "done",
+      "stop_reason": "verified",
+      "verification": [
+        true,
+        true
+      ],
+      "independent_observation": {
+        "value": "Saffron Atlas",
+        "receipt": "Confirmed"
+      },
+      "elapsed_ms": 15116,
+      "planner_calls": [
+        {
+          "phase": "initial",
+          "reason": "initial",
+          "model": "qwen3.8-max",
+          "latency_ms": 14386,
+          "usage": {
+            "prompt_tokens": 1519,
+            "total_tokens": 1662,
+            "completion_tokens": 143,
+            "prompt_tokens_details": {
+              "cached_tokens": 1024,
+              "text_tokens": 1519
+            }
+          },
+          "transport": "function_calling"
+        }
+      ],
+      "jev_calls": 2,
+      "helper_calls": 0,
+      "actions": 2,
+      "replans_used": 0,
+      "prepared_plan": {
+        "objective": "Enter Saffron Atlas in the Search field and confirm it. Stop when Confirmed is displayed.",
+        "plan": [
+          {
+            "goal": "Enter Saffron Atlas in the Search field",
+            "texts": [
+              {
+                "label": "Search",
+                "value": "Saffron Atlas",
+                "role": "",
+                "group": ""
+              }
+            ],
+            "checks": [
+              {
+                "kind": "value",
+                "value": "Saffron Atlas",
+                "label": "Search",
+                "role": "",
+                "group": ""
+              }
+            ]
+          },
+          {
+            "goal": "Click Confirm button and verify Confirmed is displayed",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "text",
+                "value": "Confirmed",
+                "label": "",
+                "role": "",
+                "group": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "scope": "Targeted live Hacker News-to-arXiv diagnostic, not an alternating or statistically controlled benchmark",
+  "goal": "Find the story titled Context Language Models on Hacker News and open its linked article. Stop when the linked article is open.",
+  "source_url": "https://news.ycombinator.com/",
+  "destination_url": "https://arxiv.org/abs/2609.37725",
+  "before": {
+    "status": "blocked",
+    "origin": "TypeSafe chose BLOCKED",
+    "agent_ms": 1670,
+    "actions": 2,
+    "typesafe_requests": 3,
+    "observed_destination_title": "[2609.37725] Context Language Models",
+    "observed_destination_ready_state": "complete",
+    "reported_operation_probabilities": {
+      "BLOCKED": 0.5,
+      "CLICK": 0.45,
+      "SCROLL_TO": 0.02,
+      "DONE": 0.01,
+      "WAIT": 0.01,
+      "SCROLL_DOWN": 0.01
+    }
+  },
+  "after": [
+    {"status": "done", "stop_reason": "model_done", "verified": true, "agent_ms": 1668, "typesafe_requests": 3, "actions": 2, "stale_retries": 0, "reported_DONE_probability": 0.95},
+    {"status": "done", "stop_reason": "model_done", "verified": true, "agent_ms": 1566, "typesafe_requests": 3, "actions": 2, "stale_retries": 0, "reported_DONE_probability": 0.94},
+    {"status": "done", "stop_reason": "model_done", "verified": true, "agent_ms": 1700, "typesafe_requests": 3, "actions": 2, "stale_retries": 0, "reported_DONE_probability": 0.96}
+  ],
+  "verification": "Fresh browser read confirmed the arXiv article URL and a document title containing Context Language Models. No model choice was used as proof.",
+  "negative_local_case": {
+    "goal": "Choose Enterprise in the plan dropdown on this page.",
+    "fixture": "Read-only information page without a plan dropdown or form",
+    "status": "blocked",
+    "stop_reason": "model_blocked",
+    "actions": 0,
+    "typesafe_requests": 1,
+    "agent_ms": 313,
+    "independently_confirmed_no_dropdown": true,
+    "reported_BLOCKED_probability": 0.98
+  },
+  "limits": "One before run and three after runs cannot prove general reliability or isolate the effect of prompt wording from added navigation context. Probabilities are uncalibrated provider outputs. Initial navigation is excluded. No credentials or raw model/page payloads are stored here."
+}

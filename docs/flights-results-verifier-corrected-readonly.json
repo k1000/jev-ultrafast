@@ -1,0 +1,47 @@
+{
+  "scope": "Corrected caller verifier, read-only on the same retained results tab; no navigation, search replay, paid models, or flight selection. Not a fresh end-to-end agent run.",
+  "retained_target": "D6AD950B0DD10EE21A96041466E519E8",
+  "source_evidence": "docs/flights-results-readonly-diagnostic.json",
+  "source_hashes": {
+    "scripts/objective_flights.py": "8aa6ab02315c25feb82dacd3bd3278098306d9b7b994fb42795856ff03efba63",
+    "jev_ultrafast/browser.py": "2210baf641d40c0d086b43b7078d2a20043510f5d055718d41d751e2d7c76e75",
+    "jev_ultrafast/snapshot.js": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+    "tests/test_objective_flights.py": "937daaa994f1ec0c846a5cacfacaf2e7b25d214eb1da290952eedb4ee1a49f0a"
+  },
+  "verification": {
+    "passed": true,
+    "checks": {
+      "search_page": true,
+      "one_way": true,
+      "origin": true,
+      "destination": true,
+      "date": true,
+      "year": true,
+      "one_adult_no_children_or_infants": true,
+      "economy": true,
+      "results": true
+    },
+    "visible_flights": [
+      "From 60 euros.This price does not include overhead bin access. Nonstop flight with easyJet. Leaves Zurich Airport at 1:20 PM on Saturday, March 20 and arrives at London Stansted Airport at 2:15 PM on Saturday, March 20. Total duration 1 hr 55 min.   Select flight",
+      "From 78 euros. Nonstop flight with British Airways. Leaves Zurich Airport at 11:45 AM on Saturday, March 20 and arrives at Heathrow Airport at 12:40 PM on Saturday, March 20. Total duration 1 hr 55 min.   Select flight",
+      "From 87 euros. Nonstop flight with SWISS. Leaves Zurich Airport at 12:00 PM on Saturday, March 20 and arrives at Heathrow Airport at 1:00 PM on Saturday, March 20. Total duration 2 hr.   Select flight"
+    ]
+  },
+  "observed_selection_rows": 3,
+  "passed": true,
+  "browser_calls": [
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 0.579
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 41.402
+    }
+  ],
+  "model_or_input_calls": 0
+}

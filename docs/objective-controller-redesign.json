@@ -1,0 +1,1200 @@
+{
+  "scope": "Real local Comet DOM and browser inputs; stubbed planner/Jev; NOT live model reliability",
+  "paid_model_calls": 0,
+  "cases": [
+    {
+      "city": "Montréal",
+      "date": "2027-03-20",
+      "verified": true,
+      "verification": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "elapsed_ms": 543,
+      "planner_stub_calls": 1,
+      "jev_stub_calls": 9,
+      "real_actions": 8,
+      "helpers": 0,
+      "replans": 0,
+      "modal_unknown_seen": true,
+      "deferred_steps": [
+        1
+      ],
+      "events": [
+        {
+          "kind": "milestone_grounded",
+          "index": 0,
+          "check_indices": [
+            0
+          ],
+          "source": "caller_final_check"
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 0
+        },
+        {
+          "kind": "milestone_deferred",
+          "index": 1,
+          "reason": "unverified_done",
+          "evidence": [
+            {
+              "state": "unknown",
+              "reason": "obscured_control"
+            }
+          ]
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 2
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 3
+        }
+      ],
+      "attempts": [
+        {
+          "choice": "e1",
+          "kind": "fill",
+          "action": "Destination",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "45aee379ebde4c8d9f5e0c048c94775a",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "insertText",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 2.91
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 0.741
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.171
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 2.82
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllDown",
+                "status": "returned",
+                "ms": 0.665
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllUp",
+                "status": "returned",
+                "ms": 0.443
+              },
+              {
+                "method": "Input.insertText",
+                "phase": "insertText",
+                "status": "returned",
+                "ms": 0.96
+              }
+            ],
+            "elapsed_ms": 9.783
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Montréal",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "a3ecf01c578b4041aa0aa4299e7b00da",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.573
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.24
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 2.646
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.109
+              }
+            ],
+            "elapsed_ms": 6.713
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Departure",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "3921d04f47814892b0c89c0d010daaa4",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.564
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.429
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 2.083
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 4.027
+              }
+            ],
+            "elapsed_ms": 9.227
+          }
+        },
+        {
+          "choice": "e1",
+          "kind": "click",
+          "action": "Next month",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "815bf3c7397f4e3b93e48dda7595c6f7",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.482
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 0.476
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 0.618
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 0.681
+              }
+            ],
+            "elapsed_ms": 2.286
+          }
+        },
+        {
+          "choice": "e2",
+          "kind": "click",
+          "action": "Requested date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e2",
+            "request_id": "e3bf641a3f864a8892e5d6e292d10565",
+            "action_id": "e2",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.393
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.291
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.366
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.138
+              }
+            ],
+            "elapsed_ms": 5.327
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Apply date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "cf93ebf616054b938e64aa443a354e48",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.592
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 2.124
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.334
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.357
+              }
+            ],
+            "elapsed_ms": 6.539
+          }
+        },
+        {
+          "choice": "e4",
+          "kind": "select",
+          "action": "Category → Research",
+          "status": "executed",
+          "receipt": {
+            "executed": "e4",
+            "request_id": "594457f9697c4848a4bb1c04df6fc864",
+            "action_id": "e4",
+            "status": "executed",
+            "phase": "select",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.461
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "select",
+                "status": "returned",
+                "ms": 0.636
+              }
+            ],
+            "elapsed_ms": 1.117
+          }
+        },
+        {
+          "choice": "e6",
+          "kind": "click",
+          "action": "Search",
+          "status": "executed",
+          "receipt": {
+            "executed": "e6",
+            "request_id": "24ebe2223505496bbc05cf56d3d6ab52",
+            "action_id": "e6",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 2.191
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.218
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.074
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.012
+              }
+            ],
+            "elapsed_ms": 5.614
+          }
+        }
+      ],
+      "raw_final": {
+        "city": "Montréal",
+        "date": "2027-03-20",
+        "category": "research",
+        "notifications": false,
+        "result": "Confirmed Montréal 2027-03-20 Research"
+      }
+    },
+    {
+      "city": "Málaga",
+      "date": "2028-02-10",
+      "verified": true,
+      "verification": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "elapsed_ms": 503,
+      "planner_stub_calls": 1,
+      "jev_stub_calls": 9,
+      "real_actions": 8,
+      "helpers": 0,
+      "replans": 0,
+      "modal_unknown_seen": true,
+      "deferred_steps": [
+        1
+      ],
+      "events": [
+        {
+          "kind": "milestone_grounded",
+          "index": 0,
+          "check_indices": [
+            0
+          ],
+          "source": "caller_final_check"
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 0
+        },
+        {
+          "kind": "milestone_deferred",
+          "index": 1,
+          "reason": "unverified_done",
+          "evidence": [
+            {
+              "state": "unknown",
+              "reason": "obscured_control"
+            }
+          ]
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 2
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 3
+        }
+      ],
+      "attempts": [
+        {
+          "choice": "e1",
+          "kind": "fill",
+          "action": "Destination",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "de8d1448047248aba4bdbd7f05f65abf",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "insertText",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 2.085
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.674
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 4.031
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.463
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllDown",
+                "status": "returned",
+                "ms": 1.0
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllUp",
+                "status": "returned",
+                "ms": 0.921
+              },
+              {
+                "method": "Input.insertText",
+                "phase": "insertText",
+                "status": "returned",
+                "ms": 1.453
+              }
+            ],
+            "elapsed_ms": 12.823
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Málaga",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "c4cc50677f5549659c3027117f71d6a8",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.916
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 3.899
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 2.996
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.289
+              }
+            ],
+            "elapsed_ms": 10.243
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Departure",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "9c6b5549f5f64e73b5e8a7b8df128896",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.459
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.393
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.605
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 5.411
+              }
+            ],
+            "elapsed_ms": 10.004
+          }
+        },
+        {
+          "choice": "e1",
+          "kind": "click",
+          "action": "Next month",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "4ec93e5d4fdf424ea29867f2776e86ff",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.296
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.359
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 0.895
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.298
+              }
+            ],
+            "elapsed_ms": 4.96
+          }
+        },
+        {
+          "choice": "e2",
+          "kind": "click",
+          "action": "Requested date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e2",
+            "request_id": "da51386f4611445b94ff333921974244",
+            "action_id": "e2",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.349
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.943
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 2.75
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.656
+              }
+            ],
+            "elapsed_ms": 7.831
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Apply date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "87dc01ec1b1d40728b14fbcd387cb94f",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.086
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.247
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.271
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.225
+              }
+            ],
+            "elapsed_ms": 4.931
+          }
+        },
+        {
+          "choice": "e4",
+          "kind": "select",
+          "action": "Category → Research",
+          "status": "executed",
+          "receipt": {
+            "executed": "e4",
+            "request_id": "39ceca271c36483397dda435bf942793",
+            "action_id": "e4",
+            "status": "executed",
+            "phase": "select",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.352
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "select",
+                "status": "returned",
+                "ms": 1.486
+              }
+            ],
+            "elapsed_ms": 2.936
+          }
+        },
+        {
+          "choice": "e6",
+          "kind": "click",
+          "action": "Search",
+          "status": "executed",
+          "receipt": {
+            "executed": "e6",
+            "request_id": "ecb6e5c2ca72455fba2315937ee0c948",
+            "action_id": "e6",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.893
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.253
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.36
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.036
+              }
+            ],
+            "elapsed_ms": 4.631
+          }
+        }
+      ],
+      "raw_final": {
+        "city": "Málaga",
+        "date": "2028-02-10",
+        "category": "research",
+        "notifications": false,
+        "result": "Confirmed Málaga 2028-02-10 Research"
+      }
+    },
+    {
+      "city": "Zürich",
+      "date": "2027-04-08",
+      "verified": true,
+      "verification": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "elapsed_ms": 495,
+      "planner_stub_calls": 1,
+      "jev_stub_calls": 9,
+      "real_actions": 8,
+      "helpers": 0,
+      "replans": 0,
+      "modal_unknown_seen": true,
+      "deferred_steps": [
+        1
+      ],
+      "events": [
+        {
+          "kind": "milestone_grounded",
+          "index": 0,
+          "check_indices": [
+            0
+          ],
+          "source": "caller_final_check"
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 0
+        },
+        {
+          "kind": "milestone_deferred",
+          "index": 1,
+          "reason": "unverified_done",
+          "evidence": [
+            {
+              "state": "unknown",
+              "reason": "obscured_control"
+            }
+          ]
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 2
+        },
+        {
+          "kind": "milestone_verified",
+          "index": 3
+        }
+      ],
+      "attempts": [
+        {
+          "choice": "e1",
+          "kind": "fill",
+          "action": "Destination",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "75ad3824aeb34f46b9d499c54ea9cb38",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "insertText",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.999
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.356
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 3.173
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.156
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllDown",
+                "status": "returned",
+                "ms": 1.179
+              },
+              {
+                "method": "Input.dispatchKeyEvent",
+                "phase": "selectAllUp",
+                "status": "returned",
+                "ms": 1.21
+              },
+              {
+                "method": "Input.insertText",
+                "phase": "insertText",
+                "status": "returned",
+                "ms": 1.701
+              }
+            ],
+            "elapsed_ms": 11.991
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Zürich",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "8b191b3b11be407f9a9ccabfb259b652",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.41
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 4.029
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.669
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 2.742
+              }
+            ],
+            "elapsed_ms": 10.066
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Departure",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "7dbe85dfb03f4e168897618f9ba26f08",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.084
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.346
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.136
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 2.05
+              }
+            ],
+            "elapsed_ms": 5.726
+          }
+        },
+        {
+          "choice": "e1",
+          "kind": "click",
+          "action": "Next month",
+          "status": "executed",
+          "receipt": {
+            "executed": "e1",
+            "request_id": "e72db3b091b148788fed84c8604a159a",
+            "action_id": "e1",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 2.356
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.472
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.23
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.795
+              }
+            ],
+            "elapsed_ms": 7.069
+          }
+        },
+        {
+          "choice": "e2",
+          "kind": "click",
+          "action": "Requested date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e2",
+            "request_id": "697106ba1cfe4dabb569b4d4a169350b",
+            "action_id": "e2",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.774
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 0.818
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 0.959
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 0.914
+              }
+            ],
+            "elapsed_ms": 3.535
+          }
+        },
+        {
+          "choice": "e3",
+          "kind": "click",
+          "action": "Apply date",
+          "status": "executed",
+          "receipt": {
+            "executed": "e3",
+            "request_id": "1118ed9eeb9244f2ad23780c54178974",
+            "action_id": "e3",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.664
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 0.98
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 0.957
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.114
+              }
+            ],
+            "elapsed_ms": 3.785
+          }
+        },
+        {
+          "choice": "e4",
+          "kind": "select",
+          "action": "Category → Research",
+          "status": "executed",
+          "receipt": {
+            "executed": "e4",
+            "request_id": "db2dafad6d444e6ea93ea4b30ddfaab6",
+            "action_id": "e4",
+            "status": "executed",
+            "phase": "select",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 0.969
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "select",
+                "status": "returned",
+                "ms": 1.321
+              }
+            ],
+            "elapsed_ms": 2.353
+          }
+        },
+        {
+          "choice": "e6",
+          "kind": "click",
+          "action": "Search",
+          "status": "executed",
+          "receipt": {
+            "executed": "e6",
+            "request_id": "637690aff66e479b94f36d0fdea9ea5b",
+            "action_id": "e6",
+            "status": "executed",
+            "phase": "mouseReleased",
+            "input_started": true,
+            "calls": [
+              {
+                "method": "Runtime.evaluate",
+                "phase": "freshness",
+                "status": "returned",
+                "ms": 1.229
+              },
+              {
+                "method": "Runtime.evaluate",
+                "phase": "target_resolution",
+                "status": "returned",
+                "ms": 1.147
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mousePressed",
+                "status": "returned",
+                "ms": 1.257
+              },
+              {
+                "method": "Input.dispatchMouseEvent",
+                "phase": "mouseReleased",
+                "status": "returned",
+                "ms": 1.347
+              }
+            ],
+            "elapsed_ms": 5.083
+          }
+        }
+      ],
+      "raw_final": {
+        "city": "Zürich",
+        "date": "2027-04-08",
+        "category": "research",
+        "notifications": false,
+        "result": "Confirmed Zürich 2027-04-08 Research"
+      }
+    }
+  ]
+}

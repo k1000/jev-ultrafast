@@ -1,0 +1,205 @@
+{
+  "scope": "One owned local Chrome fixture, manually selected observed action. No live Jev/Flights; model APIs blocked.",
+  "fixture_sha256": "9f979215665ad569612516e9730fd79fe708aa32bea22ed80228c4f408516557",
+  "source_hashes": {
+    "jev_ultrafast/browser.py": "2210baf641d40c0d086b43b7078d2a20043510f5d055718d41d751e2d7c76e75",
+    "jev_ultrafast/snapshot.js": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+    "tests/test_settle.py": "a38fc2ddb4e6425488ac100599dc479557dfa4d637db3bbab4dd82d0860a2763",
+    "/Volumes/T5 EVO/offloaded-from-macbook/Users/kamil/Development/_VENDOR/jev-ultrafast/scripts/check_settle.py": "e9acbc69f4c3dca25f4676c440cacfa9701a1f40874eb472d7e4bbed9f9bbf1b"
+  },
+  "passed": true,
+  "document_ready_before_settling": "complete",
+  "action_count": 1,
+  "outcome": {
+    "status": "verified",
+    "reads": 8,
+    "evidence": [
+      {
+        "state": "met",
+        "reason": "observed"
+      }
+    ],
+    "additional_verified": null,
+    "read_errors": [],
+    "elapsed_ms": 747.132
+  },
+  "elapsed_ms": 848,
+  "model_calls": 0,
+  "retained_target": null,
+  "execution_receipts": [
+    {
+      "request_id": "b22893c3010942239387bca222054893",
+      "action_id": "e2",
+      "status": "executed",
+      "phase": "mouseReleased",
+      "input_started": true,
+      "calls": [
+        {
+          "method": "Runtime.evaluate",
+          "phase": "freshness",
+          "status": "returned",
+          "ms": 0.999
+        },
+        {
+          "method": "Runtime.evaluate",
+          "phase": "target_resolution",
+          "status": "returned",
+          "ms": 0.628
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mousePressed",
+          "status": "returned",
+          "ms": 1.07
+        },
+        {
+          "method": "Input.dispatchMouseEvent",
+          "phase": "mouseReleased",
+          "status": "returned",
+          "ms": 0.742
+        }
+      ],
+      "elapsed_ms": 3.488
+    }
+  ],
+  "browser_calls": [
+    {
+      "method": "Target.createTarget",
+      "phase": "Target.createTarget",
+      "status": "returned",
+      "ms": 10.938
+    },
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 0.879
+    },
+    {
+      "method": "Emulation.setDeviceMetricsOverride",
+      "phase": "Emulation.setDeviceMetricsOverride",
+      "status": "returned",
+      "ms": 46.966
+    },
+    {
+      "method": "Emulation.setFocusEmulationEnabled",
+      "phase": "Emulation.setFocusEmulationEnabled",
+      "status": "returned",
+      "ms": 1.404
+    },
+    {
+      "method": "Page.navigate",
+      "phase": "Page.navigate",
+      "status": "returned",
+      "ms": 2.587
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 7.757
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.712
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 0.999
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 0.628
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 1.07
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 0.742
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 17.926
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.44
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.08
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 1.991
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.484
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 4.816
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 4.357
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.921
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 3.692
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 4.351
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.304
+    },
+    {
+      "method": "Target.closeTarget",
+      "phase": "Target.closeTarget",
+      "status": "returned",
+      "ms": 1.628
+    }
+  ]
+}
