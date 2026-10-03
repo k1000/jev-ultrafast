@@ -1,0 +1,60 @@
+{
+  "scope": "One approved live policy/API attempt after the generic modal-context and no-replay candidate fixes. Not a reliability benchmark or a causal comparison. Full raw evidence and source hashes remain private on the internal SSD; this record excludes page context, target IDs, prepared text, raw model answers, credentials, and URLs.",
+  "evidence_timestamp_utc": "2026-10-03T22:44:39Z",
+  "entrypoint": "parse_policy(JSON).agent_kwargs() with the trusted search-only Flights fixture and independent verifier",
+  "browser": "Isolated Google Chrome, CDP port 9334",
+  "objective": {
+    "origin": "Zürich",
+    "destination": "London",
+    "departure": "2027-03-20",
+    "trip_type": "one_way",
+    "adults": 1,
+    "children": 0,
+    "infants": 0,
+    "cabin": "economy",
+    "stop_before_flight_selection_or_booking": true
+  },
+  "limits": {
+    "decisions": 24,
+    "actions": 24,
+    "seconds": 90,
+    "replans": 0,
+    "local_corrections_per_blocker": 2
+  },
+  "passed": true,
+  "status": "done",
+  "stop_reason": "verified",
+  "checks": {
+    "search_page": true,
+    "one_way": true,
+    "origin": true,
+    "destination": true,
+    "date": true,
+    "year": true,
+    "one_adult_no_children_or_infants": true,
+    "economy": true,
+    "results": true
+  },
+  "caller_checks_met": 6,
+  "visible_flight_options": 3,
+  "total_elapsed_ms_including_setup_and_planning": 17283,
+  "execution_elapsed_ms_including_planning_excluding_setup": 16797,
+  "upfront_planner_elapsed_ms": 7778,
+  "logical_planner_calls": 1,
+  "logical_jev_prediction_attempts": 15,
+  "successful_jev_decisions": 15,
+  "acknowledged_actions": 11,
+  "helper_calls": 0,
+  "replans_used": 0,
+  "rejected_before_input_attempts": 3,
+  "uncertain_attempts": 0,
+  "browser_transport_errors": 0,
+  "results_tab_retained": true,
+  "automatic_reruns": 0,
+  "notes": [
+    "Logical model invocations are not counts of dispatched HTTP requests or paid inference.",
+    "Pre-input freshness rejections led to fresh observation and decisions, not mutation replay.",
+    "Acknowledged actions alone are not proof; all caller and domain checks passed on fresh evidence.",
+    "Earlier failed runs and their evidence are unchanged. This success does not isolate the fix's causal contribution or establish general reliability."
+  ]
+}

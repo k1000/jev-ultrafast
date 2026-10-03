@@ -117,7 +117,22 @@ def choose(state, goal, history, *, execution=None):
 
 
 def _choose(state, goal, history, *, execution, key, diagnostic):
+    marker = state.get("marker", state.get("fingerprint"))
+    last_mutation = execution.get("_last_mutation") if execution is not None else None
     elements, targets, controls = action_space(state["actions"])
+    # Mirror the no-replay guard on fresh identities, retaining all observed indices and values.
+    if last_mutation is not None:
+        for operation in ("CLICK", "SELECT"):
+            if operation not in targets:
+                continue
+            targets[operation] = {index: a for index, a in targets[operation].items() if
+                                  (tuple(a.get(k) for k in ("kind", "node", "value")), marker, marker)
+                                  != last_mutation}
+            if not targets[operation]:
+                del targets[operation]
+        eligible = {op: {i.split(":")[0] for i in candidates} for op, candidates in targets.items()}
+        for element in elements:
+            element["operations"] = [op for op in element["operations"] if element["index"] in eligible.get(op, ())]
     labels = {
         "CLICK": "Click an element, button, menu option, autocomplete suggestion, or calendar day.",
         "TYPE_TEXT": "Enter or replace text in an editable field using a validated supplied value.",
@@ -149,7 +164,8 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
     body = {
         "model": os.environ.get("TYPESAFE_MODEL", "jev-latest"),
         "state": {
-            "page": {k: state[k] for k in ("url", "title", "text")},
+            "page": {**{k: state[k] for k in ("url", "title", "text")},
+                     **({"modal_open": state["modal_open"]} if "modal_open" in state else {})},
             "elements": elements,
             "recent_actions": [
                 {k: h.get(k) for k in ("action", "kind", "text", "page_changed", "from_url", "url")}
@@ -159,7 +175,7 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         "questions": questions,
     }
     if execution is not None:
-        body["state"]["execution"] = execution
+        body["state"]["execution"] = {k: v for k, v in execution.items() if k != "_last_mutation"}
     started = time.perf_counter()
     diagnostic.update(stage="transport", code="request_failed", transport_attempted=True)
     result = post_json("https://api.typesafe.ai/v1/systemone", key, body)

@@ -165,6 +165,49 @@ def test_target_head_receives_control_state_and_full_next_step_rules(monkeypatch
     assert d["choice"] == "e3"
 
 
+@pytest.mark.parametrize("modal_open", [True, False])
+def test_model_receives_observed_modal_state(monkeypatch, modal_open):
+    p = page()
+    p["modal_open"] = modal_open
+
+    def post(_url, _key, body):
+        assert body["state"]["page"]["modal_open"] is modal_open
+        return {"model": "test", "answers": {
+            "operation": choice(body["questions"]["operation"]["criteria"], "BLOCKED"),
+        }}
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test")
+    monkeypatch.setattr(model, "post_json", post)
+    model.choose(p, "Confirm the pending dialog edit", [])
+
+
+def test_excluding_a_forbidden_click_preserves_observed_indices_and_field_values(monkeypatch):
+    p = page()
+    p["actions"] = [a for a in p["actions"] if a["kind"] != "fill"]
+    p["actions"][0]["value"] = "already entered"
+    p["marker"] = ["same-document", "stable-controls"]
+    execution = {"objective": "Apply the edit", "_last_mutation": (
+        ("click", 10, "already entered"), deepcopy(p["marker"]), deepcopy(p["marker"]))}
+
+    def post(_url, _key, body):
+        assert set(body["questions"]["click_target"]["criteria"]) == {"2"}
+        field, button = body["state"]["elements"]
+        assert field["index"] == "1" and field["value"] == "already entered"
+        assert field["operations"] == []
+        assert button["index"] == "2" and button["operations"] == ["CLICK"]
+        assert body["state"]["execution"] == {"objective": "Apply the edit"}
+        return {"model": "test", "answers": {
+            "operation": choice(body["questions"]["operation"]["criteria"], "CLICK"),
+            "click_target": choice(["2"], "2"),
+        }}
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test")
+    monkeypatch.setattr(model, "post_json", post)
+    result = model.choose(p, "Apply the edit", [], execution=execution)
+    assert result["choice"] == "e3" and result["target"] == "2"
+    assert len(p["actions"]) == 3  # Request filtering must not mutate the browser's observed table.
+
+
 def test_model_receives_navigation_evidence_and_unmet_goal_blocked_rule(monkeypatch):
     def post(_url, _key, body):
         assert "goal remains unmet" in body["questions"]["operation"]["criteria"]["BLOCKED"].lower()

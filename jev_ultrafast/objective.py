@@ -416,6 +416,7 @@ class ObjectiveAgent:
             "check_evidence": self.check_evidence, "additional_verified": self.additional_verified,
             "verified_control_progress": [asdict(c) for c in sorted(self.completed_checks, key=repr)],
             "deferred_steps": sorted(self.deferred_steps), "feedback": self.feedback,
+            "_last_mutation": self.last_mutation,
         }
         self.verification = None
         before_count = len(self.agent.state["history"])
