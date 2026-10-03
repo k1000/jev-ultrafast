@@ -1,0 +1,82 @@
+{
+  "goal": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+  "date": "2027-03-20",
+  "scope": "One live complex search, not a reliability benchmark. Consent rejection is separate setup. Timing includes planning and final verification, excludes initial navigation. Test-owned facts/verifier are read-only; no executor action plan or text values.",
+  "source_hashes": {
+    "/Volumes/T5 EVO/offloaded-from-macbook/Users/kamil/Development/_VENDOR/jev-ultrafast/scripts/objective_flights.py": "ca2236d1fc5e1ef2734e2eecd02a70e5ef4236fcef60d3c2b098c197af22c642",
+    "jev_ultrafast/__init__.py": "e40c0c3416ca3be20a72ded0fe32b66728c146820934fae73e19d72270e26c82",
+    "jev_ultrafast/agent.py": "c595311d4e94762a5970ea3134b89ebcfa58d7dbf4a2d330cff9677919d0ab7d",
+    "jev_ultrafast/browser.py": "b6d272597848403f5eb9d83f02b658563c4731368fc2a8c0f9ca07d67c770ef5",
+    "jev_ultrafast/demo.py": "a0cfb10909b370efb284cbbe16bdb4b7e7e06ba6385827404169027645a1d8a4",
+    "jev_ultrafast/model.py": "4f6e458d49bd5389afd31004f301233a023fe8f6eaf02d560d98f678fc0e09e5",
+    "jev_ultrafast/questions.py": "12b63444e6c93eeda9642263e1bc7c96e4432509ddded47ae669d8d93a3837cb",
+    "jev_ultrafast/snapshot.js": "c32c09c34f51ade20f30cb07c432227fcf54d361fb46df1ff14aebc5b727c362",
+    "jev_ultrafast/planning.py": "7e1f80f9e2c418ff3c3076c5e1468a9581c80106f7d0c739cbc4b5a53fa32478",
+    "jev_ultrafast/objective.py": "09efd6fd2f6306e039fbb25e93dc1f14d8a8ec0cbf59a7eb7e2f0594ebb497d9"
+  },
+  "initial_ms": 1613,
+  "limits": {
+    "decisions": 36,
+    "actions": 36,
+    "seconds": 120,
+    "replans": 1,
+    "local_corrections": 2
+  },
+  "verification": {
+    "passed": false,
+    "checks": {
+      "search_page": false,
+      "one_way": false,
+      "origin": false,
+      "destination": false,
+      "date": false,
+      "year": false,
+      "one_adult_no_children_or_infants": true,
+      "economy": true,
+      "results": false
+    },
+    "visible_flights": []
+  },
+  "elapsed_ms": 11935,
+  "status": "needs_attention",
+  "stop_reason": "execution_error",
+  "planner_calls": [
+    {
+      "phase": "initial",
+      "reason": "initial",
+      "model": "qwen3.8-max",
+      "latency_ms": 6355,
+      "usage": {
+        "prompt_tokens": 5335,
+        "total_tokens": 5701,
+        "completion_tokens": 366,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 5335
+        }
+      },
+      "transport": "function_calling"
+    }
+  ],
+  "jev_calls": 1,
+  "helper_calls": 0,
+  "actions": 0,
+  "replans_used": 0,
+  "final_url": "https://www.google.com/travel/flights?hl=en",
+  "milestones": [
+    "Change ticket type to One way",
+    "Set origin to Zurich",
+    "Set destination to London",
+    "Set departure date to March 20, 2027",
+    "Verify flight search results are visible"
+  ],
+  "events": [
+    {
+      "kind": "execution_error",
+      "error": "_IPCResponseTimeout"
+    }
+  ],
+  "history": [],
+  "passed": false,
+  "retained_tab": "382F6C48A54464CD116246B074973BB8"
+}

@@ -2,10 +2,14 @@
 
 Read README.md before editing. Keep the loop small: page -> indexed elements -> operation + target -> execution.
 
-- The input is one natural-language goal. Do not add site-specific plans or hardcoded field values.
+- The input is one natural-language goal. Do not add site-specific action scripts or hardcoded executor field values.
+- ObjectiveAgent forces prepare_plan function arguments {objective, plan: [...]} upfront; reject changed objectives.
+- Forward one active step plus fresh browser context to Jev; verified checks advance steps. Jev owns runtime operation/targets.
+- Caller-owned final checks cannot be replaced by a planner. Escalate only after fresh verification and bounded local correction.
 - TypeSafe chooses an operation and operation-specific target heads in one request. Consume only the selected operation's target.
 - Targets must map to observed elements and supported operations. Never let the model emit selectors or executable code.
-- TYPE_TEXT invokes the text LLM. Cache a stale retry's value only while its entire helper input is identical.
+- ObjectiveAgent TYPE_TEXT uses prepared values bound uniquely to observed fields; missing values require bounded replanning.
+- Legacy Agent TYPE_TEXT invokes the text LLM. Cache a stale retry's value only while its entire helper input is identical.
 - Never retry a browser mutation. Log execution before observing its result.
 - Screenshots are optional; the model does not consume them. Keep demonstration footage at its original speed.
 - Keep credentials server-side and .env ignored. Tests must not call paid APIs.

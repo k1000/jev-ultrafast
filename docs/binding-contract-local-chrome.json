@@ -1,0 +1,1091 @@
+{
+  "scope": "Owned local non-flight Chrome fixture. Stubbed Jev, prepared plan, API/helper calls blocked. Tests mechanics, not live inference or universal fuzzy-match reliability.",
+  "source_hashes": {
+    "jev_ultrafast/planning.py": "fcd106ac66e630c9d56fc1e8d46bfa469db252be494e87b12b718c511c3627bd",
+    "jev_ultrafast/objective.py": "64238a21b064ce03514af66b9362caf82e5e98d681b0d4b0f1928028d46d2f82",
+    "jev_ultrafast/browser.py": "2210baf641d40c0d086b43b7078d2a20043510f5d055718d41d751e2d7c76e75",
+    "jev_ultrafast/snapshot.js": "75403cf441997c1f410ae4b3928a3f959a8da3751d543cad34666a451d77fdaa",
+    "/Volumes/T5 EVO/offloaded-from-macbook/Users/kamil/Development/_VENDOR/jev-ultrafast/scripts/check_binding_contract.py": "e15221b6916118d964ec093384f0458099a0ef1f60471755071a68c00905e582"
+  },
+  "passed": true,
+  "action_count": 2,
+  "states": 3,
+  "final": {
+    "goal": "Save invoice INV-42 and wait for project status Ready.",
+    "page": {
+      "url": "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+      "title": "Binding contract fixture",
+      "document_id": 1791018010861,
+      "modal_open": false,
+      "ready_state": "complete",
+      "w": 1120,
+      "h": 780,
+      "text": "Invoice   number\nProject status\nSave",
+      "scroll": {
+        "y": 0,
+        "height": 780
+      },
+      "actions": [
+        {
+          "node": 1,
+          "role": "textbox",
+          "label": "Invoice   number",
+          "rect": {
+            "x": 112.8515625,
+            "y": 8,
+            "w": 147,
+            "h": 21.5
+          },
+          "group": "Billing details",
+          "kind": "fill",
+          "value": "INV-42",
+          "id": "e1"
+        },
+        {
+          "node": 1,
+          "role": "textbox",
+          "label": "Open Invoice   number",
+          "rect": {
+            "x": 112.8515625,
+            "y": 8,
+            "w": 147,
+            "h": 21.5
+          },
+          "group": "Billing details",
+          "kind": "click",
+          "value": "INV-42",
+          "id": "e2"
+        },
+        {
+          "node": 2,
+          "role": "textbox",
+          "label": "Project status",
+          "rect": {
+            "x": 93.765625,
+            "y": 29.5,
+            "w": 147,
+            "h": 21.5
+          },
+          "kind": "click",
+          "value": "Ready",
+          "id": "e3"
+        },
+        {
+          "node": 3,
+          "role": "button",
+          "label": "Save",
+          "rect": {
+            "x": 244.765625,
+            "y": 29.5,
+            "w": 46.390625,
+            "h": 21.5
+          },
+          "kind": "click",
+          "value": "",
+          "id": "e4"
+        },
+        {
+          "id": "wait",
+          "kind": "wait",
+          "label": "Wait for the page to update"
+        }
+      ],
+      "controls": [
+        {
+          "node": 1,
+          "role": "textbox",
+          "label": "Invoice   number",
+          "kind": "control",
+          "group": "Billing details",
+          "observable": true,
+          "value": "INV-42",
+          "disabled": false,
+          "readonly": false
+        },
+        {
+          "node": 2,
+          "role": "textbox",
+          "label": "Project status",
+          "kind": "control",
+          "observable": true,
+          "value": "Ready",
+          "disabled": false,
+          "readonly": true
+        },
+        {
+          "node": 3,
+          "role": "button",
+          "label": "Save",
+          "kind": "control",
+          "observable": true,
+          "value": "",
+          "disabled": false,
+          "readonly": false
+        }
+      ],
+      "marker": [
+        1791018010861,
+        "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        0,
+        0,
+        1120,
+        780,
+        "Binding contract fixture",
+        "Invoice   number\nProject status\nSave",
+        [
+          {
+            "node": 1,
+            "role": "textbox",
+            "label": "Invoice   number",
+            "group": "Billing details",
+            "kind": "fill",
+            "value": "INV-42"
+          },
+          {
+            "node": 1,
+            "role": "textbox",
+            "label": "Open Invoice   number",
+            "group": "Billing details",
+            "kind": "click",
+            "value": "INV-42"
+          },
+          {
+            "node": 2,
+            "role": "textbox",
+            "label": "Project status",
+            "kind": "click",
+            "value": "Ready"
+          },
+          {
+            "node": 3,
+            "role": "button",
+            "label": "Save",
+            "kind": "click",
+            "value": ""
+          }
+        ],
+        [
+          [
+            1,
+            "INV-42",
+            false,
+            null,
+            false,
+            false
+          ],
+          [
+            2,
+            "Ready",
+            false,
+            null,
+            false,
+            true
+          ]
+        ],
+        [
+          {
+            "node": 1,
+            "role": "textbox",
+            "label": "Invoice   number",
+            "kind": "control",
+            "group": "Billing details",
+            "observable": true,
+            "value": "INV-42",
+            "disabled": false,
+            "readonly": false
+          },
+          {
+            "node": 2,
+            "role": "textbox",
+            "label": "Project status",
+            "kind": "control",
+            "observable": true,
+            "value": "Ready",
+            "disabled": false,
+            "readonly": true
+          },
+          {
+            "node": 3,
+            "role": "button",
+            "label": "Save",
+            "kind": "control",
+            "observable": true,
+            "value": "",
+            "disabled": false,
+            "readonly": false
+          }
+        ]
+      ],
+      "terminal_marker": [
+        1791018010861,
+        "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        0,
+        0,
+        1120,
+        780,
+        "Binding contract fixture",
+        "Invoice   number\nProject status\nSave",
+        [
+          {
+            "role": "textbox",
+            "label": "Invoice   number",
+            "group": "Billing details",
+            "kind": "fill",
+            "value": "INV-42"
+          },
+          {
+            "role": "textbox",
+            "label": "Open Invoice   number",
+            "group": "Billing details",
+            "kind": "click",
+            "value": "INV-42"
+          },
+          {
+            "role": "textbox",
+            "label": "Project status",
+            "kind": "click",
+            "value": "Ready"
+          },
+          {
+            "role": "button",
+            "label": "Save",
+            "kind": "click",
+            "value": ""
+          }
+        ],
+        [
+          [
+            "INV-42",
+            false,
+            null,
+            false,
+            false
+          ],
+          [
+            "Ready",
+            false,
+            null,
+            false,
+            true
+          ]
+        ],
+        [
+          [
+            "textbox",
+            "Invoice   number",
+            "INV-42",
+            false,
+            null,
+            false,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            "textbox",
+            "Invoice   number",
+            "INV-42",
+            false,
+            null,
+            false,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            "textbox",
+            "Project status",
+            "Ready",
+            false,
+            null,
+            true,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            "button",
+            "Save",
+            "",
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        ],
+        [
+          {
+            "role": "textbox",
+            "label": "Invoice   number",
+            "kind": "control",
+            "group": "Billing details",
+            "observable": true,
+            "value": "INV-42",
+            "disabled": false,
+            "readonly": false
+          },
+          {
+            "role": "textbox",
+            "label": "Project status",
+            "kind": "control",
+            "observable": true,
+            "value": "Ready",
+            "disabled": false,
+            "readonly": true
+          },
+          {
+            "role": "button",
+            "label": "Save",
+            "kind": "control",
+            "observable": true,
+            "value": "",
+            "disabled": false,
+            "readonly": false
+          }
+        ]
+      ],
+      "page_key": [
+        1791018010861,
+        "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        0,
+        0,
+        1120,
+        780,
+        [
+          [
+            1,
+            "INV-42",
+            false,
+            null,
+            false,
+            false
+          ],
+          [
+            2,
+            "Ready",
+            false,
+            null,
+            false,
+            true
+          ]
+        ]
+      ],
+      "guards": {
+        "1": [
+          1,
+          "textbox",
+          "Invoice   number",
+          "INV-42",
+          false,
+          null,
+          false,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Invoice number "
+        ],
+        "2": [
+          2,
+          "textbox",
+          "Project status",
+          "Ready",
+          false,
+          null,
+          true,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Project status"
+        ],
+        "3": [
+          3,
+          "button",
+          "Save",
+          "",
+          null,
+          null,
+          null,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Invoice number \nProject status Save"
+        ]
+      },
+      "omitted_actions": 0,
+      "omitted_controls": 0,
+      "fingerprint": "758611a9c743125cacd35adb1a7cbb840e18f39f0665d374811738772a5a677d"
+    },
+    "decision": null,
+    "history": [
+      {
+        "step": 1,
+        "action": "Invoice   number",
+        "kind": "fill",
+        "choice": "e1",
+        "probability": 1.0,
+        "confidence": 1.0,
+        "latency_ms": 0,
+        "text": "INV-42",
+        "text_source": "prepared",
+        "text_helper": null,
+        "text_latency_ms": 0,
+        "operation": "TYPE_TEXT",
+        "target": "1",
+        "page_changed": true,
+        "from_url": "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        "url": "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        "usage": {},
+        "receipt": {
+          "executed": "e1",
+          "request_id": "ad6d1aa50eb942e1b7c585839f15c9c8",
+          "action_id": "e1",
+          "status": "executed",
+          "phase": "insertText",
+          "input_started": true,
+          "calls": [
+            {
+              "method": "Runtime.evaluate",
+              "phase": "freshness",
+              "status": "returned",
+              "ms": 1.072
+            },
+            {
+              "method": "Runtime.evaluate",
+              "phase": "target_resolution",
+              "status": "returned",
+              "ms": 0.723
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mousePressed",
+              "status": "returned",
+              "ms": 1.811
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mouseReleased",
+              "status": "returned",
+              "ms": 0.65
+            },
+            {
+              "method": "Input.dispatchKeyEvent",
+              "phase": "selectAllDown",
+              "status": "returned",
+              "ms": 0.511
+            },
+            {
+              "method": "Input.dispatchKeyEvent",
+              "phase": "selectAllUp",
+              "status": "returned",
+              "ms": 1.061
+            },
+            {
+              "method": "Input.insertText",
+              "phase": "insertText",
+              "status": "returned",
+              "ms": 1.516
+            }
+          ],
+          "elapsed_ms": 7.423
+        },
+        "executed_ms": 10,
+        "elapsed_ms": 33
+      },
+      {
+        "step": 2,
+        "action": "Save",
+        "kind": "click",
+        "choice": "e4",
+        "probability": 1.0,
+        "confidence": 1.0,
+        "latency_ms": 0,
+        "text": null,
+        "text_source": null,
+        "text_helper": null,
+        "text_latency_ms": 0,
+        "operation": "CLICK",
+        "target": "1",
+        "page_changed": false,
+        "from_url": "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        "url": "data:text/html,%3C%21doctype%20html%3E%3Ctitle%3EBinding%20contract%20fixture%3C/title%3E%0A%3Cform%20aria-label%3D%22Billing%20details%22%3E%3Clabel%3E%20Invoice%20%20%20number%20%3Cinput%20id%3D%22invoice%22%3E%3C/label%3E%3C/form%3E%0A%3Clabel%3EProject%20status%3Cinput%20id%3D%22status%22%20readonly%20value%3D%22Pending%22%3E%3C/label%3E%0A%3Cbutton%20id%3D%22save%22%3ESave%3C/button%3E%3Cscript%3Ewindow.actionCount%3D0%3B%0Ainvoice.oninput%3D%28%29%3D%3Ewindow.actionCount%2B%2B%3Bsave.onclick%3D%28%29%3D%3E%7Bwindow.actionCount%2B%2B%3B%0AsetTimeout%28%28%29%3D%3E%7Bdocument.getElementById%28%27status%27%29.value%3D%27Ready%27%7D%2C600%29%7D%3B%3C/script%3E",
+        "usage": {},
+        "receipt": {
+          "executed": "e4",
+          "request_id": "d951965856c0446eb923d0c6be061470",
+          "action_id": "e4",
+          "status": "executed",
+          "phase": "mouseReleased",
+          "input_started": true,
+          "calls": [
+            {
+              "method": "Runtime.evaluate",
+              "phase": "freshness",
+              "status": "returned",
+              "ms": 0.54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "phase": "target_resolution",
+              "status": "returned",
+              "ms": 0.598
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mousePressed",
+              "status": "returned",
+              "ms": 0.892
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mouseReleased",
+              "status": "returned",
+              "ms": 1.275
+            }
+          ],
+          "elapsed_ms": 3.336
+        },
+        "executed_ms": 40,
+        "elapsed_ms": 62
+      }
+    ],
+    "attempts": [
+      {
+        "choice": "e1",
+        "kind": "fill",
+        "action": "Invoice   number",
+        "status": "executed",
+        "receipt": {
+          "executed": "e1",
+          "request_id": "ad6d1aa50eb942e1b7c585839f15c9c8",
+          "action_id": "e1",
+          "status": "executed",
+          "phase": "insertText",
+          "input_started": true,
+          "calls": [
+            {
+              "method": "Runtime.evaluate",
+              "phase": "freshness",
+              "status": "returned",
+              "ms": 1.072
+            },
+            {
+              "method": "Runtime.evaluate",
+              "phase": "target_resolution",
+              "status": "returned",
+              "ms": 0.723
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mousePressed",
+              "status": "returned",
+              "ms": 1.811
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mouseReleased",
+              "status": "returned",
+              "ms": 0.65
+            },
+            {
+              "method": "Input.dispatchKeyEvent",
+              "phase": "selectAllDown",
+              "status": "returned",
+              "ms": 0.511
+            },
+            {
+              "method": "Input.dispatchKeyEvent",
+              "phase": "selectAllUp",
+              "status": "returned",
+              "ms": 1.061
+            },
+            {
+              "method": "Input.insertText",
+              "phase": "insertText",
+              "status": "returned",
+              "ms": 1.516
+            }
+          ],
+          "elapsed_ms": 7.423
+        }
+      },
+      {
+        "choice": "e4",
+        "kind": "click",
+        "action": "Save",
+        "status": "executed",
+        "receipt": {
+          "executed": "e4",
+          "request_id": "d951965856c0446eb923d0c6be061470",
+          "action_id": "e4",
+          "status": "executed",
+          "phase": "mouseReleased",
+          "input_started": true,
+          "calls": [
+            {
+              "method": "Runtime.evaluate",
+              "phase": "freshness",
+              "status": "returned",
+              "ms": 0.54
+            },
+            {
+              "method": "Runtime.evaluate",
+              "phase": "target_resolution",
+              "status": "returned",
+              "ms": 0.598
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mousePressed",
+              "status": "returned",
+              "ms": 0.892
+            },
+            {
+              "method": "Input.dispatchMouseEvent",
+              "phase": "mouseReleased",
+              "status": "returned",
+              "ms": 1.275
+            }
+          ],
+          "elapsed_ms": 3.336
+        }
+      }
+    ],
+    "status": "done",
+    "stop_reason": "verified",
+    "stale_retries": 0,
+    "plan": [
+      "Save invoice"
+    ],
+    "plan_index": 1,
+    "decisions": [
+      {
+        "operation": "TYPE_TEXT",
+        "choice": "e1",
+        "target": "1",
+        "confidence": 1.0,
+        "probabilities": {
+          "e1": 1.0
+        },
+        "latency_ms": 0,
+        "usage": {},
+        "fingerprint": "c5484c1f760565c0a395ebacd3c28506060b86845c00ea72f149f38cf8c32b55",
+        "elapsed_ms": 2
+      },
+      {
+        "operation": "CLICK",
+        "choice": "e4",
+        "target": "1",
+        "confidence": 1.0,
+        "probabilities": {
+          "e4": 1.0
+        },
+        "latency_ms": 0,
+        "usage": {},
+        "fingerprint": "98aa9ed98fabcfb4cb94b6353db3d0205ca7fe4c9581321e343dc4cc670417d7",
+        "elapsed_ms": 36
+      },
+      {
+        "operation": "DONE",
+        "choice": "DONE",
+        "target": "1",
+        "confidence": 1.0,
+        "probabilities": {
+          "DONE": 1.0
+        },
+        "latency_ms": 0,
+        "usage": {},
+        "fingerprint": "98aa9ed98fabcfb4cb94b6353db3d0205ca7fe4c9581321e343dc4cc670417d7",
+        "elapsed_ms": 67
+      }
+    ],
+    "text_calls": [],
+    "elapsed_ms": 851,
+    "started_at": 11139.387844208,
+    "record": false,
+    "elements": [
+      {
+        "role": "textbox",
+        "value": "INV-42",
+        "group": "Billing details",
+        "index": "1",
+        "label": "Invoice   number",
+        "operations": [
+          "TYPE_TEXT",
+          "CLICK"
+        ]
+      },
+      {
+        "role": "textbox",
+        "value": "Ready",
+        "index": "2",
+        "label": "Project status",
+        "operations": [
+          "CLICK"
+        ]
+      },
+      {
+        "role": "button",
+        "value": "",
+        "index": "3",
+        "label": "Save",
+        "operations": [
+          "CLICK"
+        ]
+      }
+    ],
+    "browser_calls": [
+      {
+        "method": "Target.createTarget",
+        "phase": "Target.createTarget",
+        "status": "returned",
+        "ms": 9.387
+      },
+      {
+        "method": "Target.attachToTarget",
+        "phase": "Target.attachToTarget",
+        "status": "returned",
+        "ms": 1.599
+      },
+      {
+        "method": "Emulation.setDeviceMetricsOverride",
+        "phase": "Emulation.setDeviceMetricsOverride",
+        "status": "returned",
+        "ms": 0.79
+      },
+      {
+        "method": "Emulation.setFocusEmulationEnabled",
+        "phase": "Emulation.setFocusEmulationEnabled",
+        "status": "returned",
+        "ms": 0.816
+      },
+      {
+        "method": "Page.navigate",
+        "phase": "Page.navigate",
+        "status": "returned",
+        "ms": 2.319
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 11.111
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 2.975
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.422
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.77
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.001
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "freshness",
+        "status": "returned",
+        "ms": 1.072
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "target_resolution",
+        "status": "returned",
+        "ms": 0.723
+      },
+      {
+        "method": "Input.dispatchMouseEvent",
+        "phase": "mousePressed",
+        "status": "returned",
+        "ms": 1.811
+      },
+      {
+        "method": "Input.dispatchMouseEvent",
+        "phase": "mouseReleased",
+        "status": "returned",
+        "ms": 0.65
+      },
+      {
+        "method": "Input.dispatchKeyEvent",
+        "phase": "selectAllDown",
+        "status": "returned",
+        "ms": 0.511
+      },
+      {
+        "method": "Input.dispatchKeyEvent",
+        "phase": "selectAllUp",
+        "status": "returned",
+        "ms": 1.061
+      },
+      {
+        "method": "Input.insertText",
+        "phase": "insertText",
+        "status": "returned",
+        "ms": 1.516
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "post_input_wait",
+        "status": "returned",
+        "ms": 20.529
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.512
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.152
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.072
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.043
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "freshness",
+        "status": "returned",
+        "ms": 0.54
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "target_resolution",
+        "status": "returned",
+        "ms": 0.598
+      },
+      {
+        "method": "Input.dispatchMouseEvent",
+        "phase": "mousePressed",
+        "status": "returned",
+        "ms": 0.892
+      },
+      {
+        "method": "Input.dispatchMouseEvent",
+        "phase": "mouseReleased",
+        "status": "returned",
+        "ms": 1.275
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "post_input_wait",
+        "status": "returned",
+        "ms": 21.092
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.614
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.323
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.336
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.205
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.626
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.465
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 1.221
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 2.572
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 3.619
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 6.358
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 3.594
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 5.859
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 6.268
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "snapshot",
+        "status": "returned",
+        "ms": 5.112
+      },
+      {
+        "method": "Runtime.evaluate",
+        "phase": "Runtime.evaluate",
+        "status": "returned",
+        "ms": 1.545
+      },
+      {
+        "method": "Target.closeTarget",
+        "phase": "Target.closeTarget",
+        "status": "returned",
+        "ms": 0.889
+      }
+    ],
+    "model_status": "done",
+    "verification": [
+      true
+    ],
+    "check_evidence": [
+      {
+        "state": "met",
+        "reason": "observed"
+      }
+    ],
+    "additional_verified": true,
+    "verified_steps": [
+      0
+    ],
+    "deferred_steps": [],
+    "corrections_used": 0,
+    "replans_used": 0,
+    "planner_calls": [],
+    "events": [
+      {
+        "kind": "binding_recovered",
+        "method": "edit_distance",
+        "node": 1,
+        "role": "textbox",
+        "distance": 1,
+        "score": 0.9286,
+        "runner_up_distance": null,
+        "binding_step": 0,
+        "binding_text": 0,
+        "plan_request": null
+      },
+      {
+        "kind": "milestone_verified",
+        "index": 0
+      },
+      {
+        "kind": "outcome_settling",
+        "generation": 2,
+        "timeout": 3
+      },
+      {
+        "kind": "outcome_settled",
+        "generation": 2,
+        "status": "verified",
+        "reads": 8,
+        "elapsed_ms": 779.009,
+        "read_errors": []
+      }
+    ]
+  },
+  "settlements": [
+    {
+      "status": "verified",
+      "reads": 8,
+      "evidence": [
+        {
+          "state": "met",
+          "reason": "observed"
+        }
+      ],
+      "additional_verified": true,
+      "read_errors": [],
+      "elapsed_ms": 779.009
+    }
+  ],
+  "model_or_helper_calls": 0,
+  "stub_decisions": [
+    "TYPE_TEXT",
+    "CLICK",
+    "DONE"
+  ],
+  "retained_target": null
+}

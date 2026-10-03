@@ -1,0 +1,19 @@
+{
+  "scope": "Read-only bootstrap inspection after failed attempt; no target creation, navigation, input or models",
+  "original_error": "BrowserSetupError; original report did not retain phase/cause",
+  "harness_name": "default",
+  "reads": [
+    {
+      "method": "Browser.getVersion",
+      "returned": true,
+      "has_error": false
+    },
+    {
+      "method": "Target.getTargets",
+      "returned": true,
+      "has_error": false
+    }
+  ],
+  "same_isolated_target_set": true,
+  "isolated_page_count": 3
+}

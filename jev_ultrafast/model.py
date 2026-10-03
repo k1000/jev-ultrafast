@@ -7,7 +7,7 @@ import time
 
 import httpx
 
-from .questions import NEXT_ACTION, TARGET, TEXT_VALUE
+from .questions import NEXT_ACTION, TARGET, TEXT_VALUES
 
 CLIENT = httpx.Client(http2=True, timeout=25)
 
@@ -27,28 +27,38 @@ def post_json(url, key, body):
     raise RuntimeError("Model unavailable")
 
 
-def validate_choice(answer, ids):
-    try:
-        probabilities = answer["probabilities"]
-        numbers = [*probabilities.values(), answer["confidence"]]
-        valid = (
-            answer["choice"] in ids
-            and set(probabilities) == set(ids)
-            and all(type(n) in (int, float) and math.isfinite(n) and 0 <= n <= 1 for n in numbers)
-            and abs(sum(probabilities.values()) - 1) < 0.02
-            and probabilities[answer["choice"]] >= max(probabilities.values()) - 1e-6
-        )
-    except (KeyError, TypeError, ValueError):
-        valid = False
-    if not valid:
-        raise ValueError("Invalid TypeSafe response; no action executed.")
-    return answer
+def validate_choice(answer, ids, *, head=None):
+    stage = "choice_validation" if head is None else (
+        "operation_validation" if head == "operation" else "selected_target_validation")
+    code = "invalid_answer"
+    if isinstance(answer, dict):
+        choice, probabilities, confidence = answer.get("choice"), answer.get("probabilities"), answer.get("confidence")
+        if not isinstance(choice, str) or choice not in ids:
+            code = "invalid_choice"
+        elif not isinstance(probabilities, dict):
+            code = "invalid_probabilities"
+        elif set(probabilities) != set(ids):
+            code = "probability_keys_mismatch"
+        elif type(confidence) not in (int, float) or not math.isfinite(confidence) or not 0 <= confidence <= 1:
+            code = "invalid_confidence"
+        elif not all(type(n) in (int, float) and math.isfinite(n) and 0 <= n <= 1 for n in probabilities.values()):
+            code = "invalid_probability_values"
+        elif abs(sum(probabilities.values()) - 1) >= 0.02:
+            code = "probability_mass"
+        elif probabilities[choice] < max(probabilities.values()) - 1e-6:
+            code = "choice_not_maximal"
+        else:
+            return answer
+    metadata = {"expected_choices": len(ids)}
+    if head is not None:
+        metadata["head"] = head
+    raise PredictionError(stage, code, **metadata)
 
 
 def action_space(actions):
     """One index per observed element; each operation has its own valid target choices."""
     elements, indices, targets, controls = [], {}, {}, {}
-    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT"}
+    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT", "scroll_to": "SCROLL_TO"}
     for action in actions:
         kind = action["kind"]
         if kind not in operations:
@@ -58,7 +68,9 @@ def action_space(actions):
         if node not in indices:
             index = str(len(elements) + 1)
             indices[node] = index
-            element = {k: action[k] for k in ("role", "value", "checked", "selected", "expanded") if k in action}
+            element = {k: action[k] for k in
+                       ("role", "value", "control_value", "checked", "selected", "expanded", "group", "position")
+                       if k in action}
             element.update(index=index, label=action["label"].split(" → ")[0], operations=[])
             if kind == "select":
                 element["value"] = action.get("current_value", "")
@@ -78,16 +90,46 @@ def action_space(actions):
     return elements, targets, controls
 
 
-def choose(state, goal, history):
+class PredictionError(ValueError):
+    """Code-owned stages only; never retain raw responses or exception messages."""
+
+    def __init__(self, stage, code, **metadata):
+        self.diagnostic = {"stage": stage, "code": code, **metadata}
+        super().__init__(f"Invalid TypeSafe prediction or response; no action executed. ({stage}/{code})")
+
+
+def choose(state, goal, history, *, execution=None):
+    started = time.perf_counter()
+    diagnostic = {"stage": "configuration", "code": "missing_configuration", "transport_attempted": False}
+    try:
+        key = os.environ.get("TYPESAFE_API_KEY")
+        if not key or not key.strip():
+            raise ValueError()
+        diagnostic.update(stage="request", code="invalid_context")
+        return _choose(state, goal, history, execution=execution, key=key, diagnostic=diagnostic)
+    except PredictionError as exc:
+        exc.diagnostic.update(transport_attempted=diagnostic["transport_attempted"],
+                              latency_ms=round((time.perf_counter() - started) * 1000))
+        raise
+    except Exception as exc:
+        raise PredictionError(**diagnostic, cause_type=type(exc).__name__,
+                              latency_ms=round((time.perf_counter() - started) * 1000)) from None
+
+
+def _choose(state, goal, history, *, execution, key, diagnostic):
     elements, targets, controls = action_space(state["actions"])
     labels = {
         "CLICK": "Click an element, button, menu option, autocomplete suggestion, or calendar day.",
-        "TYPE_TEXT": "Enter or replace text in an editable field. A small LLM will supply the value from the goal.",
+        "TYPE_TEXT": "Enter or replace text in an editable field using a validated supplied value.",
         "SELECT": "Select an observed dropdown value.",
+        "SCROLL_TO": "Reveal an observed offscreen element, then re-observe before interacting with it.",
     }
     operations = {key: labels[key] for key in targets}
     operations.update({key: value["label"] for key, value in controls.items()})
-    operations.update(DONE="Every requirement is visibly satisfied.", BLOCKED="No supported operation can progress.")
+    operations.update(
+        DONE="Every requirement is already satisfied by the current page; no further action is needed.",
+        BLOCKED="The goal remains unmet and no supported operation can progress.",
+    )
     questions = {
         "operation": {"type": "choice", "criteria": operations, "instructions": {"goal": goal, "rules": NEXT_ACTION}}
     }
@@ -98,7 +140,7 @@ def choose(state, goal, history):
                 index: {
                     "element": f"[{index}] {a['label']}",
                     "current_value": a.get("current_value", a.get("value", "")),
-                    **{k: a[k] for k in ("role", "checked", "selected", "expanded") if k in a},
+                    **{k: a[k] for k in ("role", "checked", "selected", "expanded", "group", "position") if k in a},
                 }
                 for index, a in candidates.items()
             },
@@ -110,27 +152,38 @@ def choose(state, goal, history):
             "page": {k: state[k] for k in ("url", "title", "text")},
             "elements": elements,
             "recent_actions": [
-                {k: h.get(k) for k in ("action", "kind", "text", "page_changed")} for h in history[-10:]
+                {k: h.get(k) for k in ("action", "kind", "text", "page_changed", "from_url", "url")}
+                for h in history[-10:]
             ],
         },
         "questions": questions,
     }
+    if execution is not None:
+        body["state"]["execution"] = execution
     started = time.perf_counter()
-    result = post_json("https://api.typesafe.ai/v1/systemone", os.environ["TYPESAFE_API_KEY"], body)
-    operation_answer = validate_choice(result["answers"].get("operation", {}), operations)
+    diagnostic.update(stage="transport", code="request_failed", transport_attempted=True)
+    result = post_json("https://api.typesafe.ai/v1/systemone", key, body)
+    diagnostic.update(stage="envelope", code="invalid_answers")
+    if not isinstance(result, dict) or not isinstance(result.get("answers"), dict):
+        raise ValueError()
+    operation_answer = validate_choice(result["answers"].get("operation", {}), operations, head="operation")
     operation = operation_answer["choice"]
     target = None
     target_answer = None
     probabilities = {}
     if operation in targets:
         # Unused target heads cannot cause an action. Validate the head selected by the operation.
-        target_answer = validate_choice(result["answers"].get(operation.lower() + "_target", {}), targets[operation])
+        target_answer = validate_choice(result["answers"].get(operation.lower() + "_target", {}),
+                                        targets[operation], head=operation.lower() + "_target")
         target = target_answer["choice"]
         choice = targets[operation][target]["id"]
         probabilities = {a["id"]: target_answer["probabilities"][index] for index, a in targets[operation].items()}
     else:
         choice = controls[operation]["id"] if operation in controls else operation
         probabilities[choice] = operation_answer["probabilities"][operation]
+    diagnostic.update(stage="envelope", code="invalid_model")
+    if not isinstance(result.get("model"), str) or not result["model"].strip():
+        raise ValueError()
     return {
         "choice": choice,
         "operation": operation,
@@ -148,16 +201,20 @@ def choose(state, goal, history):
     }
 
 
-def field_context(goal, action, page, history):
+def text_context(goal, page, history):
     return {
         "goal": goal,
-        "field": {k: action.get(k) for k in ("label", "role", "value")},
-        "page": {"title": page["title"], "text": page["text"][:6000]},
+        "observation": page["fingerprint"],
+        "fields": {
+            a["id"]: {k: a.get(k) for k in ("label", "role", "value")}
+            for a in page["actions"] if a["kind"] == "fill"
+        },
+        "page": {"url": page["url"], "title": page["title"], "text": page["text"][:6000]},
         "recent_actions": [{k: h.get(k) for k in ("action", "text")} for h in history[-6:]],
     }
 
 
-def field_text(context):
+def field_texts(context):
     key = os.environ.get("TEXT_MODEL_API_KEY")
     if not key:
         raise ValueError("TYPE_TEXT needs TEXT_MODEL_API_KEY; no text is hardcoded or guessed by the executor.")
@@ -176,7 +233,7 @@ def field_text(context):
             "response_format": {"type": "json_object"},
             **reasoning,
             "messages": [
-                {"role": "system", "content": TEXT_VALUE},
+                {"role": "system", "content": TEXT_VALUES},
                 {
                     "role": "user",
                     "content": json.dumps(context),
@@ -186,12 +243,15 @@ def field_text(context):
     )
     try:
         output = json.loads(result["choices"][0]["message"]["content"])
-        value = output["text"]
-        if set(output) != {"text"} or not isinstance(value, str) or not value.strip() or len(value) > 2000:
+        values = output["values"]
+        if (set(output) != {"values"} or not isinstance(values, dict)
+                or not set(values) <= set(context["fields"])
+                or any(v is not None and (not isinstance(v, str) or not v.strip() or len(v) > 2000)
+                       for v in values.values())):
             raise ValueError()
     except (ValueError, KeyError, TypeError):
-        raise ValueError("Text helper returned no valid field value; nothing typed.") from None
-    return value, {
+        raise ValueError("Text helper returned no valid field values; nothing typed.") from None
+    return {field: value for field, value in values.items() if value is not None}, {
         "model": model,
         "latency_ms": round((time.perf_counter() - started) * 1000),
         "usage": result.get("usage", {}),

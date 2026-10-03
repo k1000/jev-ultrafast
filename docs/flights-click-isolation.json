@@ -1,0 +1,57 @@
+{
+  "scope": "Single reversible menu-open diagnostic on inspected owned tab. No paid models, no retries, no form values set",
+  "action": "Change ticket type. Round trip",
+  "execution": "returned",
+  "inspection": {
+    "url": "https://www.google.com/travel/flights?hl=en",
+    "options": [
+      "Round trip",
+      "One way",
+      "Multi-city"
+    ]
+  },
+  "calls": [
+    {
+      "method": "Runtime.evaluate",
+      "type": null,
+      "phase": "other",
+      "status": "returned",
+      "ms": 14.232
+    },
+    {
+      "method": "Runtime.evaluate",
+      "type": null,
+      "phase": "guard",
+      "status": "returned",
+      "ms": 0.893
+    },
+    {
+      "method": "Runtime.evaluate",
+      "type": null,
+      "phase": "target",
+      "status": "returned",
+      "ms": 0.794
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "type": "mousePressed",
+      "phase": "other",
+      "status": "returned",
+      "ms": 3.973
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "type": "mouseReleased",
+      "phase": "other",
+      "status": "returned",
+      "ms": 9.909
+    },
+    {
+      "method": "Runtime.evaluate",
+      "type": null,
+      "phase": "other",
+      "status": "returned",
+      "ms": 4.71
+    }
+  ]
+}

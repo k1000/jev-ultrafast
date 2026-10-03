@@ -1,0 +1,36 @@
+{
+  "scope": "Activate the existing owned isolated tab once, then read; no reload/navigation/search input/models",
+  "target": "7765C941521795F16E31AD45CD472D5B",
+  "calls": [
+    {
+      "method": "Target.activateTarget",
+      "status": "returned",
+      "ms": 9.24
+    },
+    {
+      "method": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 8.367
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "error",
+      "error": "TimeoutError",
+      "ms": 3005.126
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "error",
+      "error": "TimeoutError",
+      "ms": 3004.746
+    }
+  ],
+  "paid_calls": 0,
+  "activation_ack": true,
+  "simple": {
+    "error": "TimeoutError"
+  },
+  "readiness": {
+    "error": "TimeoutError"
+  }
+}

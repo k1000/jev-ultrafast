@@ -1,0 +1,108 @@
+{
+  "scope": "One owned Flights bootstrap, retained on failure; same-target read-only transport comparison.\n\nNo models, search inputs, browser restarts, debugger resume, or navigation retries.\n",
+  "paid_calls": 0,
+  "search_inputs": 0,
+  "probes": [
+    {
+      "check": "simple",
+      "route": "harness",
+      "error": "_IPCResponseTimeout",
+      "ms": 3001.795
+    },
+    {
+      "check": "simple",
+      "route": "direct_cdp",
+      "error": "TimeoutError",
+      "ms": 3005.157
+    },
+    {
+      "check": "readiness",
+      "route": "harness",
+      "error": "_IPCResponseTimeout",
+      "ms": 3000.808
+    },
+    {
+      "check": "readiness",
+      "route": "direct_cdp",
+      "error": "TimeoutError",
+      "ms": 3003.986
+    },
+    {
+      "check": "snapshot",
+      "route": "harness",
+      "error": "_IPCResponseTimeout",
+      "ms": 3003.873
+    },
+    {
+      "check": "snapshot",
+      "route": "direct_cdp",
+      "error": "TimeoutError",
+      "ms": 3006.213
+    }
+  ],
+  "events": [
+    {
+      "method": "Target.attachedToTarget",
+      "waitingForDebugger": false
+    }
+  ],
+  "direct_calls": [
+    {
+      "method": "Target.attachToTarget",
+      "status": "returned"
+    },
+    {
+      "method": "Page.getFrameTree",
+      "status": "no_reply_within_read_budget"
+    },
+    {
+      "method": "DOM.getDocument",
+      "status": "no_reply_within_read_budget"
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "no_reply_within_read_budget"
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "no_reply_within_read_budget"
+    },
+    {
+      "method": "Runtime.evaluate",
+      "status": "no_reply_within_read_budget"
+    }
+  ],
+  "bootstrap": "not_replayed; inspect retained target only",
+  "retained_target": "7765C941521795F16E31AD45CD472D5B",
+  "frame_error": "TimeoutError",
+  "dom_error": "TimeoutError",
+  "browser_calls": [
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 0.516
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "diagnostic_read",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 3001.754
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "diagnostic_read",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 3000.764
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "diagnostic_read",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 3003.833
+    }
+  ]
+}

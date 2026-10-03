@@ -4,6 +4,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .DS_Store
+._*
+.pi/
+.pi-memory/
+scripts/reflect-automations/
 artifacts/
 *.egg-info/
 

@@ -1,0 +1,71 @@
+{
+  "scope": "One owned Flights bootstrap, retained on failure; same-target read-only transport comparison.\n\nNo models, search inputs, browser restarts, debugger resume, or navigation retries.\n",
+  "paid_calls": 0,
+  "search_inputs": 0,
+  "probes": [],
+  "events": [
+    {
+      "method": "Target.attachedToTarget",
+      "waitingForDebugger": false
+    }
+  ],
+  "bootstrap": {
+    "phase": "document_ready",
+    "cause_type": "TimeoutError"
+  },
+  "retained_target": "7765C941521795F16E31AD45CD472D5B",
+  "error": "TimeoutError",
+  "browser_calls": [
+    {
+      "method": "Target.createTarget",
+      "phase": "Target.createTarget",
+      "status": "returned",
+      "ms": 111.245
+    },
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 7.752
+    },
+    {
+      "method": "Emulation.setDeviceMetricsOverride",
+      "phase": "Emulation.setDeviceMetricsOverride",
+      "status": "returned",
+      "ms": 23.357
+    },
+    {
+      "method": "Emulation.setFocusEmulationEnabled",
+      "phase": "Emulation.setFocusEmulationEnabled",
+      "status": "returned",
+      "ms": 17.102
+    },
+    {
+      "method": "Page.navigate",
+      "phase": "Page.navigate",
+      "status": "returned",
+      "ms": 358.618
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 5001.388
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 5001.36
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "error",
+      "error": "_IPCResponseTimeout",
+      "ms": 4950.669
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "User-approved cookie rejection before measured search; no models and no click replay",
+  "events": [
+    {
+      "kind": "scroll_to",
+      "label": "Reveal Reject all",
+      "logged_before_execution": true
+    },
+    {
+      "kind": "click",
+      "label": "Reject all",
+      "logged_before_execution": true
+    }
+  ],
+  "immediate_observation_error": "StalePage",
+  "inspection": "Fresh read-only inspection of retained owned tab",
+  "verified_flights_page": true,
+  "planner_calls": 0,
+  "jev_calls": 0,
+  "helper_calls": 0
+}

@@ -1,0 +1,86 @@
+{
+  "scope": "Targeted fresh-tab diagnostics after SELECT verification fix; not replacements for the first suite",
+  "source_hashes": {
+    "jev_ultrafast/planning.py": "7e1f80f9e2c418ff3c3076c5e1468a9581c80106f7d0c739cbc4b5a53fa32478",
+    "jev_ultrafast/snapshot.js": "c32c09c34f51ade20f30cb07c432227fcf54d361fb46df1ff14aebc5b727c362",
+    "jev_ultrafast/model.py": "4f6e458d49bd5389afd31004f301233a023fe8f6eaf02d560d98f678fc0e09e5"
+  },
+  "runs": [
+    {
+      "case": "form-select",
+      "expected": "done",
+      "verified": true,
+      "initial_ms": 321,
+      "controller_ms": 2978,
+      "status": "done",
+      "stop_reason": "verified",
+      "controller_verified": true,
+      "stale_retries": 0,
+      "actions": 1,
+      "decisions": 1,
+      "text_requests": 0,
+      "planner_requests": 1,
+      "replans": 0,
+      "corrections": 0,
+      "operations": [
+        "SELECT"
+      ],
+      "model_choices": [
+        "SELECT"
+      ],
+      "typesafe_ms": 462,
+      "planner_ms": 2453,
+      "planner_errors": [],
+      "budget_exhausted": false,
+      "uncertain_execution": false,
+      "safety_verified": true,
+      "agent_ms": 2981,
+      "passed": true,
+      "diagnostic": {
+        "url": "https://www.selenium.dev/selenium/web/web-form.html",
+        "title": "Web form",
+        "verification": [
+          true,
+          true
+        ],
+        "milestones": [
+          "Select 'Three' from the Dropdown (select) field"
+        ],
+        "plan_index": 1,
+        "events": [
+          {
+            "kind": "milestone_verified",
+            "reason": null,
+            "index": 0
+          }
+        ],
+        "history": [
+          {
+            "action": "Dropdown (select) \u2192 Three",
+            "kind": "select",
+            "from_url": "https://www.selenium.dev/selenium/web/web-form.html",
+            "url": "https://www.selenium.dev/selenium/web/web-form.html",
+            "page_changed": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "hn-article",
+      "expected": "done",
+      "verified": false,
+      "initial_ms": 749,
+      "preflight_unavailable": true,
+      "passed": false,
+      "diagnostic": {
+        "url": "https://news.ycombinator.com/",
+        "title": "Hacker News",
+        "verification": null,
+        "milestones": [],
+        "plan_index": 0,
+        "events": [],
+        "history": []
+      }
+    }
+  ]
+}

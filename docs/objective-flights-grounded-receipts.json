@@ -1,0 +1,1606 @@
+{
+  "goal": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+  "date": "2027-03-20",
+  "scope": "One live complex search, not a reliability benchmark. Consent rejection is separate setup. Timing includes planning and final verification, excludes initial navigation. Test-owned facts/verifier are read-only; no executor action plan or text values.",
+  "source_hashes": {
+    "/Volumes/T5 EVO/offloaded-from-macbook/Users/kamil/Development/_VENDOR/jev-ultrafast/scripts/objective_flights.py": "c8f64d902e4ecc3fde6d639922c38651315576cb8f7ec3135fd05fe5ddf41fb6",
+    "jev_ultrafast/__init__.py": "e40c0c3416ca3be20a72ded0fe32b66728c146820934fae73e19d72270e26c82",
+    "jev_ultrafast/agent.py": "17abe160d4e6071be5aa9146f82f3083dea6c9374e15a5cd51cbe8434add51bb",
+    "jev_ultrafast/browser.py": "c78a10aca2f09c1c78739b288078756be1a56a9fdd76a2a6bb695c2d573b4ed5",
+    "jev_ultrafast/demo.py": "a0cfb10909b370efb284cbbe16bdb4b7e7e06ba6385827404169027645a1d8a4",
+    "jev_ultrafast/model.py": "4f6e458d49bd5389afd31004f301233a023fe8f6eaf02d560d98f678fc0e09e5",
+    "jev_ultrafast/questions.py": "12b63444e6c93eeda9642263e1bc7c96e4432509ddded47ae669d8d93a3837cb",
+    "jev_ultrafast/snapshot.js": "c32c09c34f51ade20f30cb07c432227fcf54d361fb46df1ff14aebc5b727c362",
+    "jev_ultrafast/planning.py": "7b5cb6c9c7471e2a9e4fadc390d2fc346ae025308de85875a7db239c8baf219b",
+    "jev_ultrafast/objective.py": "8489aae06c739ce5dd45bd9b135fa90c4e430cc7646cedfdf91be0d23de0d176"
+  },
+  "initial_ms": 789,
+  "limits": {
+    "decisions": 36,
+    "actions": 36,
+    "seconds": 120,
+    "replans": 1,
+    "local_corrections": 2
+  },
+  "verification": {
+    "passed": false,
+    "checks": {
+      "search_page": false,
+      "one_way": false,
+      "origin": false,
+      "destination": false,
+      "date": false,
+      "year": false,
+      "one_adult_no_children_or_infants": true,
+      "economy": false,
+      "results": false
+    },
+    "visible_flights": []
+  },
+  "elapsed_ms": 20326,
+  "status": "abandoned",
+  "stop_reason": "replanning_exhausted",
+  "planner_calls": [
+    {
+      "phase": "initial",
+      "reason": "initial",
+      "model": "qwen3.8-max",
+      "latency_ms": 7946,
+      "usage": {
+        "prompt_tokens": 5589,
+        "total_tokens": 5952,
+        "completion_tokens": 363,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 5589
+        }
+      },
+      "transport": "function_calling",
+      "plan": {
+        "objective": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+        "plan": [
+          {
+            "goal": "Change ticket type to One way",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "value",
+                "label": "Change ticket type. One way",
+                "value": "One way"
+              }
+            ]
+          },
+          {
+            "goal": "Set origin to Zürich",
+            "texts": [
+              {
+                "label": "Where from?",
+                "value": "Zurich"
+              }
+            ],
+            "checks": [
+              {
+                "kind": "value",
+                "label": "Where from?",
+                "value": "Zürich"
+              }
+            ]
+          },
+          {
+            "goal": "Set destination to London",
+            "texts": [
+              {
+                "label": "Where to? ",
+                "value": "London"
+              }
+            ],
+            "checks": [
+              {
+                "kind": "value",
+                "label": "Where to? ",
+                "value": "London"
+              }
+            ]
+          },
+          {
+            "goal": "Set departure date to March 20, 2027",
+            "texts": [
+              {
+                "label": "Departure",
+                "value": "Mar 20, 2027"
+              }
+            ],
+            "checks": [
+              {
+                "kind": "value",
+                "label": "Departure",
+                "value": "Sat, Mar 20"
+              }
+            ]
+          },
+          {
+            "goal": "Verify search results page with correct parameters",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "url_contains",
+                "value": "/travel/flights/search"
+              },
+              {
+                "kind": "text",
+                "value": "Zürich"
+              },
+              {
+                "kind": "text",
+                "value": "London"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "phase": "replan",
+      "reason": "stale_target",
+      "model": "qwen3.8-max",
+      "latency_ms": 6571,
+      "usage": {
+        "prompt_tokens": 9747,
+        "total_tokens": 10061,
+        "completion_tokens": 314,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "text_tokens": 9747
+        }
+      },
+      "transport": "function_calling",
+      "plan": {
+        "objective": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+        "plan": [
+          {
+            "goal": "Confirm ticket type is One way",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "value",
+                "value": "One way",
+                "label": "Change ticket type. One way"
+              }
+            ]
+          },
+          {
+            "goal": "Confirm origin is Zürich",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "value",
+                "value": "Zürich",
+                "label": "Where from?"
+              }
+            ]
+          },
+          {
+            "goal": "Confirm destination is London",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "value",
+                "value": "London",
+                "label": "Where to? "
+              }
+            ]
+          },
+          {
+            "goal": "Set departure date to March 20, 2027 via calendar navigation",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "value",
+                "value": "Sat, Mar 20",
+                "label": "Departure"
+              }
+            ]
+          },
+          {
+            "goal": "Verify search results page with correct parameters",
+            "texts": [],
+            "checks": [
+              {
+                "kind": "url_contains",
+                "value": "/travel/flights/search"
+              },
+              {
+                "kind": "value",
+                "value": "Economy",
+                "label": "Change seating class. Economy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "jev_calls": 12,
+  "helper_calls": 0,
+  "actions": 7,
+  "replans_used": 1,
+  "final_url": "https://www.google.com/travel/flights?tfs=CBwQARocagwIAxIIL20vMDg5NjZyDAgDEggvbS8wNGpwbEABSAFwAYIBCwj___________8BmAEC&tfu=KgIIAw&hl=en",
+  "decisions": [
+    {
+      "operation": "CLICK",
+      "choice": "e12",
+      "latency_ms": 415,
+      "confidence": 0.99
+    },
+    {
+      "operation": "CLICK",
+      "choice": "e14",
+      "latency_ms": 336,
+      "confidence": 0.99
+    },
+    {
+      "operation": "DONE",
+      "choice": "DONE",
+      "latency_ms": 253,
+      "confidence": 0.88
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "choice": "e15",
+      "latency_ms": 451,
+      "confidence": 0.92
+    },
+    {
+      "operation": "CLICK",
+      "choice": "e4",
+      "latency_ms": 270,
+      "confidence": 0.97
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "choice": "e17",
+      "latency_ms": 338,
+      "confidence": 0.96
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "choice": "e17",
+      "latency_ms": 325,
+      "confidence": 0.94
+    },
+    {
+      "operation": "CLICK",
+      "choice": "e4",
+      "latency_ms": 292,
+      "confidence": 0.45
+    },
+    {
+      "operation": "CLICK",
+      "choice": "e21",
+      "latency_ms": 375,
+      "confidence": 0.43
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "choice": "e20",
+      "latency_ms": 359,
+      "confidence": 0.48
+    },
+    {
+      "operation": "CLICK",
+      "choice": "e68",
+      "latency_ms": 486,
+      "confidence": 0.66
+    },
+    {
+      "operation": "DONE",
+      "choice": "DONE",
+      "latency_ms": 495,
+      "confidence": 0.7
+    }
+  ],
+  "prepared_plan": {
+    "objective": "Find one-way flights from Zurich to London on March 20, 2027, for one adult in economy. Stop when matching flight options are visible. Do not select or book a flight, sign in, or enable price tracking.",
+    "plan": [
+      {
+        "goal": "Confirm ticket type is One way",
+        "texts": [],
+        "checks": [
+          {
+            "kind": "value",
+            "value": "One way",
+            "label": "Change ticket type. One way",
+            "role": "",
+            "group": ""
+          }
+        ]
+      },
+      {
+        "goal": "Confirm origin is Zürich",
+        "texts": [],
+        "checks": [
+          {
+            "kind": "value",
+            "value": "Zürich",
+            "label": "Where from?",
+            "role": "",
+            "group": ""
+          }
+        ]
+      },
+      {
+        "goal": "Confirm destination is London",
+        "texts": [],
+        "checks": [
+          {
+            "kind": "value",
+            "value": "London",
+            "label": "Where to? ",
+            "role": "",
+            "group": ""
+          }
+        ]
+      },
+      {
+        "goal": "Set departure date to March 20, 2027 via calendar navigation",
+        "texts": [],
+        "checks": [
+          {
+            "kind": "value",
+            "value": "Sat, Mar 20",
+            "label": "Departure",
+            "role": "",
+            "group": ""
+          }
+        ]
+      },
+      {
+        "goal": "Verify search results page with correct parameters",
+        "texts": [],
+        "checks": [
+          {
+            "kind": "url_contains",
+            "value": "/travel/flights/search",
+            "label": "",
+            "role": "",
+            "group": ""
+          },
+          {
+            "kind": "value",
+            "value": "Economy",
+            "label": "Change seating class. Economy",
+            "role": "",
+            "group": ""
+          }
+        ]
+      }
+    ]
+  },
+  "milestones": [
+    "Confirm ticket type is One way",
+    "Confirm origin is Zürich",
+    "Confirm destination is London",
+    "Set departure date to March 20, 2027 via calendar navigation",
+    "Verify search results page with correct parameters"
+  ],
+  "events": [
+    {
+      "kind": "milestone_verified",
+      "index": 0
+    },
+    {
+      "kind": "milestone_verified",
+      "index": 1
+    },
+    {
+      "kind": "local_correction",
+      "reason": "stale_target",
+      "verification": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "kind": "milestone_verified",
+      "index": 2
+    },
+    {
+      "kind": "local_correction",
+      "reason": "stale_target",
+      "verification": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "kind": "abandoned",
+      "reason": "unverified_done",
+      "verification": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "scope": "Unresolved within supported actions and configured recovery limits"
+    }
+  ],
+  "history": [
+    {
+      "operation": "CLICK",
+      "action": "Change ticket type. Round trip",
+      "text": null,
+      "text_source": null,
+      "from_url": "https://www.google.com/travel/flights?hl=en",
+      "url": "https://www.google.com/travel/flights?hl=en"
+    },
+    {
+      "operation": "CLICK",
+      "action": "One way",
+      "text": null,
+      "text_source": null,
+      "from_url": "https://www.google.com/travel/flights?hl=en",
+      "url": "https://www.google.com/travel/flights?hl=en"
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "action": "Where from?",
+      "text": "Zurich",
+      "text_source": "prepared",
+      "from_url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAhIIL20vMGRseTBAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en",
+      "url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAhIIL20vMGRseTBAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en"
+    },
+    {
+      "operation": "CLICK",
+      "action": "Zürich, Switzerland",
+      "text": null,
+      "text_source": null,
+      "from_url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAhIIL20vMGRseTBAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en",
+      "url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAhIIL20vMGRseTBAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en"
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "action": "Where to? ",
+      "text": "London",
+      "text_source": "prepared",
+      "from_url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAxIIL20vMDg5NjZAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en",
+      "url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAxIIL20vMDg5NjZAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en"
+    },
+    {
+      "operation": "CLICK",
+      "action": "London, United Kingdom",
+      "text": null,
+      "text_source": null,
+      "from_url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAxIIL20vMDg5NjZAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en",
+      "url": "https://www.google.com/travel/flights?tfs=CBwQARoOagwIAxIIL20vMDg5NjZAAUgBcAGCAQsI____________AZgBAg&tfu=KgIIAw&hl=en"
+    },
+    {
+      "operation": "TYPE_TEXT",
+      "action": "Departure",
+      "text": "Mar 20, 2027",
+      "text_source": "prepared",
+      "from_url": "https://www.google.com/travel/flights?tfs=CBwQARocagwIAxIIL20vMDg5NjZyDAgDEggvbS8wNGpwbEABSAFwAYIBCwj___________8BmAEC&tfu=KgIIAw&hl=en",
+      "url": "https://www.google.com/travel/flights?tfs=CBwQARocagwIAxIIL20vMDg5NjZyDAgDEggvbS8wNGpwbEABSAFwAYIBCwj___________8BmAEC&tfu=KgIIAw&hl=en"
+    }
+  ],
+  "passed": false,
+  "browser_calls": [
+    {
+      "method": "Target.createTarget",
+      "phase": "Target.createTarget",
+      "status": "returned",
+      "ms": 13.268
+    },
+    {
+      "method": "Target.attachToTarget",
+      "phase": "Target.attachToTarget",
+      "status": "returned",
+      "ms": 1.416
+    },
+    {
+      "method": "Emulation.setDeviceMetricsOverride",
+      "phase": "Emulation.setDeviceMetricsOverride",
+      "status": "returned",
+      "ms": 2.903
+    },
+    {
+      "method": "Emulation.setFocusEmulationEnabled",
+      "phase": "Emulation.setFocusEmulationEnabled",
+      "status": "returned",
+      "ms": 2.035
+    },
+    {
+      "method": "Page.navigate",
+      "phase": "Page.navigate",
+      "status": "returned",
+      "ms": 359.71
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 13.04
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.813
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 3.005
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 20.808
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 22.566
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 12.545
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.778
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.715
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.96
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.778
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.714
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 0.654
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 8.657
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 1.249
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 8.189
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 6.232
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 13.374
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 6.068
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 1.714
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 1.827
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 14.785
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 8.243
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 21.099
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 8.722
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 7.009
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 7.646
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 4.193
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 1.918
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 1.472
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 9.827
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 14.575
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 18.233
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.896
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.667
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 2.18
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 2.583
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 19.849
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 8.636
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 9.378
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 5.955
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 14.227
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 7.667
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 1.535
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 9.546
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 8.968
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllDown",
+      "status": "returned",
+      "ms": 2.841
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllUp",
+      "status": "returned",
+      "ms": 1.557
+    },
+    {
+      "method": "Input.insertText",
+      "phase": "insertText",
+      "status": "returned",
+      "ms": 4.618
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 211.914
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 7.004
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 6.05
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 6.237
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 4.616
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 3.548
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 2.373
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 8.709
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 36.524
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 21.773
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 15.997
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 12.187
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 11.536
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 7.112
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 18.214
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 15.045
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 12.836
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 8.107
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 16.342
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 14.729
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 1.942
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 4.002
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 7.508
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllDown",
+      "status": "returned",
+      "ms": 1.65
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllUp",
+      "status": "returned",
+      "ms": 0.856
+    },
+    {
+      "method": "Input.insertText",
+      "phase": "insertText",
+      "status": "returned",
+      "ms": 4.2
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 109.903
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 8.737
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 9.224
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 8.838
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 5.652
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 2.878
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 10.668
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 7.058
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 41.128
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 21.822
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 17.696
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 13.779
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 11.542
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 8.068
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 2.585
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 18.985
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 14.872
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 8.864
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 15.444
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 9.447
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "target_resolution",
+      "status": "returned",
+      "ms": 1.507
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mousePressed",
+      "status": "returned",
+      "ms": 7.477
+    },
+    {
+      "method": "Input.dispatchMouseEvent",
+      "phase": "mouseReleased",
+      "status": "returned",
+      "ms": 20.682
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllDown",
+      "status": "returned",
+      "ms": 7.183
+    },
+    {
+      "method": "Input.dispatchKeyEvent",
+      "phase": "selectAllUp",
+      "status": "returned",
+      "ms": 2.119
+    },
+    {
+      "method": "Input.insertText",
+      "phase": "insertText",
+      "status": "returned",
+      "ms": 5.744
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "post_input_wait",
+      "status": "returned",
+      "ms": 59.857
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 22.457
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 19.338
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 19.915
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 18.457
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "freshness",
+      "status": "returned",
+      "ms": 11.455
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 23.258
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 29.189
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 17.689
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "Runtime.evaluate",
+      "status": "returned",
+      "ms": 25.754
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 20.236
+    },
+    {
+      "method": "Runtime.evaluate",
+      "phase": "snapshot",
+      "status": "returned",
+      "ms": 20.199
+    },
+    {
+      "method": "Target.closeTarget",
+      "phase": "Target.closeTarget",
+      "status": "returned",
+      "ms": 0.554
+    }
+  ],
+  "execution_attempts": [
+    {
+      "choice": "e12",
+      "kind": "click",
+      "action": "Change ticket type. Round trip",
+      "status": "executed",
+      "receipt": {
+        "executed": "e12",
+        "request_id": "01fd49948b374ffd8abc6f49b1ee5d52",
+        "action_id": "e12",
+        "status": "executed",
+        "phase": "mouseReleased",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 1.714
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 1.827
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 14.785
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 8.243
+          }
+        ],
+        "elapsed_ms": 26.634
+      }
+    },
+    {
+      "choice": "e14",
+      "kind": "click",
+      "action": "One way",
+      "status": "executed",
+      "receipt": {
+        "executed": "e14",
+        "request_id": "9ff5a3a915024511a15318109f2063c3",
+        "action_id": "e14",
+        "status": "executed",
+        "phase": "mouseReleased",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 1.918
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 1.472
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 9.827
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 14.575
+          }
+        ],
+        "elapsed_ms": 27.844
+      }
+    },
+    {
+      "choice": "e15",
+      "kind": "fill",
+      "action": "Where from?",
+      "status": "executed",
+      "receipt": {
+        "executed": "e15",
+        "request_id": "db1ce07f797f430691f3f302c5e48504",
+        "action_id": "e15",
+        "status": "executed",
+        "phase": "insertText",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 7.667
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 1.535
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 9.546
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 8.968
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllDown",
+            "status": "returned",
+            "ms": 2.841
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllUp",
+            "status": "returned",
+            "ms": 1.557
+          },
+          {
+            "method": "Input.insertText",
+            "phase": "insertText",
+            "status": "returned",
+            "ms": 4.618
+          }
+        ],
+        "elapsed_ms": 37.086
+      }
+    },
+    {
+      "choice": "e4",
+      "kind": "click",
+      "action": "Zürich, Switzerland",
+      "status": "executed",
+      "receipt": {
+        "executed": "e4",
+        "request_id": "ec5508fbc4b749fdb8279870941c73cf",
+        "action_id": "e4",
+        "status": "executed",
+        "phase": "mouseReleased",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 3.548
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 2.373
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 8.709
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 36.524
+          }
+        ],
+        "elapsed_ms": 51.261
+      }
+    },
+    {
+      "choice": "e17",
+      "kind": "fill",
+      "action": "Where to? ",
+      "status": "executed",
+      "receipt": {
+        "executed": "e17",
+        "request_id": "b979f40bee2d4cff8470c1f95e4ef783",
+        "action_id": "e17",
+        "status": "executed",
+        "phase": "insertText",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 14.729
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 1.942
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 4.002
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 7.508
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllDown",
+            "status": "returned",
+            "ms": 1.65
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllUp",
+            "status": "returned",
+            "ms": 0.856
+          },
+          {
+            "method": "Input.insertText",
+            "phase": "insertText",
+            "status": "returned",
+            "ms": 4.2
+          }
+        ],
+        "elapsed_ms": 35.101
+      }
+    },
+    {
+      "choice": "e4",
+      "kind": "click",
+      "action": "London, United Kingdom",
+      "status": "executed",
+      "receipt": {
+        "executed": "e4",
+        "request_id": "6c02fd412abb4e47ba240de7fe6741b5",
+        "action_id": "e4",
+        "status": "executed",
+        "phase": "mouseReleased",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 2.878
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 10.668
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 7.058
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 41.128
+          }
+        ],
+        "elapsed_ms": 61.846
+      }
+    },
+    {
+      "choice": "e21",
+      "kind": "click",
+      "action": "Open Departure",
+      "status": "rejected_before_input",
+      "error": "StalePage",
+      "receipt": {
+        "request_id": "8328d54aeb4f4c308f208dea864d82d0",
+        "action_id": "e21",
+        "status": "rejected_before_input",
+        "phase": "freshness",
+        "input_started": false,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 2.585
+          }
+        ],
+        "error": "StalePage",
+        "elapsed_ms": 2.643
+      }
+    },
+    {
+      "choice": "e20",
+      "kind": "fill",
+      "action": "Departure",
+      "status": "executed",
+      "receipt": {
+        "executed": "e20",
+        "request_id": "b6dd31736a864d9c8b94de5944212108",
+        "action_id": "e20",
+        "status": "executed",
+        "phase": "insertText",
+        "input_started": true,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 9.447
+          },
+          {
+            "method": "Runtime.evaluate",
+            "phase": "target_resolution",
+            "status": "returned",
+            "ms": 1.507
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mousePressed",
+            "status": "returned",
+            "ms": 7.477
+          },
+          {
+            "method": "Input.dispatchMouseEvent",
+            "phase": "mouseReleased",
+            "status": "returned",
+            "ms": 20.682
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllDown",
+            "status": "returned",
+            "ms": 7.183
+          },
+          {
+            "method": "Input.dispatchKeyEvent",
+            "phase": "selectAllUp",
+            "status": "returned",
+            "ms": 2.119
+          },
+          {
+            "method": "Input.insertText",
+            "phase": "insertText",
+            "status": "returned",
+            "ms": 5.744
+          }
+        ],
+        "elapsed_ms": 54.308
+      }
+    },
+    {
+      "choice": "e68",
+      "kind": "click",
+      "action": "Next",
+      "status": "rejected_before_input",
+      "error": "StalePage",
+      "receipt": {
+        "request_id": "c76b554ce9e2465a856183ffe5ac6693",
+        "action_id": "e68",
+        "status": "rejected_before_input",
+        "phase": "freshness",
+        "input_started": false,
+        "calls": [
+          {
+            "method": "Runtime.evaluate",
+            "phase": "freshness",
+            "status": "returned",
+            "ms": 11.455
+          }
+        ],
+        "error": "StalePage",
+        "elapsed_ms": 11.484
+      }
+    }
+  ]
+}
