@@ -55,10 +55,16 @@ def validate_choice(answer, ids, *, head=None):
     raise PredictionError(stage, code, **metadata)
 
 
+def _mutation_key(action):
+    key = tuple(action.get(name) for name in ("kind", "node", "value"))
+    return (*key, action.get("key")) if action.get("kind") == "press_key" else key
+
+
 def action_space(actions):
     """One index per observed element; each operation has its own valid target choices."""
     elements, indices, targets, controls = [], {}, {}, {}
-    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT", "scroll_to": "SCROLL_TO"}
+    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT", "scroll_to": "SCROLL_TO",
+                  "press_key": "PRESS_KEY", "set_range": "SET_RANGE"}
     for action in actions:
         kind = action["kind"]
         if kind not in operations:
@@ -86,6 +92,8 @@ def action_space(actions):
         if kind == "select":
             target = f"{index}:{len(element['options']) + 1}"
             element["options"].append({"index": target, "label": action["label"], "value": action["value"]})
+        if kind == "press_key":
+            target = f"{index}:{action['key']}"
         group[target] = action
     return elements, targets, controls
 
@@ -117,17 +125,22 @@ def choose(state, goal, history, *, execution=None):
 
 
 def _choose(state, goal, history, *, execution, key, diagnostic):
-    marker = state.get("marker", state.get("fingerprint"))
+    marker = state.get("semantic_marker", state.get("marker", state.get("fingerprint")))
     last_mutation = execution.get("_last_mutation") if execution is not None else None
+    forbidden = execution.get("_forbidden_targets", ()) if execution is not None else ()
+    bindings = execution.get("_binding_choices", {}) if execution is not None else {}
     elements, targets, controls = action_space(state["actions"])
-    # Mirror the no-replay guard on fresh identities, retaining all observed indices and values.
-    if last_mutation is not None:
-        for operation in ("CLICK", "SELECT"):
-            if operation not in targets:
-                continue
+    # Policy exclusions and no-replay share the observed semantic state; never rewrite a model choice.
+    if last_mutation is not None or forbidden:
+        for operation in tuple(targets):
             targets[operation] = {index: a for index, a in targets[operation].items() if
-                                  (tuple(a.get(k) for k in ("kind", "node", "value")), marker, marker)
-                                  != last_mutation}
+                                  (repr(marker), *_mutation_key(a)) not in forbidden and
+                                  (operation not in {"CLICK", "SELECT", "SET_RANGE", "PRESS_KEY"} or
+                                   last_mutation is None or marker != last_mutation[1] or
+                                   marker != last_mutation[2] or
+                                   (_mutation_key(a) != last_mutation[0] and not (
+                                    operation == "SET_RANGE" and a.get("kind") == "set_range" and
+                                    _mutation_key(a)[:2] == last_mutation[0][:2])))}
             if not targets[operation]:
                 del targets[operation]
         eligible = {op: {i.split(":")[0] for i in candidates} for op, candidates in targets.items()}
@@ -138,6 +151,8 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         "TYPE_TEXT": "Enter or replace text in an editable field using a validated supplied value.",
         "SELECT": "Select an observed dropdown value.",
         "SCROLL_TO": "Reveal an observed offscreen element, then re-observe before interacting with it.",
+        "PRESS_KEY": "Press only an observed Escape or Enter key on its focused field or active modal.",
+        "SET_RANGE": "Set an observed native range control using only its uniquely bound prepared value.",
     }
     operations = {key: labels[key] for key in targets}
     operations.update({key: value["label"] for key, value in controls.items()})
@@ -155,17 +170,35 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
                 index: {
                     "element": f"[{index}] {a['label']}",
                     "current_value": a.get("current_value", a.get("value", "")),
-                    **{k: a[k] for k in ("role", "checked", "selected", "expanded", "group", "position") if k in a},
+                    **{k: a[k] for k in ("role", "checked", "selected", "expanded", "group", "position",
+                                           "key", "target_label", "form_label", "min", "max", "step") if k in a},
                 }
                 for index, a in candidates.items()
             },
-            "instructions": {"goal": goal, "operation": operation, "rules": [NEXT_ACTION, TARGET]},
+            "instructions": {"goal": goal, "operation": operation, "rules": [NEXT_ACTION, TARGET, *([
+                "Late binding is enabled: unbound fields have finite supplied source-slot choices or NONE. "
+                "Choose TYPE_TEXT only when an observed field is the current milestone's recipient. "
+                "Never invent a value or move a reserved binding; code rejects ambiguous or unsafe targets."
+            ] if operation == "TYPE_TEXT" and execution and execution.get("late_bindings") is True else [])]},
         }
+    # These heads are speculative. Only the selected TYPE_TEXT target's binding may be consumed.
+    for index, action in targets.get("TYPE_TEXT", {}).items():
+        options = bindings.get(action["id"], {}) if isinstance(bindings, dict) else {}
+        if options:
+            questions["binding_target_" + index] = {
+                "type": "choice", "criteria": {"NONE": "No supplied value belongs to this field",
+                                            **{token: {"value": row["value"], "source": row["label"]}
+                                               for token, row in options.items()}},
+                "instructions": {"goal": goal, "rules": [
+                    "Select exactly one supplied source slot for this observed field, or NONE. "
+                    "Do not invent text; only the selected field's answer can authorize input."]},
+            }
     body = {
         "model": os.environ.get("TYPESAFE_MODEL", "jev-latest"),
         "state": {
             "page": {**{k: state[k] for k in ("url", "title", "text")},
-                     **({"modal_open": state["modal_open"]} if "modal_open" in state else {})},
+                     **({"modal_open": state["modal_open"]} if "modal_open" in state else {}),
+                     **({"modal_label": state["modal_label"]} if "modal_label" in state else {})},
             "elements": elements,
             "recent_actions": [
                 {k: h.get(k) for k in ("action", "kind", "text", "page_changed", "from_url", "url")}
@@ -175,7 +208,8 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         "questions": questions,
     }
     if execution is not None:
-        body["state"]["execution"] = {k: v for k, v in execution.items() if k != "_last_mutation"}
+        body["state"]["execution"] = {k: v for k, v in execution.items()
+                                      if k not in {"_last_mutation", "_forbidden_targets", "_binding_choices"}}
     started = time.perf_counter()
     diagnostic.update(stage="transport", code="request_failed", transport_attempted=True)
     result = post_json("https://api.typesafe.ai/v1/systemone", key, body)
@@ -186,6 +220,7 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
     operation = operation_answer["choice"]
     target = None
     target_answer = None
+    binding_choice = None
     probabilities = {}
     if operation in targets:
         # Unused target heads cannot cause an action. Validate the head selected by the operation.
@@ -194,6 +229,10 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         target = target_answer["choice"]
         choice = targets[operation][target]["id"]
         probabilities = {a["id"]: target_answer["probabilities"][index] for index, a in targets[operation].items()}
+        head = "binding_target_" + target
+        if operation == "TYPE_TEXT" and head in questions:
+            binding_choice = validate_choice(result["answers"].get(head, {}), questions[head]["criteria"],
+                                             head=head)["choice"]
     else:
         choice = controls[operation]["id"] if operation in controls else operation
         probabilities[choice] = operation_answer["probabilities"][operation]
@@ -204,6 +243,7 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         "choice": choice,
         "operation": operation,
         "target": target,
+        "binding_choice": binding_choice,
         "confidence": operation_answer["confidence"],
         "probabilities": probabilities,
         "operation_probabilities": operation_answer["probabilities"],

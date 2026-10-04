@@ -8,6 +8,7 @@
       "runs": [
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -51,6 +52,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "environment_retained": false,
           "expected_outcome": "inconclusive",
@@ -95,6 +97,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -138,6 +141,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "environment_retained": false,
           "expected_outcome": "inconclusive",
@@ -200,6 +204,7 @@
       "runs": [
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -251,6 +256,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "environment_retained": false,
           "expected_outcome": "inconclusive",
@@ -303,6 +309,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -354,6 +361,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "environment_retained": false,
           "expected_outcome": "inconclusive",
@@ -424,6 +432,7 @@
       "runs": [
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -467,6 +476,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 1,
           "environment_retained": true,
           "expected_outcome": "inconclusive",
@@ -495,6 +505,7 @@
         },
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -538,6 +549,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 1,
           "environment_retained": true,
           "expected_outcome": "inconclusive",

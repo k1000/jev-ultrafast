@@ -181,6 +181,27 @@ def test_model_receives_observed_modal_state(monkeypatch, modal_open):
     model.choose(p, "Confirm the pending dialog edit", [])
 
 
+@pytest.mark.parametrize("enabled", [False, True])
+def test_late_binding_guidance_is_conditional_and_adds_no_value_generation_head(monkeypatch, enabled):
+    def post(_url, _key, body):
+        heads = body["questions"]
+        rules = heads["type_text_target"]["instructions"]["rules"]
+        assert any("Late binding is enabled" in rule for rule in rules) is enabled
+        assert not any("value" in name or "text_generation" in name for name in heads)
+        assert body["state"]["execution"]["late_bindings"] is enabled
+        target = next(iter(heads["type_text_target"]["criteria"]))
+        return {"model": "test", "answers": {
+            "operation": choice(heads["operation"]["criteria"], "TYPE_TEXT"),
+            "type_text_target": choice(heads["type_text_target"]["criteria"], target),
+            "click_target": {"choice": "unobserved and unused"},
+        }}
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test")
+    monkeypatch.setattr(model, "post_json", post)
+    result = model.choose(page(), "Enter the prepared identifier", [], execution={"late_bindings": enabled})
+    assert result["operation"] == "TYPE_TEXT"
+
+
 def test_excluding_a_forbidden_click_preserves_observed_indices_and_field_values(monkeypatch):
     p = page()
     p["actions"] = [a for a in p["actions"] if a["kind"] != "fill"]

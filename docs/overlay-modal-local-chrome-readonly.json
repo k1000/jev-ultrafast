@@ -1,0 +1,14 @@
+{
+  "scope": "Read-only follow-up on failed fixture's retained owned target",
+  "source_hashes": {
+    "jev_ultrafast/snapshot.js": "8a72eecb4c4c0e6ad94c477a247153e3b2a49c3b8d20e35a4be271428c787f2e",
+    "scripts/check_overlay_modal.py": "abbcb09d12939f937ad05dac69e316c339e09a0f5eeb8c825aea3f7a287f972a"
+  },
+  "passed": false,
+  "error": "AssertionError",
+  "failure_phase": "assert_snapshot",
+  "model_or_helper_calls": 0,
+  "retained_target": "74F04CE2D2C3189BFFA7ADFD50B17CB7",
+  "prior_evidence": "overlay-modal-local-chrome.json",
+  "prior_passed": false
+}

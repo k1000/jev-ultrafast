@@ -1,0 +1,42 @@
+{
+  "scope": "Offline regressions and read-only saved-observation mechanics only; no new site attempts, learned-model success, or general reliability claim.",
+  "changes": [
+    "Conservative passive-dialog caption classifier for caller-owned guards. The private candidate exempts authentication wording only; CAPTCHA, transaction, consent, host and product/property-path restrictions remain.",
+    "ObjectiveAgent late_bindings=True is a trusted caller opt-in for one immutable current-step prepared value and a unique fresh complete non-modal observed recipient. Default exact matching and policy-v1 envelope remain unchanged.",
+    "Document/node reservation before input, logged-execution acknowledgment, unique fresh value proof, and planner-only matching-value milestone grounding; immutable plans and caller final checks are not rewritten.",
+    "Failed acknowledgment, identity/value proof or reserved-input rejection stops without rebinding, refocusing or mutation retry. Nonfield planner checks retain their original evidence."
+  ],
+  "verification": {
+    "offline_pytest_passed": 573,
+    "ruff_passed": true,
+    "snapshot_javascript_syntax_passed": true,
+    "app_javascript_syntax_passed": true,
+    "build_passed": true,
+    "diff_whitespace_check_passed": true,
+    "saved_observation_checks_passed": 15,
+    "saved_booking_passive_auth_dismissal_classified_correctly": true,
+    "saved_maps_selected_field_accepts_unchanged_prepared_value_only_with_opt_in": true,
+    "saved_maps_binding_is_unacknowledged_reservation_not_input_or_outcome_proof": true
+  },
+  "regressions_cover": [
+    "Default strict behavior; no helper/planner calls; unchanged final and planner predicates",
+    "Two renamed fields receive their own immutable values and advance separate planner steps",
+    "Identical text steps cannot share binding evidence",
+    "Nonfield milestones are not aliased; unmet ones cannot move the origin value into a destination",
+    "Hidden/visible/ambiguous exact sources, duplicate controls, truncation and unknown document/modal evidence",
+    "Explicit role/group constraints, nonwritable controls and inconsistent value facts",
+    "Document/node/label/role changes, contradictory post-action reads and application value changes",
+    "Lost or non-executed acknowledgment and known pre-input rejection",
+    "Returning original caption cannot move a reservation; untrusted model strings are not input",
+    "Authentication close exception cannot exempt CAPTCHA, checkout, purchases, cookies, cart, navigation or links"
+  ],
+  "new_site_attempts": 0,
+  "new_browser_inputs": 0,
+  "new_model_calls_outside_stub_tests": 0,
+  "historical_full_site_goals_passed": 0,
+  "historical_site_attempts": 3,
+  "historical_evidence_unchanged": true,
+  "paid_candidate_entry_disabled": true,
+  "slider_support_added": false,
+  "committed_or_pushed": false
+}

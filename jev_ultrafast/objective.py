@@ -1,17 +1,17 @@
 """A prepared-plan loop: Jev acts, code verifies; runtime replanning is opt-in."""
 
+import hashlib
 import json
 import math
 import time
 import unicodedata
 from copy import deepcopy
 from dataclasses import asdict, replace
-from urllib.parse import urlsplit
 
 from .agent import Agent
-from .browser import StalePage
-from .model import PredictionError, action_space
-from .planning import Check, PlanningError, controls, evidence, parse_plan, plan_objective, resolve_controls
+from .browser import PolicyRejected, StalePage
+from .model import PredictionError, _mutation_key, action_space
+from .planning import Check, PlanningError, Text, controls, evidence, parse_plan, plan_objective, resolve_controls
 
 
 class PreparedTextUnavailable(ValueError):
@@ -25,7 +25,7 @@ class RepeatedMutation(ValueError):
 class ObjectiveAgent:
     def __init__(self, url, goal, *, checks, prepared_plan=None, planner=None,
                  max_replans=0, local_attempts=2, max_decisions=24, max_actions=24, max_seconds=90,
-                 settle_timeout=5, verifier=None, recover_bindings=False):
+                 settle_timeout=5, verifier=None, recover_bindings=False, late_bindings=False):
         self.checks = tuple(checks)
         if not self.checks or any(not isinstance(c, Check) for c in self.checks):
             raise ValueError("Supply nonempty caller-owned final checks")
@@ -45,7 +45,12 @@ class ObjectiveAgent:
             raise ValueError("Invalid outcome verifier")
         if type(recover_bindings) is not bool:
             raise ValueError("Invalid binding recovery policy")
+        if type(late_bindings) is not bool:
+            raise ValueError("Invalid late binding policy")
         self.recover_bindings = recover_bindings
+        self.late_bindings = late_bindings
+        self.value_owners = {}  # (source step, text index) -> acknowledged, freshly proven node.
+        self.pending_binding = None
         self.verifier = verifier
         self.additional_verified = None
         self.settle_timeout = settle_timeout
@@ -71,9 +76,11 @@ class ObjectiveAgent:
         self.feedback = None
         self._phase = "initialization"
         self.last_mutation = None
+        self.forbidden_targets = set()
         self.progress_document = None
         self.completed_checks = set()
         self.agent = Agent(url, self.goal, text_provider=self.prepared_value)
+        self.agent.binding_provider = self.binding_candidates if late_bindings else None
         self.browser = self.agent.browser
         self.started = time.perf_counter()
 
@@ -115,6 +122,7 @@ class ObjectiveAgent:
                 raise ValueError("Outcome verifier must return a boolean")
             self.additional_verified = extra
         self._phase = "milestone_verification"
+        self.release_owners(page)
         document = page.get("document_id", page.get("page_key", [None])[0])
         if document != self.progress_document:
             self.completed_checks.clear()
@@ -130,13 +138,21 @@ class ObjectiveAgent:
                 self.ground_milestone(page)
                 checks = self.plan.steps[self.index].checks
                 proof = evidence(page, checks)
+                grounded = {}
+                for i, check in enumerate(checks):
+                    bound = self.bound_milestone(check, page)
+                    if bound is not None and proof[i]["state"] == "unknown" and proof[i]["reason"] in {
+                            "missing_control", "obscured_control"}:
+                        proof[i] = evidence(page, (bound,))[0]
+                        grounded[i] = bound
                 results = [r["state"] == "met" for r in proof]
                 preserved = [r["state"] == "unknown" and r["reason"] in {"missing_control", "obscured_control"}
                              and document is not None and page.get("modal_open") is True
                              and check in self.completed_checks for check, r in zip(checks, proof, strict=True)]
                 if not all(met or old for met, old in zip(results, preserved, strict=True)):
                     break
-                self.completed_checks.update(c for c, met in zip(checks, results, strict=True)
+                self.completed_checks.update(grounded.get(i, c)
+                                             for i, (c, met) in enumerate(zip(checks, results, strict=True))
                                              if met and c.kind in {"value", "checked"})
                 self.events.append({"kind": "milestone_preserved" if any(preserved) else "milestone_verified",
                                     "index": self.index})
@@ -220,6 +236,8 @@ class ObjectiveAgent:
         event.update({k: meta[k] for k in ("model", "latency_ms", "usage", "transport") if k in meta})
         event["plan"] = deepcopy(data)  # Preserve each validated source contract before runtime grounding.
         self.plan, self.index = plan, 0
+        self.value_owners.clear()
+        self.pending_binding = None
         self.verified_steps.clear()
         self.deferred_steps.clear()
         self.feedback = None
@@ -237,29 +255,158 @@ class ObjectiveAgent:
         self.agent.state.update(status="ready", stop_reason=None, decision=None)
         return True
 
-    def prepared_value(self, action, page):
-        texts = self.plan.steps[self.index].texts if self.plan and self.index < len(self.plan.steps) else ()
-        bindings = []
-        for text in texts:
-            observed, audit = resolve_controls(page, text, recover=self.recover_bindings)
+    @staticmethod
+    def known_document(document):
+        return (isinstance(document, str) and bool(document.strip()) or
+                type(document) in {int, float} and math.isfinite(document))
+
+    def release_owners(self, page):
+        """Unknown identity is not proof of replacement; keep ownership until a known contradiction."""
+        document = page.get("document_id")
+        if not self.known_document(document):
+            return
+        for slot, owner in tuple(self.value_owners.items()):
+            if owner["document"] != document:
+                del self.value_owners[slot]
+                continue
+            facts = [c for c in page.get("controls", page["actions"])
+                     if c.get("node") == owner["node"] and c.get("observable") is True]
+            if (len(facts) == 1 and isinstance(facts[0].get("value"), str) and
+                    facts[0]["value"] != owner["source"].value):
+                del self.value_owners[slot]
+
+    def bound_milestone(self, check, page, *, step_index=None):
+        """Only the acknowledged source slot can ground its own current-step value predicate."""
+        index = self.index if step_index is None else step_index
+        for (source_step, _), owner in self.value_owners.items():
+            text = owner["source"]
+            if (source_step != index or page.get("document_id") != owner["document"] or
+                    check != Check("value", text.value, text.label, text.role, text.group)):
+                continue
+            target = owner["target"]
+            bound = Check("value", text.value, target.label, target.role, target.group)
+            nodes = controls(page, bound, facts=True)
+            if len(nodes) == 1 and owner["node"] in nodes and nodes[owner["node"]].get("observable") is True:
+                return bound
+        return None
+
+    def binding_candidates(self, page):
+        """One finite source-slot set per freshly offered unbound fill; no executable selectors."""
+        document = page.get("document_id")
+        if (not self.late_bindings or not self.plan or self.index >= len(self.plan.steps) or
+                not self.known_document(document) or
+                not isinstance(page.get("controls"), list) or page.get("modal_open") is not False or
+                any(type(page.get(k)) is not int or page[k] != 0
+                    for k in ("omitted_actions", "omitted_controls"))):
+            return {}
+        step = self.plan.steps[self.index]
+        if sum(a.get("kind") == "fill" for a in page["actions"]) > 8:
+            return {}  # Fail closed rather than silently omit speculative heads for some targets.
+        candidates = {}
+        for action in page["actions"]:
+            if (action.get("kind") != "fill" or action.get("role") not in {"textbox", "combobox", "searchbox"} or
+                    type(action.get("node")) is not int or not isinstance(action.get("value"), str) or
+                    not isinstance(action.get("label"), str) or not action["label"].strip() or
+                    len(action["label"]) > 500 or sum(a == action for a in page["actions"]) != 1 or
+                    sum(a.get("node") == action["node"] and a.get("kind") == "fill"
+                        for a in page["actions"]) != 1 or
+                    any(o["node"] == action["node"] for o in self.value_owners.values())):
+                continue
+            options = {}
+            for text_index, text in enumerate(step.texts):
+                slot = (self.index, text_index)
+                if slot in self.value_owners or (text.role and text.role != action["role"]) or (
+                        text.group and " ".join(text.group.split()) != " ".join(action.get("group", "").split())):
+                    continue
+                predicate = Check("value", text.value, text.label, text.role, text.group)
+                matches = sum(c == predicate for c in step.checks)
+                if matches > 1 or (matches == 0 and any(c.kind in {"value", "checked"} for c in step.checks)):
+                    continue
+                offered, audit = resolve_controls(page, text, recover=self.recover_bindings)
+                original, _ = resolve_controls(page, text, facts=True)
+                if (offered or audit["method"] == "ambiguous" or len(original) > 1 or
+                        any(c.get("observable") is not False for c in original.values())):
+                    continue
+                target = Text(action["label"], text.value, role=text.role or action["role"], group=text.group)
+                facts, _ = resolve_controls(page, target, facts=True)
+                if len(facts) != 1 or action["node"] not in facts:
+                    continue
+                fact = facts[action["node"]]
+                if (fact.get("observable") is not True or fact.get("disabled") is not False or
+                        fact.get("readonly") is not False or fact.get("role") != action["role"] or
+                        " ".join(fact.get("group", "").split()) != " ".join(action.get("group", "").split()) or
+                        fact.get("value") != action["value"] or action["value"] == text.value):
+                    continue
+                options[f"s{self.index}t{text_index}"] = {"value": text.value, "label": text.label}
+            if options:
+                candidates[action["id"]] = options
+        return candidates
+
+    def prepared_range_value(self, action, page):
+        """A range uses one exact current-step prepared source; no generated or fuzzy value."""
+        if (action.get("kind") != "set_range" or action.get("role") != "slider" or
+                not self.plan or self.index >= len(self.plan.steps)):
+            raise PreparedTextUnavailable("Range has no current prepared value.")
+        matches = []
+        for text in self.plan.steps[self.index].texts:
+            observed, _ = resolve_controls(page, text)
             if len(observed) == 1 and action["node"] in observed:
-                bindings.append((text, audit))
-        if not bindings and self.plan:
-            for step in self.plan.steps:
-                for text in step.texts:
+                matches.append(text.value)
+        if len(matches) != 1:
+            raise PreparedTextUnavailable("Range needs one uniquely bound current-step prepared value.")
+        if action.get("value") == matches[0]:
+            raise RepeatedMutation("Range already contains the prepared value.")
+        return matches[0]
+
+    def prepared_value(self, action, page):
+        if (getattr(self, "late_bindings", False) and getattr(self, "value_owners", {}) and
+                not self.known_document(page.get("document_id"))):
+            raise PreparedTextUnavailable("Document identity is unknown; owned values remain reserved.")
+        if action.get("kind") == "set_range":
+            return self.prepared_range_value(action, page)
+        bindings = []
+        if self.plan:
+            order = ([self.index] if self.index < len(self.plan.steps) else []) + [
+                i for i in range(len(self.plan.steps)) if i != self.index]
+            for step_index in order:
+                for text_index, text in enumerate(self.plan.steps[step_index].texts):
                     observed, audit = resolve_controls(page, text, recover=self.recover_bindings)
-                    if len(observed) == 1 and action["node"] in observed and all(t != text for t, _ in bindings):
-                        bindings.append((text, audit))
-        if len(bindings) != 1:
-            raise PreparedTextUnavailable("Selected field has no unique prepared value; nothing typed.")
-        text, audit = bindings[0]
+                    if len(observed) == 1 and action["node"] in observed:
+                        bindings.append(((step_index, text_index), text, audit))
+                if bindings:
+                    break  # Current-step exact/normalized binding always takes precedence.
+        if len(bindings) > 1:
+            raise PreparedTextUnavailable("Ambiguous exact prepared bindings; nothing typed.")
+        if len(bindings) == 1:
+            slot, text, audit = bindings[0]
+            owner = self.value_owners.get(slot)
+            if owner and (owner["node"] != action["node"] or owner["document"] != page.get("document_id")):
+                raise PreparedTextUnavailable("Owned source slot cannot move to another field.")
+        else:
+            token = self.agent.selected_binding_choice
+            options = self.agent.binding_choices.get(action["id"], {})
+            fresh = self.binding_candidates(page).get(action["id"], {})
+            if (type(token) is not str or token == "NONE" or token not in options or
+                    options[token] != fresh.get(token)):
+                raise PreparedTextUnavailable("No validated finite prepared value belongs to this field.")
+            prefix, separator, suffix = token.partition("t")
+            if not separator or not prefix.startswith("s") or not prefix[1:].isdigit() or not suffix.isdigit():
+                raise PreparedTextUnavailable("Invalid source slot.")
+            slot = (int(prefix[1:]), int(suffix))
+            if slot[0] != self.index or slot[1] >= len(self.plan.steps[self.index].texts):
+                raise PreparedTextUnavailable("Source slot no longer belongs to the current step.")
+            text = self.plan.steps[slot[0]].texts[slot[1]]
+            audit = {"method": "finite_choice", "node": action["node"],
+                     "binding_step": slot[0], "binding_text": slot[1]}
+            self.pending_binding = {"slot": slot, "source": text,
+                                    "target": Text(action["label"], text.value, action["role"], text.group),
+                                    "node": action["node"], "document": page["document_id"]}
+            self.events.append({"kind": "binding_late_bound", **audit})
         if action.get("value") == text.value:
             raise RepeatedMutation("Field already contains the prepared value; choose another action.")
         if audit["method"] == "edit_distance":
-            step_index, text_index = next((i, j) for i, step in enumerate(self.plan.steps)
-                                          for j, candidate in enumerate(step.texts) if candidate == text)
-            self.events.append({"kind": "binding_recovered", **audit, "binding_step": step_index,
-                                "binding_text": text_index, "plan_request": len(self.planner_calls) - 1
+            self.events.append({"kind": "binding_recovered", **audit, "binding_step": slot[0],
+                                "binding_text": slot[1], "plan_request": len(self.planner_calls) - 1
                                 if self.planner_calls else None})
         return text.value
 
@@ -268,11 +415,15 @@ class ObjectiveAgent:
         if self.last_mutation is None or not state["decision"]:
             return False
         action = next((a for a in state["page"]["actions"] if a["id"] == state["decision"]["choice"]), {})
-        if action.get("kind") not in {"click", "select"}:
+        if action.get("kind") not in {"click", "select", "press_key", "set_range"}:
             return False
-        current = state["page"].get("marker", state["page"]["fingerprint"])
-        key = tuple(action.get(k) for k in ("kind", "node", "value"))
-        # Real markers ignore geometry, unlike the debug fingerprint; animation isn't progress.
+        current = state["page"].get("semantic_marker", state["page"].get("marker", state["page"].get("fingerprint")))
+        key = _mutation_key(action)
+        if action["kind"] == "set_range":
+            try:
+                key = ("set_range", action["node"], self.prepared_range_value(action, state["page"]))
+            except (PreparedTextUnavailable, RepeatedMutation):
+                return False  # Prepared-value validation itself stops input on the act path.
         return self.last_mutation == (key, current, current)
 
     def limit_stop(self):
@@ -300,21 +451,7 @@ class ObjectiveAgent:
         time.sleep(.2)
         return True
 
-    def semantic_state(self):
-        """DOM identity, geometry, and unrelated text churn do not count as progress."""
-        page = self.agent.state["page"]
-        url = urlsplit(page["url"])
-        facts = page.get("controls", page["actions"])
-        keys = ("role", "label", "group", "observable", "control_value", "current_value", "value",
-                "checked", "disabled", "readonly")
-        return (self.progress_document, (url.scheme, url.netloc, url.path),
-                tuple(self.verification), self.additional_verified,
-                tuple((r["state"], r["reason"]) for r in self.check_evidence),
-                tuple(sorted({repr(tuple(c.get(k) for k in keys)) for c in facts})),
-                tuple(sorted({repr(tuple(a.get(k) for k in ("kind", "role", "label", "group", "value", "position")))
-                              for a in page["actions"]})))
-
-    def recover(self, reason):
+    def recover(self, reason, *, target=None):
         if self.limit_stop():
             return
         self.agent.discard_text()
@@ -323,7 +460,13 @@ class ObjectiveAgent:
             return
         self.feedback = {"reason": reason, "verification": list(self.verification),
                          "instruction": "Objective is unverified; choose a supported corrective action, not a repeat."}
-        key = ("missing_binding" if reason == "missing_prepared_text" else "no_progress", self.semantic_state())
+        if target is not None:
+            self.feedback["target"] = target
+        page = self.agent.state["page"]
+        key = (reason if reason in {"missing_prepared_text", "policy_rejected"} else "no_progress",
+               repr(page.get("semantic_marker", page.get("marker", page.get("fingerprint")))),
+               tuple(self.verification), self.additional_verified,
+               tuple((r["state"], r["reason"]) for r in self.check_evidence))
         if key != self.blocker_key:
             self.blocker_key, self.blocker_attempts = key, 0
         self.blocker_attempts += 1
@@ -333,8 +476,9 @@ class ObjectiveAgent:
                                 "stable_observations": self.blocker_attempts,
                                 "verification": list(self.verification)})
             return
-        if self.replans >= self.max_replans:
-            self.status, self.stop_reason = "abandoned", "replanning_exhausted"
+        if reason == "policy_rejected" or self.replans >= self.max_replans:
+            self.status, self.stop_reason = "abandoned", (
+                "policy_exhausted" if reason == "policy_rejected" else "replanning_exhausted")
             self.events.append({"kind": "abandoned", "reason": reason,
                                 "verification": list(self.verification),
                                 "scope": "Unresolved within supported actions and configured recovery limits"})
@@ -344,15 +488,16 @@ class ObjectiveAgent:
 
     def settle_after_stale(self, rejected_page):
         """At most three extra reads. Stable changed context permits a new decision, never replay."""
-        rejected_marker = rejected_page.get("marker", rejected_page["fingerprint"])
+        rejected_marker = rejected_page.get(
+            "semantic_marker", rejected_page.get("marker", rejected_page.get("fingerprint")))
         page = self.observe()
-        previous = page.get("marker", page["fingerprint"])
+        previous = page.get("semantic_marker", page.get("marker", page.get("fingerprint")))
         for _ in range(3):
             if self.status != "ready" or self.limit_stop():
                 return True
             time.sleep(.05)
             page = self.observe()
-            current = page.get("marker", page["fingerprint"])
+            current = page.get("semantic_marker", page.get("marker", page.get("fingerprint")))
             if current == previous and page.get("ready_state", "complete") == "complete":
                 if current != rejected_marker:
                     self.feedback = {"reason": "page_settled", "instruction": "Choose from the fresh observation."}
@@ -410,16 +555,40 @@ class ObjectiveAgent:
         step_index = self.index
         step = self.plan.steps[self.index] if self.index < len(self.plan.steps) else None
         self.agent.state["goal"] = step.goal if step else self.goal
+        page = self.agent.state["page"]
+        offered_nodes = {a.get("node") for a in page["actions"]}
+        unsupported_controls = [
+            {"role": c["role"][:40], "label": c["label"][:120],
+             **({"group": c["group"][:80]} if isinstance(c.get("group"), str) else {}),
+             "disabled": c.get("disabled") is True, "readonly": c.get("readonly") is True}
+            for c in page.get("controls", [])
+            if c.get("observable") is True and type(c.get("node")) is int and c["node"] not in offered_nodes
+            and isinstance(c.get("role"), str) and isinstance(c.get("label"), str)
+        ][:16]
         self.agent.execution_context = {
             "objective": self.goal, "step": asdict(step) if step else None, "step_index": self.index,
             "final_checks": [asdict(c) for c in self.checks], "verification": self.verification,
             "check_evidence": self.check_evidence, "additional_verified": self.additional_verified,
             "verified_control_progress": [asdict(c) for c in sorted(self.completed_checks, key=repr)],
             "deferred_steps": sorted(self.deferred_steps), "feedback": self.feedback,
-            "_last_mutation": self.last_mutation,
+            "unsupported_controls": unsupported_controls,
+            "_last_mutation": self.last_mutation, "_forbidden_targets": tuple(self.forbidden_targets),
+            **({"late_bindings": True} if self.late_bindings else {}),
+        }
+        marker = page.get("semantic_marker")
+        source_digest = (hashlib.sha256(json.dumps(marker, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+                         if marker is not None else None)
+        self.agent.decision_context = {
+            "_source_fingerprint": page.get("fingerprint"), "_source_semantic_digest": source_digest,
+            "verification": list(self.verification) if self.verification is not None else None,
+            "check_evidence_states": ([r["state"] for r in self.check_evidence]
+                                      if self.check_evidence is not None else None),
+            "completed_checks_count": len(self.completed_checks), "index": self.index,
+            "last_mutation_present": self.last_mutation is not None,
         }
         self.verification = None
         before_count = len(self.agent.state["history"])
+        self.pending_binding = None
         try:
             self._phase = "prediction"
             self.agent.command("predict")
@@ -437,13 +606,46 @@ class ObjectiveAgent:
                 action = next((a for a in page["actions"] if a["id"] == state["decision"]["choice"]), {})
                 self._phase = "execution"
                 self.agent.command("act", {"fingerprint": page["fingerprint"]})
-                if action.get("kind") in {"click", "fill", "select"}:
-                    key = tuple(action.get(k) for k in ("kind", "node", "value"))
-                    self.last_mutation = (key, page.get("marker", page["fingerprint"]),
-                                          state["page"].get("marker", state["page"]["fingerprint"]))
+                if self.pending_binding is not None and not (
+                        len(state["history"]) > before_count and state["attempts"][-1]["status"] == "executed" and
+                        state["attempts"][-1].get("receipt", {}).get("status", "executed") == "executed"):
+                    self.status, self.stop_reason = "needs_attention", "late_binding_unacknowledged"
+                    return
+                if action.get("kind") in {"click", "fill", "select", "press_key", "set_range"}:
+                    key = (_mutation_key(action) if action["kind"] != "set_range" else
+                           ("set_range", action["node"], state["history"][-1].get("text")))
+                    self.last_mutation = (
+                        key, page.get("semantic_marker", page.get("marker", page.get("fingerprint"))),
+                        state["page"].get(
+                            "semantic_marker", state["page"].get("marker", state["page"].get("fingerprint"))))
+        except PolicyRejected:
+            if len(self.agent.state["history"]) != before_count:
+                raise  # An issued input is never a recoverable policy denial.
+            if self.pending_binding is not None:
+                self.status, self.stop_reason = "needs_attention", "late_binding_rejected"
+                return  # A reserved binding cannot move to another recipient.
+            page = self.agent.state["page"]
+            marker = page.get("semantic_marker", page.get("marker", page.get("fingerprint")))
+            self.forbidden_targets.add((repr(marker), *_mutation_key(action)))
+            self.observe()  # Fresh checks, no stale settling and no mutation retry.
+            if self.status == "ready":
+                self.recover("policy_rejected", target=action["label"])
+                if self.status == "ready":
+                    fresh = self.agent.state["page"]
+                    current = repr(fresh.get("semantic_marker", fresh.get("marker", fresh.get("fingerprint"))))
+                    candidates = (a for a in fresh["actions"] if a["kind"] in
+                                  {"click", "fill", "select", "scroll_to", "press_key", "set_range"})
+                    if not any((current, *_mutation_key(a)) not in self.forbidden_targets for a in candidates):
+                        self.status, self.stop_reason = "abandoned", "policy_exhausted"
+                        self.events.append({"kind": "abandoned", "reason": "policy_rejected",
+                                            "scope": "No unblocked observed target remains"})
+            return
         except StalePage:
             if len(self.agent.state["history"]) != before_count:
                 raise  # Execution was logged; a failed result read cannot authorize a retry.
+            if self.pending_binding is not None:
+                self.status, self.stop_reason = "needs_attention", "late_binding_rejected"
+                return
             self.agent.state.update(status="ready", decision=None)
             self.agent.state["stale_retries"] += 1
             settled = self.settle_after_stale(self.agent.state["page"])
@@ -467,10 +669,29 @@ class ObjectiveAgent:
             return
         self.stale_failures = 0
         self.observe()
+        if self.pending_binding is not None:
+            # A second fresh read rejects transient acknowledgment before committing an owned slot.
+            self.observe()
+            owner = self.pending_binding
+            page = self.agent.state["page"]
+            target = owner["target"]
+            bound = Check("value", owner["source"].value, target.label, target.role, target.group)
+            matches = controls(page, bound, facts=True)
+            if (page.get("document_id") != owner["document"] or len(matches) != 1 or
+                    owner["node"] not in matches or matches[owner["node"]].get("observable") is not True or
+                    evidence(page, (bound,))[0]["state"] != "met"):
+                self.status, self.stop_reason = "needs_attention", "late_binding_unverified"
+                return
+            self.value_owners[owner["slot"]] = owner
+            self.pending_binding = None
+            self.verify_observation(page)
         if self.status == "ready" and self.agent.state["status"] in {"done", "blocked"}:
             if self.index > step_index:
                 self.agent.state.update(status="ready", stop_reason=None, decision=None)
             elif self.agent.state["status"] == "done" and self.defer_milestone("unverified_done"):
+                pass
+            elif (self.agent.state["status"] == "blocked" and self.plan and
+                  self.index < len(self.plan.steps) - 1 and self.defer_milestone("model_blocked")):
                 pass
             else:
                 if self.agent.state["status"] == "done" and self.settle_objective():

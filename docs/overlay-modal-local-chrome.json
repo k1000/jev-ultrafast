@@ -1,0 +1,11 @@
+{
+  "scope": "Read-only observation of a new owned local data:text/html target. No Jev inference or public-site completion.",
+  "source_hashes": {
+    "jev_ultrafast/snapshot.js": "4496c24cc2372b0c4deec18f2818fd97b88bad3ecccb993b120e85329a844323",
+    "scripts/check_overlay_modal.py": "3bad8fc0ebeb3717100aae7c0f4807eeb6ae02d53f310f07fe016b8f13c23f54"
+  },
+  "passed": false,
+  "error": "AssertionError",
+  "model_or_helper_calls": 0,
+  "retained_target": "74F04CE2D2C3189BFFA7ADFD50B17CB7"
+}

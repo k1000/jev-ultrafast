@@ -16,6 +16,7 @@ from urllib.parse import parse_qs, urlparse
 from jev_ultrafast import Check, ObjectiveAgent
 from jev_ultrafast import agent as loop
 from jev_ultrafast import browser as browser_module
+from jev_ultrafast.browser import PolicyRejected
 from jev_ultrafast.planning import evidence
 
 URL = "https://www.google.com/travel/flights?hl=en"
@@ -72,8 +73,10 @@ def verify_flights(page, departure=DATE):
 class SearchOnlyBrowser(browser_module.Browser):
     def validate_action(self, action, page, text=None):
         super().validate_action(action, page, text)
+        if action.get("kind") == "press_key" and action.get("key") == "Enter":
+            raise PolicyRejected("Search-only test does not permit keyboard form submission")
         if any(marker in action["label"] for marker in ("Select flight", "Sign in", "Track prices")):
-            raise ValueError("Search-only test prohibits this action; no input issued")
+            raise PolicyRejected("Search-only test prohibits this action; no input issued")
 
 
 class FlightsObjective(ObjectiveAgent):

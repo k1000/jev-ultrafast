@@ -1,0 +1,13 @@
+{
+  "scope": "New owned data:text/html target, three distinct observed actions, no paid requests; DOM mechanics only, not live Jev reasoning.",
+  "source_hashes": {
+    "jev_ultrafast/snapshot.js": "0fbf108809a4d241cb073d2b53c9376cd4fb3bfbfa8f7e86111b50deba9ac66e",
+    "jev_ultrafast/browser.py": "e274386d421cc4f888d857492b154d530a019ec07c723922a4175e7d15d31da6",
+    "scripts/check_key_range.py": "71be4a7137353ec2d090324060da7c3e63c02b102ca9ed3cc945c0f0fa6c3efa"
+  },
+  "passed": false,
+  "failure_phase": "enter",
+  "error": "AssertionError",
+  "model_or_helper_calls": 0,
+  "retained_target": "73DFAD782B967CF3B92F282F2E28FD88"
+}

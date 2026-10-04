@@ -101,12 +101,13 @@ def test_invalid_or_unobserved_actions_are_rejected_without_transport(monkeypatc
 
 def test_insert_text_timeout_cannot_trigger_another_click_or_typing(monkeypatch):
     b, cdp, action, page = client(monkeypatch, [
-        {"result": {"value": {"x": 40, "y": 50}}}, {}, {}, {}, {}, TimeoutError(),
+        {"result": {"value": {"x": 40, "y": 50}}}, {}, {}, {"result": {"value": True}},
+        {}, {}, {"result": {"value": True}}, TimeoutError(),
     ])
     action["kind"] = "fill"
     receipt = b.execute(action, page, "Ada")
     assert receipt["status"] == "outcome_unknown" and receipt["phase"] == "insertText"
-    assert cdp.call_count == 6
+    assert cdp.call_count == 8
 
 
 def test_keyboard_interrupt_retains_unknown_receipt_and_stops_input(monkeypatch):

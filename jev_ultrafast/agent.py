@@ -1,15 +1,44 @@
 """The complete agent loop. Typed choices, observable state, bounded execution."""
 
 import base64
+import hashlib
+import json
 import time
 from concurrent.futures import Future
 from copy import deepcopy
 from pathlib import Path
 from threading import BoundedSemaphore, Thread
 
-from .browser import Browser, StalePage
+from .browser import Browser, PolicyRejected, StalePage
 from .model import PredictionError, action_space, choose, field_texts, text_context
 from .questions import MAX_STEPS
+
+
+def _decision_evidence(page, context):
+    """Only code-owned scalars leave the chooser page; its raw marker never enters a decision."""
+    marker = page.get("semantic_marker")
+    if marker is None or not isinstance(context, dict) or type(page.get("modal_open")) is not bool:
+        return {}
+    digest = hashlib.sha256(json.dumps(marker, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    source = context.get("_source_fingerprint")
+    same_observation = (isinstance(source, str) and source == page.get("fingerprint") and
+                        context.get("_source_semantic_digest") == digest)
+    verification = context.get("verification") if same_observation else None
+    checks = context.get("check_evidence_states") if same_observation else None
+    if (verification is not None and (not isinstance(verification, list) or
+            any(type(v) is not bool for v in verification)) or
+            checks is not None and (not isinstance(checks, list) or
+            any(v not in {"met", "unmet", "unknown"} for v in checks)) or
+            type(context.get("completed_checks_count")) is not int or
+            type(context.get("index")) is not int or
+            type(context.get("last_mutation_present")) is not bool):
+        return {}
+    return {"state_digest": digest, "state_context": {
+        "modal_open": page["modal_open"], "verification": list(verification) if verification is not None else None,
+        "check_evidence_states": list(checks) if checks is not None else None,
+        "completed_checks_count": context["completed_checks_count"], "index": context["index"],
+        "last_mutation_present": context["last_mutation_present"],
+    }}
 
 
 class Agent:
@@ -22,6 +51,10 @@ class Agent:
         self.speculative_text = speculative_text
         self.text_provider = text_provider
         self.execution_context = None
+        self.decision_context = None  # Controller-owned telemetry, never passed into the model request.
+        self.binding_provider = None
+        self.binding_choices = {}
+        self.selected_binding_choice = None
         self._text_slots = BoundedSemaphore(2)  # Cap uncancellable in-flight HTTP calls.
         self.browser = Browser(url)
         self.record_dir = Path(record_dir) if record_dir else None
@@ -138,11 +171,17 @@ class Agent:
             state["prediction_calls"].append(call)
             started = time.perf_counter()
             try:
+                decision_evidence = _decision_evidence(state["page"], getattr(self, "decision_context", None))
+                provider = getattr(self, "binding_provider", None)
+                self.binding_choices = provider(state["page"]) if provider else {}
                 if self.execution_context is None:
                     state["decision"] = choose(state["page"], state["goal"], state["history"])
                 else:
+                    execution = self.execution_context
+                    if self.binding_choices:
+                        execution = {**execution, "_binding_choices": self.binding_choices}
                     state["decision"] = choose(state["page"], state["goal"], state["history"],
-                                               execution=self.execution_context)
+                                               execution=execution)
                 call["status"] = "returned"
             except (Exception, KeyboardInterrupt, SystemExit) as exc:
                 call.update(status="error", error=type(exc).__name__)
@@ -150,10 +189,11 @@ class Agent:
                     call["diagnostic"] = deepcopy(exc.diagnostic)
                 raise
             finally:
+                self.decision_context = None
                 call["latency_ms"] = round((time.perf_counter() - started) * 1000)
             state["decisions"].append(
                 {
-                    **state["decision"],
+                    **state["decision"], **decision_evidence,
                     "fingerprint": state["page"]["fingerprint"],
                     "elapsed_ms": round((time.perf_counter() - state["started_at"]) * 1000),
                 }
@@ -164,6 +204,7 @@ class Agent:
             if not decision or body.get("fingerprint") != page["fingerprint"]:
                 raise ValueError("Observe and choose before acting")
             # Consume once, before any mutation or model call. A retry cannot double-click.
+            self.selected_binding_choice = decision.get("binding_choice")
             state["decision"] = None
             selected = decision["choice"]
             if selected in {"DONE", "BLOCKED"}:
@@ -187,14 +228,16 @@ class Agent:
                 self.discard_text()
                 raise ValueError(f"Stopped at the {MAX_STEPS}-action demo budget")
             text, helper = None, None
-            if action["kind"] == "fill":
+            if action["kind"] in {"fill", "set_range"}:
                 if not state["browser"].fresh(page):
-                    raise StalePage("Page changed before text generation. Choose again.")
+                    raise StalePage("Page changed before prepared input. Choose again.")
                 if self.text_provider is not None:
                     text = self.text_provider(action, page)
                     if not isinstance(text, str) or not text.strip() or len(text) > 2000:
                         raise ValueError("Prepared text is invalid; nothing typed.")
                 else:
+                    if action["kind"] == "set_range":
+                        raise ValueError("SET_RANGE requires a caller-prepared value; no helper fallback.")
                     context = text_context(state["goal"], page, state["history"])
                     if not self.pending_text or self.pending_text[0] != context:
                         raise ValueError("Text was not prepared for this page; nothing typed.")
@@ -249,6 +292,14 @@ class Agent:
             state.setdefault("attempts", []).append(attempt)
             try:
                 receipt = state["browser"].act(action, page, text=text)
+            except PolicyRejected as exc:
+                attempt.update(status="rejected_by_policy", error=type(exc).__name__)
+                if getattr(exc, "receipt", None):
+                    attempt["receipt"] = exc.receipt
+                if action["kind"] == "scroll_to":
+                    state["history"].pop()
+                state["status"] = "ready"
+                raise
             except StalePage as exc:
                 attempt.update(status="rejected_before_input", error=type(exc).__name__)
                 if getattr(exc, "receipt", None):
@@ -280,7 +331,8 @@ class Agent:
             state["page"] = state["browser"].observe(screenshot=self.screenshots)
             state["elapsed_ms"] = round((time.perf_counter() - state["started_at"]) * 1000)
             state["history"][-1].update(
-                page_changed=state["page"]["fingerprint"] != page["fingerprint"],
+                page_changed=(state["page"].get("semantic_marker", state["page"]["fingerprint"]) !=
+                              page.get("semantic_marker", page["fingerprint"])),
                 url=state["page"]["url"],
                 elapsed_ms=state["elapsed_ms"],
             )

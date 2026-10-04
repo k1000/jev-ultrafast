@@ -135,6 +135,27 @@ def test_no_replay_exclusion_is_scoped_to_fresh_operation_node_value_and_marker(
     assert p["actions"] == original_actions
 
 
+def test_live_clock_does_not_restore_an_unchanged_click_candidate(monkeypatch):
+    p = page()
+    p["marker"] = ["Clock 2"]
+    p["semantic_marker"] = ["stable controls", "stable actions"]
+    execution = {"_last_mutation": (("click", 10, ""),
+                                    ["stable controls", "stable actions"],
+                                    ["stable controls", "stable actions"])}
+
+    def post(_url, _key, body):
+        criteria = body["questions"]["click_target"]["criteria"]
+        assert "1" not in criteria
+        return {"model": "offline-stub", "answers": {
+            "operation": choice(body["questions"]["operation"]["criteria"], "CLICK"),
+            "click_target": choice(criteria, "2"),
+        }}
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "offline-only")
+    monkeypatch.setattr(model, "post_json", post)
+    assert model.choose(p, "Complete the edit", [], execution=execution)["choice"] == "e3"
+
+
 def test_unchanged_select_excludes_only_the_same_option_and_preserves_option_indices(monkeypatch):
     p = page()
     p["marker"] = ["document-A", "stable-control"]

@@ -209,6 +209,12 @@ def evidence(page, checks):
             met = check.value in page["url"]
         elif check.kind in {"title", "text"}:
             met = check.value in page[check.kind]
+            scroll = page.get("scroll", {})
+            if (check.kind == "text" and not met and
+                    (len(page["text"]) >= 6000 or (page.get("h") is not None and
+                     scroll.get("y", 0) + page["h"] < scroll.get("height", 0)))):
+                results.append({"state": "unknown", "reason": "partial_text"})
+                continue
         else:
             nodes = controls(page, check, facts=True)
             observable = {node: c for node, c in nodes.items() if c.get("observable", True) is True}
@@ -253,7 +259,9 @@ Do not verify a persistent choice using a transient menu option that disappears;
 If a field's final spelling/format is unknown, do not invent it or assume the query will be its final value.
 For url/url_contains/title/text checks, supply only kind and value; do not attach a control label, role, or group.
 Control value/checked checks require a label; role/group are optional and must be strings, never null.
-Texts are nonempty strings for editable fields only; use an empty texts array for clicking or confirmation.
+Texts are nonempty strings for editable fields or numeric values explicitly supplied for observed native
+range controls. Bind range values by their observed slider label/role/group; never invent a numeric value.
+Use an empty texts array for clicking, keys, or confirmation.
 Control bindings use label and optional role/group from observed controls. Never invent personal information.
 Plan from the objective and observation; use only supplied values or values unambiguously implied by the goal.
 Leave unknown text absent. Future field bindings must be confirmed against an observed element before use.

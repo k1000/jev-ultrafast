@@ -6,6 +6,7 @@ import math
 import sys
 import time
 from copy import deepcopy
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from uuid import uuid4
 
@@ -17,6 +18,32 @@ READ_STATE = Path(__file__).with_name("snapshot.js").read_text()
 MARKER = f"(() => {{ const state={READ_STATE}; return state?.marker ?? null; }})()"
 TERMINAL_MARKER = f"(() => {{ const state={READ_STATE}; return state?.terminal_marker ?? null; }})()"
 
+def _range_number(value):
+    if type(value) is not str or not value or len(value) > 100:
+        raise ValueError("Range needs a bounded numeric string")
+    try:
+        number = Decimal(value)
+    except InvalidOperation:
+        raise ValueError("Range needs a finite number") from None
+    if not number.is_finite():
+        raise ValueError("Range needs a finite number")
+    return number
+
+
+def _validate_range_value(action, value):
+    if action.get("role") != "slider":
+        raise ValueError("Range must be an observed native slider")
+    lower, upper, step = (_range_number(action.get(key)) for key in ("min", "max", "step"))
+    target = _range_number(value)
+    if step <= 0 or upper < lower or not lower <= target <= upper:
+        raise ValueError("Range value is outside observed bounds")
+    try:
+        if (target - lower) % step != 0:
+            raise ValueError("Range value does not lie on the observed step grid")
+    except InvalidOperation:
+        raise ValueError("Invalid range step grid") from None
+
+
 def _positive_seconds(value):
     if type(value) not in {int, float} or not math.isfinite(value) or value <= 0:
         raise ValueError("Supply positive finite seconds")
@@ -25,6 +52,10 @@ def _positive_seconds(value):
 
 class StalePage(ValueError):
     """A decision no longer refers to the observed page."""
+
+
+class PolicyRejected(ValueError):
+    """Caller policy denied an observed action before browser input."""
 
 
 class _TargetRejected(StalePage):
@@ -186,10 +217,18 @@ class Browser:
             if action is not None:
                 raise ValueError("Terminal freshness cannot authorize a browser action.")
             return self.evaluate(TERMINAL_MARKER) == page["terminal_marker"]
-        if action is not None and action["kind"] in {"click", "select", "scroll_to"}:
+        if action is not None and action["kind"] in {"click", "fill", "select", "scroll_to",
+                                                     "press_key", "set_range"}:
             node = action["node"]
             if type(node) is not int:
                 return False
+            if "identity_marker" in page:
+                identity = json.dumps(f"{node}:{action['kind']}")
+                current = self.evaluate(f"(() => {{ const state={READ_STATE}; "
+                                        f"return state?.identity_marker?.[{identity}] ?? null; }})()")
+                expected = page["identity_marker"].get(f"{node}:{action['kind']}")
+                return expected is not None and current == expected
+            # Compatibility for synthetic observations that predate the per-node marker.
             current = self.evaluate(
                 "(() => { const c=window.__jevFast; "
                 f"return c ? [c.pageKey(),c.guard(c.nodes.get({node}))] : null; }})()"
@@ -199,15 +238,21 @@ class Browser:
 
     def validate_action(self, action, page, text=None):
         """Pre-input validation shared by execute/act; subclasses may add safety policy."""
-        if (action.get("kind") not in {"click", "fill", "select", "scroll_to", "scroll", "wait"}
+        if (action.get("kind") not in {"click", "fill", "select", "scroll_to", "scroll", "wait",
+                                       "press_key", "set_range"}
                 or sum(a == action for a in page["actions"]) != 1
                 or sum(a.get("id") == action.get("id") for a in page["actions"]) != 1):
             raise ValueError("Action must match a unique observed action")
         if action["kind"] == "fill":
             if not isinstance(text, str) or not text.strip() or len(text) > 2000:
                 raise ValueError("Invalid prepared text")
+        elif action["kind"] == "set_range":
+            _validate_range_value(action, text)
         elif text is not None:
-            raise ValueError("Text is only supported for fill")
+            raise ValueError("Text is only supported for fill or set_range")
+        if action["kind"] == "press_key" and (action.get("key") not in {"Escape", "Enter"} or
+                                                type(action.get("node")) is not int):
+            raise ValueError("Only observed Escape and Enter targets are supported")
 
     def execute(self, action, page, text=None):
         """Single-shot observed action; unknown input locks execution but permits reads."""
@@ -233,6 +278,10 @@ class Browser:
                               transport=self.call)
             self.after_input = action if action["kind"] != "wait" else None
             receipt["status"] = "executed"
+        except PolicyRejected as exc:
+            receipt.update(status="rejected_by_policy" if not receipt["input_started"] and
+                           receipt["phase"] == "validation" else "outcome_unknown",
+                           error=type(exc).__name__)
         except Exception as exc:
             if isinstance(exc, _TargetRejected):
                 receipt["input_started"] = False
@@ -309,6 +358,10 @@ class Browser:
         receipt = self.execute(action, page, text)
         if receipt["status"] == "outcome_unknown":
             raise ExecutionUncertain(receipt)
+        if receipt["status"] == "rejected_by_policy":
+            error = PolicyRejected("Caller policy rejected observed action before input")
+            error.receipt = receipt
+            raise error
         if receipt["status"] == "rejected_before_input":
             error = StalePage(f"Action rejected before input during {receipt['phase']} ({receipt.get('error')})")
             error.receipt = receipt
@@ -336,16 +389,19 @@ def browser_operation(request, *, transport=None):
             return transport(method, _phase=_phase, _input=_input, **params)
         return cdp(method, session_id=session, **params)
 
-    def evaluate(expression):
+    def evaluate(expression, *, phase=None):
         kind = request["action"]["kind"] if operation == "act" else None
-        mutating = kind in {"select", "scroll_to"}
-        result = call("Runtime.evaluate", _phase=kind if mutating else "target_resolution" if kind else "snapshot",
+        mutating = kind in {"select", "scroll_to", "set_range"} and phase != "range_bounds"
+        result = call("Runtime.evaluate",
+                      _phase=phase or (kind if mutating else "target_resolution" if kind else "snapshot"),
                       _input=mutating, expression=expression, returnByValue=True)
         if result.get("exceptionDetails"):
             if operation == "act" and request["action"]["kind"] == "select":
                 raise RuntimeError("Dropdown execution was interrupted; inspect before retrying.")
             if operation == "act" and request["action"]["kind"] == "scroll_to":
                 raise RuntimeError("Scroll execution was interrupted; inspect before retrying.")
+            if operation == "act" and request["action"]["kind"] == "set_range" and phase != "range_bounds":
+                raise RuntimeError("Range execution was interrupted; inspect before retrying.")
             raise StalePage("Document changed during evaluation")
         return result.get("result", {}).get("value")
 
@@ -355,6 +411,69 @@ def browser_operation(request, *, transport=None):
         if kind == "scroll":
             call("Input.dispatchMouseEvent", _phase="mouseWheel", _input=True,
                  type="mouseWheel", x=550, y=650, deltaX=0, deltaY=action["delta"])
+        elif kind == "press_key":
+            target = evaluate("""(action => {
+              const page=""" + READ_STATE + """;
+              const e=window.__jevFast?.nodes.get(action.node), focus=document.activeElement;
+              const offered=page?.actions.some(a=>a.kind==='press_key' && a.node===action.node &&
+                a.key===action.key && a.target_label===action.target_label);
+              const focused=action.key==='Enter' ? focus===e && !!e.value?.trim() &&
+                e.tagName==='INPUT' && (e.type==='search' || e.getAttribute('role')==='searchbox') &&
+                !e.readOnly : action.role==='dialog' ?
+                page?.modal_open && e && (focus===e || e.contains(focus)) :
+                !page?.modal_open && focus===e && !e.readOnly &&
+                (e.tagName==='INPUT' || e.tagName==='TEXTAREA' || e.isContentEditable);
+              return {authorized:!!(offered && focused && e?.isConnected &&
+                !e.matches(':disabled') && !e.closest('[aria-disabled="true"],[inert]') &&
+                e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}))};
+            })(""" + json.dumps(action) + ")", phase="key_target")
+            if not isinstance(target, dict) or target.get("authorized") is not True:
+                raise _TargetRejected("Key target lost focus or is no longer offered")
+            code = 13 if action["key"] == "Enter" else 27
+            for event in ("keyDown", "keyUp"):
+                call("Input.dispatchKeyEvent", _phase=event, _input=True, type=event,
+                     key=action["key"], code=action["key"],
+                     **({"text": "\r", "unmodifiedText": "\r"}
+                        if event == "keyDown" and action["key"] == "Enter" else {}),
+                     windowsVirtualKeyCode=code, nativeVirtualKeyCode=code)
+        elif kind == "set_range":
+            target = evaluate("""(action => {
+              const e=window.__jevFast?.nodes.get(action.node);
+              if (e?.tagName!=='INPUT' || e.type!=='range' || !e.isConnected || e.readOnly ||
+                  e.matches(':disabled') || e.closest('[aria-disabled="true"],[inert]') ||
+                  !e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}) ||
+                  e.min!==action.min || e.max!==action.max || e.step!==action.step ||
+                  e.value!==action.value) return {rejected:true};
+              const r=e.getBoundingClientRect(), x=r.x+r.width/2, y=r.y+r.height/2;
+              return x>=0 && y>=0 && x<innerWidth && y<innerHeight &&
+                (e===document.elementFromPoint(x,y) || e.contains(document.elementFromPoint(x,y))) ?
+                {authorized:true} : {rejected:true};
+            })(""" + json.dumps(action) + ")", phase="range_bounds")
+            if not isinstance(target, dict) or target.get("authorized") is not True:
+                raise _TargetRejected("Range target or bounds changed before input")
+            result = evaluate("""(({action,value}) => {
+              const e=window.__jevFast?.nodes.get(action.node);
+              if (e?.tagName!=='INPUT' || e.type!=='range' || !e.isConnected || e.readOnly ||
+                  e.matches(':disabled') || e.closest('[aria-disabled="true"],[inert]') ||
+                  !e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}) ||
+                  e.min!==action.min || e.max!==action.max || e.step!==action.step ||
+                  e.value!==action.value) return {rejected:true};
+              const number=Number(value);
+              if (!Number.isFinite(number) || number<Number(e.min) || number>Number(e.max))
+                return {rejected:true};
+              const r=e.getBoundingClientRect(), x=r.x+r.width/2, y=r.y+r.height/2;
+              if (!r.width || !r.height || x<0 || y<0 || x>=innerWidth || y>=innerHeight ||
+                  !(e===document.elementFromPoint(x,y) || e.contains(document.elementFromPoint(x,y))))
+                return {rejected:true};
+              e.value=value;
+              e.dispatchEvent(new Event('input',{bubbles:true}));
+              e.dispatchEvent(new Event('change',{bubbles:true}));
+              return {set:Number(e.value)===number};
+            })(""" + json.dumps({"action": action, "value": request["text"]}) + ")", phase="set_range")
+            if isinstance(result, dict) and result.get("rejected") is True:
+                raise _TargetRejected("Range changed before mutation")
+            if not isinstance(result, dict) or result.get("set") is not True:
+                raise RuntimeError("Range mutation was not acknowledged; inspect before retrying")
         elif kind != "wait":
             if type(action["node"]) is not int:
                 raise ValueError("Invalid observed node")
@@ -395,6 +514,23 @@ def browser_operation(request, *, transport=None):
                     call("Input.dispatchMouseEvent", _phase=event, _input=True,
                          type=event, x=x, y=y, button="left", clickCount=1)
                 if kind == "fill":
+                    def check_focus(phase):
+                        bound = evaluate("""(node => {
+                          const e=window.__jevFast?.nodes.get(node);
+                          const writable=e?.tagName==='INPUT' ?
+                            ['text','search','email','url','tel','number'].includes(e.type) :
+                            e?.tagName==='TEXTAREA' || (e?.isContentEditable &&
+                              !['IFRAME','FRAME','OBJECT','EMBED'].includes(e.tagName));
+                          return !!(e?.isConnected && document.activeElement===e && writable &&
+                            !e.shadowRoot?.activeElement && !e.readOnly &&
+                            e.getAttribute('aria-readonly')!=='true' && !e.matches(':disabled') &&
+                            !e.closest('[aria-disabled="true"],[aria-hidden="true"],[inert]') &&
+                            e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}));
+                        })(""" + json.dumps(action["node"]) + ")", phase=phase)
+                        if bound is not True:
+                            raise RuntimeError("Observed field lost focus or writability; text entry stopped")
+
+                    check_focus("focus_after_activation")
                     call(
                         "Input.dispatchKeyEvent", _phase="selectAllDown", _input=True,
                         type="keyDown",
@@ -410,6 +546,7 @@ def browser_operation(request, *, transport=None):
                         code="KeyA",
                         modifiers=4 if sys.platform == "darwin" else 2,
                     )
+                    check_focus("focus_before_insert")
                     call("Input.insertText", _phase="insertText", _input=True, text=request["text"])
         return {"executed": action["id"]}
 

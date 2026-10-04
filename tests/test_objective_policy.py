@@ -90,6 +90,8 @@ def test_dom_identity_and_text_churn_do_not_reset_stable_blocker_budget(monkeypa
             self.page["actions"][0]["node"] = self.reads
             self.page["actions"][0]["rect"] = {"x": self.reads, "y": 0}
             self.page["fingerprint"] = fingerprint(self.page)
+            # Real snapshots provide this node/text/geometry-independent progress tier.
+            self.page["semantic_marker"] = ["stable document", "same controls and actions"]
             return super().observe(screenshot)
 
     monkeypatch.setattr(loop, "Browser", Churn)

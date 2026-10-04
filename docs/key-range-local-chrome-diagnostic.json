@@ -1,0 +1,84 @@
+{
+  "scope": "New owned data:text/html target, three distinct observed actions, no paid requests; DOM mechanics only, not live Jev reasoning.",
+  "source_hashes": {
+    "jev_ultrafast/snapshot.js": "51da53b4144c53a444021b06dfa0977449a864253b6a13883812ca7310a98ca3",
+    "jev_ultrafast/browser.py": "1483ad26adfd9cbcc8b281f4d056a71ac99a7a21fd024922532f9cf9a66cd4b6",
+    "scripts/check_key_range.py": "318cb32a442abe93674bb95b9886b7abc9235667d8169cb4b3a6328892d29393"
+  },
+  "escape_receipt": {
+    "status": "executed",
+    "input_started": true,
+    "phases": [
+      [
+        "freshness",
+        "returned"
+      ],
+      [
+        "key_target",
+        "returned"
+      ],
+      [
+        "keyDown",
+        "returned"
+      ],
+      [
+        "keyUp",
+        "returned"
+      ]
+    ]
+  },
+  "enter_receipt": {
+    "status": "executed",
+    "input_started": true,
+    "phases": [
+      [
+        "freshness",
+        "returned"
+      ],
+      [
+        "key_target",
+        "returned"
+      ],
+      [
+        "keyDown",
+        "returned"
+      ],
+      [
+        "keyUp",
+        "returned"
+      ]
+    ]
+  },
+  "enter_dom": {
+    "downs": 1,
+    "ups": 2,
+    "submits": 1
+  },
+  "enter_check": true,
+  "range_receipt": {
+    "status": "executed",
+    "input_started": true,
+    "phases": [
+      [
+        "freshness",
+        "returned"
+      ],
+      [
+        "range_bounds",
+        "returned"
+      ],
+      [
+        "set_range",
+        "returned"
+      ]
+    ]
+  },
+  "passed": true,
+  "acknowledged_actions": 3,
+  "model_or_helper_calls": 0,
+  "final_checks": [
+    true,
+    true
+  ],
+  "retained_target": null
+}

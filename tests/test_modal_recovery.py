@@ -86,10 +86,19 @@ def test_stale_or_contradicted_progress_cannot_skip_a_replan_check(monkeypatch, 
                 controller.browser.page["actions"].append({**SEARCH, "node": 99, "id": "other"})
         controller.browser.refresh()
         controller.command()
-        result = controller.command()
+        deferred = controller.command()
         assert choices.call_args_list[-1].args[1] == "Confirm Search remains Ready"
-        assert result["status"] == "abandoned" and result["stop_reason"] == "replanning_exhausted"
+        assert deferred["status"] == "ready" and deferred["verification"] != [True, True]
+        assert deferred["deferred_steps"] == [0] and deferred["verified_steps"] == []
+        assert any(e["kind"] == "milestone_deferred" and e["index"] == 0 and
+                   e["reason"] == "model_blocked" for e in deferred["events"])
         assert controller.browser.calls == []
+        result = controller.command()
+        assert choices.call_args_list[-1].args[1] == "Set the dialog filter"
+        assert result["status"] == "abandoned" and result["stop_reason"] == "replanning_exhausted"
+        assert result["verification"] != [True, True] and result["verified_steps"] == []
+        assert result["deferred_steps"] == [0] and controller.browser.calls == []
+        assert choices.call_count == 3
 
 
 def test_transient_pre_input_change_settles_without_spending_recovery_or_replaying_input(monkeypatch):

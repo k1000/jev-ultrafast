@@ -8,6 +8,7 @@
       "runs": [
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -49,6 +50,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -90,6 +92,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "abandoned",
           "fixture_pass": true,
@@ -131,6 +134,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -172,6 +176,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -213,6 +218,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "abandoned",
           "fixture_pass": true,
@@ -272,6 +278,7 @@
       "runs": [
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -321,6 +328,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -370,6 +378,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "abandoned",
           "fixture_pass": true,
@@ -419,6 +428,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -468,6 +478,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "verified",
           "fixture_pass": false,
@@ -517,6 +528,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 4,
           "expected_outcome": "abandoned",
           "fixture_pass": true,
@@ -584,6 +596,7 @@
       "runs": [
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 2,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -617,6 +630,7 @@
         },
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 2,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -650,6 +664,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "abandoned",
           "fixture_pass": true,
@@ -691,6 +706,7 @@
         },
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 2,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -724,6 +740,7 @@
         },
         {
           "actions": 2,
+          "decision_states": [],
           "decisions": 2,
           "expected_outcome": "verified",
           "fixture_pass": true,
@@ -757,6 +774,7 @@
         },
         {
           "actions": 0,
+          "decision_states": [],
           "decisions": 3,
           "expected_outcome": "abandoned",
           "fixture_pass": true,

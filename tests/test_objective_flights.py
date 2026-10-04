@@ -8,6 +8,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from jev_ultrafast.browser import PolicyRejected
 from scripts.objective_flights import FACTS, FlightsObjective, SearchOnlyBrowser, verify_flights
 
 
@@ -130,21 +131,24 @@ def test_example_controller_completion_is_owned_by_full_verifier(monkeypatch, fu
 def test_receipt_interface_cannot_bypass_search_only_policy(label):
     browser = SearchOnlyBrowser.__new__(SearchOnlyBrowser)
     browser.fresh = Mock(side_effect=AssertionError("No input can be authorized"))
+    browser.call = Mock(side_effect=AssertionError("No browser transport authorized"))
     action = {"id": "e1", "kind": "click", "node": 1, "label": label}
     receipt = browser.execute(action, {"actions": [action]})
-    assert receipt["status"] == "rejected_before_input" and receipt["phase"] == "validation"
-    assert receipt["input_started"] is False
+    assert receipt["status"] == "rejected_by_policy" and receipt["phase"] == "validation"
+    assert receipt["input_started"] is False and receipt["calls"] == []
     browser.fresh.assert_not_called()
+    browser.call.assert_not_called()
 
 
 def test_search_only_guard_rejects_flight_selection_before_any_input():
     browser = SearchOnlyBrowser.__new__(SearchOnlyBrowser)
     browser.fresh = Mock(side_effect=AssertionError("No input can be authorized"))
-    from jev_ultrafast.browser import StalePage
-
+    browser.call = Mock(side_effect=AssertionError("No browser transport authorized"))
     action = {"id": "e1", "kind": "click", "node": 1, "label": "Select flight departing Saturday, March 20"}
-    with pytest.raises(StalePage) as caught:
+    with pytest.raises(PolicyRejected) as caught:
         browser.act(action, {"actions": [action]})
-    assert caught.value.receipt["status"] == "rejected_before_input"
+    assert caught.value.receipt["status"] == "rejected_by_policy"
     assert caught.value.receipt["phase"] == "validation"
+    assert caught.value.receipt["input_started"] is False and caught.value.receipt["calls"] == []
     browser.fresh.assert_not_called()
+    browser.call.assert_not_called()

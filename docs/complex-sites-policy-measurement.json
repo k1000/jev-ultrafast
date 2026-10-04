@@ -1,0 +1,76 @@
+{
+  "scope": "One approved attempt per public goal on isolated Chrome, after an uncommitted port of the existing focus-binding guard. Observed outcomes, not a general reliability benchmark. No automated reruns or weakened checks. Booking's first blocker is a test-harness safety-classifier false positive, not evidence of a Jev capability failure.",
+  "base_commit": "3aa3478",
+  "tested_worktree_addition": "Generic native-fill focus checks after activation and immediately before insertion; unrelated original-checkout changes were not imported.",
+  "raw_evidence": "Private internal-SSD complex-sites-20261003T230724Z evidence directory; this record excludes page context, target IDs, raw model answers, credentials, and URLs.",
+  "browser": "Isolated Google Chrome on port 9334",
+  "safety_preflight": {
+    "initial_guard_contract_failed": true,
+    "post_port_offline_tests_passed": 489,
+    "post_port_no_model_focus_cases_passed": 4,
+    "no_model_outcome_reader_and_predicate_checks_passed": 24,
+    "model_calls_in_local_checks": 0
+  },
+  "limits_per_attempt": {
+    "decisions": 24,
+    "actions": 24,
+    "controller_seconds": 90,
+    "replans": 0,
+    "local_corrections_per_stable_blocker": 2
+  },
+  "outcomes": [
+    {
+      "site": "Booking.com",
+      "goal": "London hotels, March 20-22, 2027, two adults, zero children, one room, Free cancellation applied; stop before property selection or booking",
+      "passed": false,
+      "status": "abandoned",
+      "stop_reason": "unstable_observation",
+      "elapsed_ms_including_planning_excluding_earlier_browser_preflight": 14227,
+      "logical_planner_calls": 1,
+      "logical_jev_predictions_and_decisions": 6,
+      "acknowledged_actions": 1,
+      "diagnosis": "Optional cookies declined. The private suite guard matched the words 'sign in' in the safe observed button 'Dismiss sign in information.' and rejected its activation before input. These policy rejections surfaced as stale-input errors and ended as unstable_observation. Hotel search never started. This is an overblocking harness confound, not demonstrated browser instability. The plan also used a different destination caption than preflight, but that later binding was not exercised."
+    },
+    {
+      "site": "Amazon.de",
+      "goal": "Wireless headphones with maximum price 100 EUR and 4 Stars & Up applied; visible options below 100 EUR; no product selection or cart changes",
+      "passed": false,
+      "status": "abandoned",
+      "stop_reason": "replanning_exhausted",
+      "elapsed_ms_including_planning_excluding_earlier_browser_preflight": 9064,
+      "logical_planner_calls": 1,
+      "logical_jev_predictions_and_decisions": 6,
+      "acknowledged_actions": 3,
+      "diagnosis": "Optional cookies declined and the requested query submitted. Neither requested filter was applied. The visible Maximum price control was a native range input, not in the supported action table. Jev chose BLOCKED three times at the price milestone even though a supported 4 Stars & Up filter link was available for partial progress. Visible ratings alone were not accepted as evidence of an applied filter."
+    },
+    {
+      "site": "Google Maps",
+      "goal": "Public-transport directions from Zurich HB to ETH Zurich Zentrum at Ramistrasse 101; visible transit routes; no navigation or sign-in",
+      "passed": false,
+      "status": "abandoned",
+      "stop_reason": "replanning_exhausted",
+      "elapsed_ms_including_planning_excluding_earlier_browser_preflight": 6194,
+      "logical_planner_calls": 1,
+      "logical_jev_predictions_and_decisions": 6,
+      "acknowledged_actions": 1,
+      "diagnosis": "Directions opened, but the immutable upfront values were bound to Search Google Maps and Choose destination, while the new view exposed Choose starting point, or click on the map... and Choose destination.... Three TYPE_TEXT choices lacked a unique prepared binding and issued no text. Recovery stopped with missing_prepared_text; no origin, destination, transit mode, or route options were verified."
+    }
+  ],
+  "totals": {
+    "attempts": 3,
+    "verified_goals": 0,
+    "logical_planner_calls": 3,
+    "logical_jev_predictions_and_decisions": 18,
+    "acknowledged_actions": 5,
+    "text_helper_calls": 0,
+    "runtime_replans": 0,
+    "uncertain_inputs": 0,
+    "automatic_reruns": 0
+  },
+  "notes": [
+    "All failed suite tabs remain available for inspection. No flight/property/product selection, booking, purchase, cart change, or optional-cookie acceptance was executed.",
+    "Model counts describe logical helper invocations, not dispatched HTTP requests or paid inference.",
+    "Outcome predicates remained unmet; matching products or a Directions URL alone could not cause PASS.",
+    "Raw failures are unchanged. Fixing a harness or verifier later must not retroactively promote these attempts to PASS."
+  ]
+}
