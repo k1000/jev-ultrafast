@@ -1,0 +1,45 @@
+{
+  "scope": "Bounded non-repeated public-site diagnostic, not a reliability benchmark or proof of backend consent state",
+  "browser": "Isolated Comet CDP on port 9333; separate owned tabs in one shared isolated profile. Consent state may persist across tabs.",
+  "privacy": "Process-memory model credentials; no raw page content, query-token URLs, credentials or form values in this file. Sanitized per-run evidence is on the internal SSD under Library/Application Support/JevDiagnostics.",
+  "diagnostic_logging_caveat": "One read-only retained-target diagnostic printed a Skyscanner session-handoff URL in transient tool output before subsequent origin/path-only sanitization. The token was not filed in this repository or the retained JSON evidence.",
+  "source_evolution": "These runs span incremental guard and marker edits, not a frozen release; the offscreen fix followed the first two consent cases, and the Italian necessary-only label was allowed before the Skyscanner consent case. No paired causal comparison is claimed.",
+  "limits": "Twelve approved paid ObjectiveAgent cases; one initial IKEA read-only preflight failed without model calls and was corrected before its paid case. No same-case automatic replay after uncertain input.",
+  "summary": {
+    "paid_cases": 12,
+    "independently_verified_by_original_runner": 8,
+    "failed_by_original_runner": 4,
+    "logical_upfront_plans": 12,
+    "logical_successful_jev_decisions": 22,
+    "confirmed_browser_inputs": 11,
+    "hn_possible_input_unknown": true,
+    "http_transport_or_billing_retries": "not instrumented"
+  },
+  "cases": [
+    {"site": "IKEA", "goal": "explicit optional-cookie rejection", "status": "verified", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 1, "fresh_tab_dialog_absent": true, "private_report": "ikea-consent-20261004T100533Z.json"},
+    {"site": "Amazon.de", "goal": "explicit optional-cookie rejection", "status": "verified", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 1, "fresh_tab_dialog_absent": true, "private_report": "amazon-consent-20261004T100825Z.json"},
+    {"site": "Hacker News", "goal": "navigate to new stories", "status": "needs_attention/execution_error", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 0, "input_uncertainty": "original report lacks receipt phase; unchanged read-only target URL and zero history do not prove zero effects", "owned_tab_retained": true, "private_report": "hn-new-20261004T101341Z.json"},
+    {"site": "Selenium public form", "goal": "select dropdown value without submission", "status": "verified", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 1, "other_fields_unchanged": true, "private_report": "form-select-20261004T101553Z.json"},
+    {"site": "Wikipedia", "goal": "search and open Ada Lovelace article", "status": "verified", "planner_calls": 1, "jev_decisions": 3, "confirmed_inputs": 2, "pre_input_stale_rejection": 1, "private_report": "wikipedia-search-20261004T101636Z.json"},
+    {"site": "Booking.com", "goal": "explicit optional-cookie rejection", "status": "verified", "planner_calls": 1, "jev_decisions": 2, "confirmed_inputs": 1, "fresh_tab_dialog_absent": true, "private_report": "booking-consent-20261004T101724Z.json"},
+    {"site": "Booking.com", "goal": "open date picker without choosing a date", "status": "verified", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 1, "independent_dom_check": "date trigger expanded", "private_report": "booking-calendar-20261004T101952Z.json"},
+    {"site": "Amazon.de", "goal": "public search with visible result cards", "status": "abandoned/action_budget", "planner_calls": 1, "jev_decisions": 2, "confirmed_inputs": 2, "original_verifier_error": "Exact /s pathname and /s? URL substring excluded intermediate /s/ref=... route before the budget stopped.", "posthoc_readonly": "Retained tab later settled at /s, with query parameter present, 60 result cards and 3 visible; not a retroactive runner PASS.", "owned_tab_retained": true, "private_report": "amazon-search-20261004T102125Z.json", "private_posthoc": "amazon-search-20261004T102125Z-posthoc.json"},
+    {"site": "Skyscanner.net", "goal": "open departure date picker without selecting a date", "status": "abandoned/policy_exhausted", "planner_calls": 1, "jev_decisions": 4, "confirmed_inputs": 0, "diagnostic": "Initial calendar choice failed pre-input freshness; later choices were policy-rejected. The site then redirected to a localized .it consent dialog with a session-handoff query. No input was replayed.", "owned_tab_retained": true, "private_report": "skyscanner-calendar-20261004T102259Z.json"},
+    {"site": "Skyscanner.it", "goal": "explicit necessary-only consent", "status": "abandoned/policy_exhausted", "planner_calls": 1, "jev_decisions": 3, "confirmed_inputs": 0, "diagnostic": "Exact Italian essential-only label was permitted by the caller guard; no input passed validation. Which target choices Jev attempted was not retained; do not infer their cause.", "private_report": "skyscanner-consent-20261004T102547Z.json"},
+    {"site": "Booking.com", "goal": "open traveler/room controls without changing counts", "status": "verified", "planner_calls": 1, "jev_decisions": 1, "confirmed_inputs": 1, "independent_dom_check": "expanded trigger and visible linked panel with controls", "private_report": "booking-occupancy-20261004T102714Z.json"},
+    {"site": "The Verge", "goal": "explicit optional-cookie rejection", "status": "verified", "planner_calls": 1, "jev_decisions": 2, "confirmed_inputs": 1, "fresh_tab_dialog_absent": true, "private_report": "verge-consent-20261004T102734Z.json"}
+  ],
+  "read_only_gaps": [
+    "Guardian: consent controls live in a cross-origin iframe; observed top-level modal offers no actionable rejection. No paid run or input.",
+    "BBC: small non-modal banner had an Accept control but no explicit reject in the observed action table. No consent input.",
+    "eBay UK: control facts exceeded the 250-item cap, so prepared fill remains intentionally unauthorized. No paid run or input.",
+    "Reuters: no actionable elements on the sampled read-only page; do not infer agent capability."
+  ],
+  "mitigations": [
+    "Offscreen reveal-action truncation no longer nulls fill identity when all control facts and the visible action table are complete; omitted offscreen peers still enter the identity marker. Capped control facts or visible actions still fail closed.",
+    "Reusable caller-owned safety veto allows explicit optional-cookie rejection or necessary-only choices and rejects optional acceptance/account/booking/purchase labels; Jev still chooses the operation and observed node.",
+    "Consent runner requires one acknowledged browser input, a fresh absent dialog, stable URL/title, and refuses redirect URLs with query/fragment tokens before invoking the planner.",
+    "Live regression runner now retains code-owned receipt phase, input_started and error types without raw input text; historical HN receipt detail cannot be recovered."
+  ],
+  "verification": "707 offline pytest cases after added offscreen-peer and action-overflow regressions; Ruff with AppleDouble sidecars excluded; Node syntax checks on snapshot.js and app.js; uv build using an internal-SSD virtualenv; git diff --check. Offline tests used no paid API."
+}

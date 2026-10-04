@@ -93,6 +93,21 @@ def test_uncertain_input_is_retained_not_repeated_or_closed(monkeypatch):
     agent.close.assert_not_called()
 
 
+def test_uncertain_receipt_records_only_safe_diagnostics_and_retains_tab(monkeypatch):
+    agent = fake_agent("needs_attention", "execution_error")
+    agent.browser.receipts = [{"status": "outcome_unknown", "phase": "input_click",
+                               "input_started": True, "error": "TimeoutError", "action_id": "e7",
+                               "text": "do not persist input text", "calls": ["private"]}]
+    agent.browser.evaluate.side_effect = [True, "baseline", False, "baseline"]
+    monkeypatch.setattr(suite, "ObjectiveAgent", Mock(return_value=agent))
+    result = suite.run_case(suite.CASES[0])
+    assert result["input_receipts"] == [{"status": "outcome_unknown", "phase": "input_click",
+                                         "input_started": True, "error": "TimeoutError",
+                                         "action_id": "e7"}]
+    assert "do not persist" not in str(result) and result["retained_tab"] == "test-tab"
+    agent.close.assert_not_called()
+
+
 def test_main_skips_uncertain_repeat_and_keeps_credentials_out_of_report(monkeypatch, tmp_path):
     import json
     import sys

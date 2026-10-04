@@ -177,6 +177,132 @@ console.log(JSON.stringify([first,swapped]));
     browser.call.assert_not_called()
 
 
+def offscreen_cap_snapshots():
+    script = r"""
+const vm=require('node:vm'),fs=require('node:fs');
+const inputs=Array.from({length:61},(_,i)=>({
+  tagName:'INPUT',type:'text',label:i?'Field '+i:'Search',
+  value:'',checked:false,selectedIndex:-1,disabled:false,readOnly:false,
+  isConnected:true,labels:[],parentElement:null,
+  getAttribute(k){return k==='aria-label'?this.label:null},closest:()=>null,
+  matches:()=>false,checkVisibility:()=>true,
+  getBoundingClientRect:()=>({x:10,y:i?800+i*30:10,width:80,height:20})
+}));
+const document={body:{},title:'Offscreen cap',readyState:'complete',documentElement:{scrollHeight:4000},
+  getElementById:()=>null,
+  querySelectorAll:q=>q.includes('dialog')?[]:inputs,
+  elementFromPoint:(x,y)=>inputs.find(e=>{const r=e.getBoundingClientRect();
+    return x>=r.x&&x<r.x+r.width&&y>=r.y&&y<r.y+r.height}),
+  createTreeWalker:()=>({nextNode:()=>null}),createRange:()=>({})};
+const context={document,window:{},getComputedStyle:()=>({position:'static'}),
+  location:{href:'https://example.test/',origin:'https://example.test',pathname:'/'},
+  performance:{timeOrigin:123},scrollX:0,scrollY:0,innerWidth:800,innerHeight:600,
+  NodeFilter:{SHOW_TEXT:4}};
+vm.createContext(context);const source=fs.readFileSync(process.argv[1],'utf8');
+const first=vm.runInContext(source,context);
+inputs[60].label='Search'; // This competing field was never offered in the offscreen action table.
+const changedLabel=vm.runInContext(source,context);
+inputs[60].label='Field 60';inputs[60].type='search';
+const changedRole=vm.runInContext(source,context);
+inputs[60].type='text';
+const otherForm={tagName:'FORM',innerText:'Other form',getAttribute:k=>k==='aria-label'?'Other form':null,
+  querySelector:()=>null};
+inputs[60].closest=q=>q.includes('fieldset')?otherForm:q.includes('form')?otherForm:null;
+const changedGroup=vm.runInContext(source,context);
+inputs[60].closest=()=>null;
+const old=inputs[60];old.isConnected=false;
+inputs[60]={...old,isConnected:true,labels:[]};
+const replaced=vm.runInContext(source,context);
+console.log(JSON.stringify({first,changedLabel,changedRole,changedGroup,replaced}));
+"""
+    result = subprocess.run(["node", "-e", script, str(SNAPSHOT)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout)
+
+
+def test_offscreen_action_cap_keeps_complete_control_binding_fresh_and_tracks_omitted_peer():
+    pages = offscreen_cap_snapshots()
+    first, changed = pages["first"], pages["changedLabel"]
+    selected = next(a for a in first["actions"] if a["kind"] == "fill")
+    key = f'{selected["node"]}:fill'
+    assert first["omitted_controls"] == changed["omitted_controls"] == 0
+    assert first["omitted_actions"] > 0 and changed["omitted_actions"] > 0
+    assert first["identity_marker"][key] is not None
+    browser = Browser.__new__(Browser)
+    browser.evaluate = Mock(return_value=first["identity_marker"][key])
+    assert browser.fresh(first, selected)
+    assert changed["identity_marker"][key] != first["identity_marker"][key]
+    browser.evaluate.return_value = changed["identity_marker"][key]
+    assert not browser.fresh(first, selected)
+
+
+def test_omitted_offscreen_peer_replacement_role_and_group_churn_reject_fill_before_input():
+    pages = offscreen_cap_snapshots()
+    first = pages["first"]
+    selected = next(a for a in first["actions"] if a["kind"] == "fill")
+    key = f'{selected["node"]}:fill'
+    assert len(first["controls"]) == 61 and first["omitted_actions"] == 12
+    for kind in ("replaced", "changedRole", "changedGroup"):
+        changed = pages[kind]
+        assert changed["omitted_controls"] == 0 and changed["omitted_actions"] == 12
+        assert first["guards"][str(selected["node"])] == changed["guards"][str(selected["node"])]
+        assert changed["identity_marker"][key] is not None
+        assert changed["identity_marker"][key] != first["identity_marker"][key], kind
+        browser = Browser.__new__(Browser)
+        browser.evaluate = Mock(return_value=changed["identity_marker"][key])
+        browser.call = Mock(side_effect=AssertionError("No browser mutation"))
+        assert not browser.fresh(first, selected)
+        receipt = browser.execute(selected, first, text="prepared value")
+        assert receipt["status"] == "rejected_before_input" and receipt["input_started"] is False
+        browser.call.assert_not_called()
+
+
+def test_visible_select_option_overflow_still_blocks_an_offered_fill():
+    script = r"""
+const vm=require('node:vm'),fs=require('node:fs');
+const input={tagName:'INPUT',type:'text',value:'',checked:false,selectedIndex:-1,
+  disabled:false,readOnly:false,isConnected:true,labels:[],parentElement:null,
+  getAttribute:k=>k==='aria-label'?'Search':null,closest:()=>null,
+  matches:()=>false,checkVisibility:()=>true,
+  getBoundingClientRect:()=>({x:10,y:10,width:100,height:20})};
+const options=Array.from({length:252},(_,i)=>({value:'v'+i,label:'Option '+i,
+  selected:i===0,disabled:false,closest:()=>null}));
+const select={tagName:'SELECT',value:'v0',selectedIndex:0,selectedOptions:[options[0]],options,
+  disabled:false,readOnly:false,isConnected:true,labels:[],parentElement:null,
+  getAttribute:k=>k==='aria-label'?'Choices':null,closest:()=>null,
+  matches:()=>false,checkVisibility:()=>true,
+  getBoundingClientRect:()=>({x:200,y:10,width:100,height:20})};
+const elements=[input,select];
+const document={body:{},title:'Many options',readyState:'complete',documentElement:{scrollHeight:600},
+  getElementById:()=>null,querySelectorAll:q=>q.includes('dialog')?[]:elements,
+  elementFromPoint:(x,y)=>elements.find(e=>{const r=e.getBoundingClientRect();
+    return x>=r.x&&x<r.x+r.width&&y>=r.y&&y<r.y+r.height}),
+  createTreeWalker:()=>({nextNode:()=>null}),createRange:()=>({})};
+const context={document,window:{},getComputedStyle:()=>({position:'static'}),
+  location:{href:'https://example.test/',origin:'https://example.test',pathname:'/'},
+  performance:{timeOrigin:123},scrollX:0,scrollY:0,innerWidth:800,innerHeight:600,
+  NodeFilter:{SHOW_TEXT:4}};
+vm.createContext(context);
+console.log(JSON.stringify(vm.runInContext(fs.readFileSync(process.argv[1],'utf8'),context)));
+"""
+    result = subprocess.run(["node", "-e", script, str(SNAPSHOT)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    page = json.loads(result.stdout)
+    selected = next(a for a in page["actions"] if a["kind"] == "fill")
+    key = f'{selected["node"]}:fill'
+    assert len(page["controls"]) == 2 and page["omitted_controls"] == 0
+    assert page["omitted_actions"] > 0
+    assert any(a["kind"] == "select" for a in page["actions"])
+    assert page["identity_marker"][key] is None
+    browser = Browser.__new__(Browser)
+    browser.evaluate = Mock(return_value=None)
+    browser.call = Mock(side_effect=AssertionError("No browser mutation"))
+    assert not browser.fresh(page, selected)
+    receipt = browser.execute(selected, page, text="prepared value")
+    assert receipt["status"] == "rejected_before_input" and receipt["input_started"] is False
+    browser.call.assert_not_called()
+
+
 def test_stale_settles_with_churning_text_without_replaying(monkeypatch):
     first, second, _, _, _, _ = clock_snapshots()
     controller = ObjectiveAgent.__new__(ObjectiveAgent)

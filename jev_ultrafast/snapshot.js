@@ -200,9 +200,10 @@
     ...offscreen.map(a=>({...a,label:a.label.replace(/^Reveal /,'')}))];
   const identity_marker={};
   for (const a of actions) {
-    if (['fill','set_range'].includes(a.kind) && (omittedControls || omittedActions || omittedOffscreen ||
-        offscreen.length>available)) {
-      identity_marker[a.node+':'+a.kind]=null; // Incomplete recipient set cannot authorize supplied values.
+    if (['fill','set_range'].includes(a.kind) && (omittedControls || omittedActions)) {
+      // Every offscreen control has a fact even when its reveal action is capped.
+      // Only a capped fact table or visible action table makes recipient binding incomplete.
+      identity_marker[a.node+':'+a.kind]=null;
       continue;
     }
     const peers=['fill','set_range'].includes(a.kind) ? [...new Map(peerRows.filter(c=>

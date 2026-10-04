@@ -199,6 +199,14 @@ def run_case(case):
             result.update(evidence_error=type(exc).__name__, uncertain_execution=True)
     finally:
         if agent:
+            receipts = getattr(agent.browser, "receipts", None)
+            result["input_receipts"] = [
+                {k: r[k] for k in ("status", "phase", "input_started", "error", "action_id") if k in r}
+                for r in receipts if isinstance(r, dict)
+            ] if isinstance(receipts, list) else []
+            if any(r.get("status") == "outcome_unknown" and r.get("input_started")
+                   for r in result["input_receipts"]):
+                result["uncertain_execution"] = True
             if result.get("uncertain_execution") or (
                 agent.status == "needs_attention" and agent.stop_reason != "planning_failed"
             ):
