@@ -1,0 +1,14 @@
+{
+  "scope": "Owned local cross-origin fixture on isolated Chrome diagnostic port 9334; no Guardian navigation, paid model/API call, public-site consent choice, or input retry",
+  "finding": "Chrome exposes the fixture's out-of-process child iframe as a Target.getTargets iframe whose parentFrameId equals the owned page's root frame ID. DOM.getFrameOwner resolves its exact parent element. An acknowledged parent-session mouse click did not change the child (zero recorded clicks); that failed owned target was retained for read-only inspection. A separate new fixture's child-session click at child viewport coordinates recorded one click.",
+  "implementation": "Only the consent probe opts into framed clicks. An observed direct-child OOPIF target must have a stable root frame, exact parent owner node, membership in the top snapshot's active modal, viewport hit testing at each child button center, no transformed/bordered owner geometry, and a child snapshot offering a button click with a non-null identity marker. Frame target IDs and child node IDs are server-bound; no URL, selector, executable code, or guessed label is model output. Hash child markers before putting them in the parent snapshot. Reobserve identity and geometry, recheck owner binding, route target resolution and one click through the owned child CDP session, then recheck parent hit testing immediately before mousePressed. An unknown input still locks further execution.",
+  "independent_fixture_checks": [
+    "Read-only preflight found exactly one synthetic Reject in the modal OOPIF.",
+    "One permitted local click produced an executed receipt and one started input; no model/helper calls.",
+    "A fresh parent observation found the consent modal closed, its URL unchanged, and a rejection marker recorded by the parent's origin-checked postMessage handler.",
+    "Offline regressions reject unowned or occluded frame owners, child navigation or movement, covered points after resolution, unauthorized Accept all, and replay after uncertain child input."
+  ],
+  "evidence": "~/Library/Application Support/JevDiagnostics/frame-click-20261004T173209Z.json (private Mac SSD; no raw frame URL)",
+  "verification": "Full offline pytest suite, Ruff, Node syntax checks for app.js and snapshot.js, offline uv build, and git diff --check passed in the policy worktree.",
+  "limits": "No actual Guardian outcome is claimed. Only directly owned OOPIF modal button clicks are supported in the opt-in consent runner: not same-process frames, nested frames, transformed owners, other operations, or frames beyond the conservative count/action caps. Caller-owned verification and explicit optional-cookie rejection remain mandatory. The previous 12-paid-run budget is exhausted; public-site retesting needs renewed approval."
+}

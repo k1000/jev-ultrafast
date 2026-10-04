@@ -22,7 +22,7 @@ const heading={textContent:fixture.heading||'Overlay heading'};
 const overlay={tagName:'DIV',type:'',isConnected:true,parentElement:null,
   getAttribute:k=>k==='aria-label'?fixture.label||null:k==='role'?null:null,
   closest:()=>null,matches:()=>false,checkVisibility:()=>true,contains:e=>e===overlayButton,
-  querySelector:()=>heading,getBoundingClientRect:()=>overlayRect};
+  querySelector:()=>heading,querySelectorAll:()=>[],getBoundingClientRect:()=>overlayRect};
 const overlayButton={tagName:'BUTTON',type:'button',value:'Dismiss',isConnected:true,labels:[],parentElement:overlay,
   getAttribute:k=>k==='aria-label'?'Dismiss':null,
   closest:()=>null,matches:()=>false,checkVisibility:()=>true,contains:()=>false,
@@ -30,7 +30,7 @@ const overlayButton={tagName:'BUTTON',type:'button',value:'Dismiss',isConnected:
 const dialog={tagName:'DIALOG',type:'',isConnected:true,parentElement:null,
   getAttribute:k=>k==='aria-modal'?null:k==='aria-label'?'Native dialog':null,
   closest:()=>null,matches:()=>false,checkVisibility:()=>true,contains:e=>e===dialogButton,
-  querySelector:()=>heading,getBoundingClientRect:()=>rect(0,0,800,490)};
+  querySelector:()=>heading,querySelectorAll:()=>[],getBoundingClientRect:()=>rect(0,0,800,490)};
 const dialogButton={...overlayButton,parentElement:dialog,getAttribute:k=>k==='aria-label'?'Native close':null};
 const inRect=(r,x,y)=>x>=r.x&&x<r.x+r.width&&y>=r.y&&y<r.y+r.height;
 const hit=(x,y)=>fixture.native&&inRect(dialog.getBoundingClientRect(),x,y)?dialogButton:

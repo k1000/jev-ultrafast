@@ -1,4 +1,4 @@
-"""Observed actions through Browser Harness; one CDP session, no per-step subprocess."""
+"""Observed actions through Browser Harness; opt-in modal frames use owned child sessions."""
 
 import hashlib
 import json
@@ -17,6 +17,19 @@ from browser_harness.helpers import cdp
 READ_STATE = Path(__file__).with_name("snapshot.js").read_text()
 MARKER = f"(() => {{ const state={READ_STATE}; return state?.marker ?? null; }})()"
 TERMINAL_MARKER = f"(() => {{ const state={READ_STATE}; return state?.terminal_marker ?? null; }})()"
+FRAME_OWNER_CHECK = """function(point) {
+  const rect=this.getBoundingClientRect(), style=getComputedStyle(this);
+  const modal=window.__jevFast?.activeModal;
+  const x=rect.left+(point?.x ?? this.clientWidth/2), y=rect.top+(point?.y ?? this.clientHeight/2);
+  return {valid:!!(this.isConnected && ['IFRAME','FRAME'].includes(this.tagName) && modal &&
+    modal.contains(this) && modal.getAttribute('aria-modal')!=='false' &&
+    modal.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}) &&
+    this.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}) &&
+    style.transform==='none' && rect.width===this.clientWidth && rect.height===this.clientHeight &&
+    ['paddingTop','paddingRight','paddingBottom','paddingLeft'].every(k=>parseFloat(style[k])===0) &&
+    x>=rect.left && x<rect.right && y>=rect.top && y<rect.bottom &&
+    document.elementFromPoint(x,y)===this)};
+}"""
 
 def _range_number(value):
     if type(value) is not str or not value or len(value) > 100:
@@ -62,6 +75,10 @@ class _TargetRejected(StalePage):
     """Code-owned target validation returned explicitly before any mutation."""
 
 
+class _ProvenNoInput(_TargetRejected):
+    """An evaluated mutation script explicitly returned before its first mutation."""
+
+
 class ExecutionUncertain(RuntimeError):
     """Input may have occurred. The receipt is evidence, not permission to retry."""
 
@@ -80,6 +97,8 @@ class BrowserSetupError(RuntimeError):
 
 
 class Browser:
+    frame_clicks_enabled = False  # Opt in only where a caller explicitly handles modal-frame clicks.
+
     def __init__(self, url):
         self.target = None
         phase = "daemon"
@@ -124,7 +143,7 @@ class Browser:
                 raise error from exc
             raise
 
-    def call(self, method, *, _phase=None, _input=False, **params):
+    def call(self, method, *, _phase=None, _input=False, _session=None, **params):
         if not hasattr(self, "cdp_calls"):
             self.cdp_calls = []
         receipt = getattr(self, "_execution", None)
@@ -138,7 +157,8 @@ class Browser:
                 receipt["input_started"] = True  # Before sending, not after receiving an acknowledgment.
         began = time.perf_counter()
         try:
-            result = cdp(method, session_id=None if method.startswith("Target.") else self.session, **params)
+            result = cdp(method, session_id=None if method.startswith("Target.") else _session or self.session,
+                         **params)
             if (not isinstance(result, dict) or "error" in result
                     or (_input and method.startswith("Input.") and result != {})):
                 raise RuntimeError("Invalid CDP acknowledgment")
@@ -202,17 +222,114 @@ class Browser:
                 pass
         for attempt in range(10):
             try:
-                return browser_operation(
+                page = browser_operation(
                     {"operation": "observe", "session": self.session, "screenshot": screenshot},
                     transport=read_call,
                 )
+                if self.frame_clicks_enabled and page.get("modal_open") and page.get("unindexed_modal_frames"):
+                    self._observe_frame_clicks(page, read_call)
+                return page
             except StalePage:
                 if attempt == 9:
                     raise
                 time.sleep(0.02)
         raise StalePage("Page did not settle")
 
+    def _frame_owner_valid(self, frame_id, owner_id, point, read_call=None):
+        call = read_call or self.call
+        root = call("Page.getFrameTree")["frameTree"]["frame"]["id"]
+        targets = call("Target.getTargets")["targetInfos"]
+        if not any(t.get("type") == "iframe" and t.get("targetId") == frame_id and
+                   t.get("parentFrameId") == root for t in targets):
+            return False
+        owner = call("DOM.getFrameOwner", frameId=frame_id).get("backendNodeId")
+        if owner != owner_id:
+            return False
+        resolved = call("DOM.resolveNode", backendNodeId=owner)["object"]["objectId"]
+        reply = call("Runtime.callFunctionOn", objectId=resolved,
+                     functionDeclaration=FRAME_OWNER_CHECK, arguments=[{"value": point}], returnByValue=True)
+        value = reply.get("result", {}).get("value")
+        return isinstance(value, dict) and value.get("valid") is True
+
+    def _observe_frame_clicks(self, page, read_call):
+        root = read_call("Page.getFrameTree")["frameTree"]["frame"]["id"]
+        targets = [t for t in read_call("Target.getTargets")["targetInfos"] if
+                   t.get("type") == "iframe" and t.get("parentFrameId") == root]
+        if not 0 < len(targets) <= 4 or len(page["actions"]) > 200:
+            return
+        sessions = getattr(self, "_frame_sessions", {})
+        markers = []
+        for target in sorted(targets, key=lambda t: t["targetId"]):
+            frame_id = target["targetId"]
+            try:
+                owner = read_call("DOM.getFrameOwner", frameId=frame_id)["backendNodeId"]
+                if not self._frame_owner_valid(frame_id, owner, None, read_call):
+                    continue
+                bound = sessions.get(frame_id)
+                if bound is not None and bound["owner"] != owner:
+                    continue
+                if bound is None:
+                    session = read_call("Target.attachToTarget", targetId=frame_id, flatten=True)["sessionId"]
+                    bound = sessions[frame_id] = {"session": session, "owner": owner}
+                response = read_call("Runtime.evaluate", _session=bound["session"],
+                                     expression=READ_STATE, returnByValue=True)
+                if response.get("exceptionDetails"):
+                    continue
+                child = response.get("result", {}).get("value")
+                if not isinstance(child, dict):
+                    continue
+                buttons = [a for a in child.get("actions", ()) if a.get("kind") == "click" and
+                           a.get("role") == "button" and type(a.get("node")) is int]
+                if not 0 < len(buttons) <= 24:
+                    continue
+                adapted, identities = [], {}
+                for action in buttons:
+                    rect = action.get("rect") or {}
+                    if not all(type(rect.get(k)) in (int, float) for k in ("x", "y", "w", "h")):
+                        break
+                    point = {"x": rect["x"] + rect["w"] / 2, "y": rect["y"] + rect["h"] / 2}
+                    if not self._frame_owner_valid(frame_id, owner, point, read_call):
+                        break
+                    local_marker = child.get("identity_marker", {}).get(f'{action["node"]}:click')
+                    if local_marker is None:
+                        break
+                    node = -int.from_bytes(hashlib.sha256(f'{frame_id}:{action["node"]}'.encode()).digest()[:8],
+                                           'big') - 1
+                    if any(a.get("node") == node for a in page["actions"] + adapted):
+                        break
+                    framed = {**action, "id": f'{frame_id}:{action["id"]}', "node": node,
+                              "frame_id": frame_id, "frame_node": action["node"]}
+                    identities[f"{node}:click"] = [page.get("document_id"), page.get("url"),
+                        page.get("modal_label"), frame_id, owner, rect,
+                        hashlib.sha256(json.dumps(local_marker, sort_keys=True).encode()).hexdigest()]
+                    adapted.append(framed)
+                if len(adapted) != len(buttons) or len(page["actions"]) + len(adapted) > 250:
+                    continue
+                page["identity_marker"].update(identities)
+                page["actions"].extend(adapted)
+                page["unindexed_modal_frames"] = max(0, page["unindexed_modal_frames"] - 1)
+                markers.append([frame_id, owner, hashlib.sha256(json.dumps(
+                    [child.get("semantic_marker"), child.get("terminal_marker")],
+                    sort_keys=True).encode()).hexdigest()])
+            except (KeyError, TypeError, ValueError, RuntimeError, TimeoutError):
+                continue  # A failed read never authorizes an unobserved frame action.
+        self._frame_sessions = sessions
+        if markers:
+            for name in ("marker", "semantic_marker", "terminal_marker"):
+                page[name] = [page[name], markers]
+            page["fingerprint"] = fingerprint(page)
+
     def fresh(self, page, action=None, *, terminal=False):
+        if self.frame_clicks_enabled and (action is not None and action.get("frame_id") or
+                                          terminal and any(a.get("frame_id") for a in page["actions"])):
+            if terminal and action is not None:
+                raise ValueError("Terminal freshness cannot authorize a browser action.")
+            observed = self.observe(screenshot=False)
+            if terminal:
+                return observed["terminal_marker"] == page["terminal_marker"]
+            key = f'{action["node"]}:click'
+            return (page.get("identity_marker", {}).get(key) is not None and
+                    observed.get("identity_marker", {}).get(key) == page["identity_marker"][key])
         if terminal:
             if action is not None:
                 raise ValueError("Terminal freshness cannot authorize a browser action.")
@@ -243,6 +360,9 @@ class Browser:
                 or sum(a == action for a in page["actions"]) != 1
                 or sum(a.get("id") == action.get("id") for a in page["actions"]) != 1):
             raise ValueError("Action must match a unique observed action")
+        if action.get("frame_id") and (not self.frame_clicks_enabled or action["kind"] != "click" or
+                                        type(action.get("frame_node")) is not int):
+            raise ValueError("Frame input requires an observed supported click")
         if action["kind"] == "fill":
             if not isinstance(text, str) or not text.strip() or len(text) > 2000:
                 raise ValueError("Invalid prepared text")
@@ -274,8 +394,28 @@ class Browser:
                 raise StalePage("Page changed since this decision. Observe again.")
             if action["kind"] == "wait":
                 time.sleep(0.1)
-            browser_operation({"operation": "act", "session": self.session, "action": action, "text": text},
-                              transport=self.call)
+            session, routed_action, transport = self.session, action, self.call
+            if action.get("frame_id"):
+                receipt["phase"] = "frame_owner"
+                bound = getattr(self, "_frame_sessions", {}).get(action["frame_id"])
+                rect = action.get("rect") or {}
+                point = {"x": rect["x"] + rect["w"] / 2, "y": rect["y"] + rect["h"] / 2}
+                if (bound is None or not self._frame_owner_valid(action["frame_id"], bound["owner"], point)
+                        or page["identity_marker"].get(f'{action["node"]}:click') is None):
+                    raise _TargetRejected("Frame owner changed before input")
+                session = bound["session"]
+                routed_action = {**action, "node": action["frame_node"]}
+                def child_transport(method, **params):
+                    if method == "Input.dispatchMouseEvent" and params.get("type") == "mousePressed":
+                        receipt["phase"] = "frame_owner"
+                        point = {"x": params["x"], "y": params["y"]}
+                        if not self._frame_owner_valid(action["frame_id"], bound["owner"], point):
+                            raise _TargetRejected("Frame click point is no longer exposed")
+                    return self.call(method, _session=session, **params)
+
+                transport = child_transport
+            browser_operation({"operation": "act", "session": session, "action": routed_action, "text": text},
+                              transport=transport)
             self.after_input = action if action["kind"] != "wait" else None
             receipt["status"] = "executed"
         except PolicyRejected as exc:
@@ -283,7 +423,7 @@ class Browser:
                            receipt["phase"] == "validation" else "outcome_unknown",
                            error=type(exc).__name__)
         except Exception as exc:
-            if isinstance(exc, _TargetRejected):
+            if isinstance(exc, _ProvenNoInput):
                 receipt["input_started"] = False
             receipt.update(status="outcome_unknown" if receipt["input_started"] else "rejected_before_input",
                            error=type(exc).__name__)
@@ -471,7 +611,7 @@ def browser_operation(request, *, transport=None):
               return {set:Number(e.value)===number};
             })(""" + json.dumps({"action": action, "value": request["text"]}) + ")", phase="set_range")
             if isinstance(result, dict) and result.get("rejected") is True:
-                raise _TargetRejected("Range changed before mutation")
+                raise _ProvenNoInput("Range changed before mutation")
             if not isinstance(result, dict) or result.get("set") is not True:
                 raise RuntimeError("Range mutation was not acknowledged; inspect before retrying")
         elif kind != "wait":
@@ -501,6 +641,8 @@ def browser_operation(request, *, transport=None):
               return {x,y,selected:action.kind==='select'};
             })(""" + json.dumps(action) + ")")
             if isinstance(target, dict) and target.get("rejected") is True:
+                if kind in {"select", "scroll_to"}:
+                    raise _ProvenNoInput("Target changed before mutation")
                 raise _TargetRejected("Target changed, is disabled, or is covered. Observe again.")
             if kind == "scroll_to" and (not isinstance(target, dict) or target.get("scrolled") is not True):
                 raise RuntimeError("Scroll execution was not confirmed; inspect before retrying.")

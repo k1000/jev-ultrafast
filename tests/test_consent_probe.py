@@ -7,7 +7,14 @@ import pytest
 
 from jev_ultrafast.browser import PolicyRejected
 from scripts import consent_probe
-from scripts.consent_probe import ConsentOnlyBrowser, consent_verified, preflight, safe_reject
+from scripts.consent_probe import (
+    ConsentOnlyBrowser,
+    UnindexedConsentFrame,
+    consent_verified,
+    preflight,
+    run,
+    safe_reject,
+)
 from scripts.live_safety import CookieSafeBrowser
 
 
@@ -100,6 +107,76 @@ def test_preflight_never_forwards_redirect_query_tokens_to_the_planner(monkeypat
     assert preflight("https://example.test/", "Skyscanner") is None
     browser.close.assert_called_once()
     browser.observe.assert_called_once()
+
+
+def test_unindexed_consent_frame_stops_before_planning_or_input(monkeypatch):
+    _, page = observed(modal="SP Consent Message")
+    page.update(title="The Guardian", actions=[{"id": "wait", "kind": "wait", "label": "Wait"}],
+                unindexed_modal_frames=1)
+    browser = Mock()
+    browser.observe.return_value = page
+    monkeypatch.setattr("scripts.consent_probe.browser_module.Browser", Mock(return_value=browser))
+    monkeypatch.setattr("scripts.consent_probe.time.sleep", Mock())
+    planner = Mock(side_effect=AssertionError("No paid planner or browser input"))
+    monkeypatch.setattr(consent_probe, "ObjectiveAgent", planner)
+    with pytest.raises(UnindexedConsentFrame):
+        preflight("https://example.test/", "The Guardian")
+    assert browser.observe.call_count == 4  # A late top-level Reject is still allowed to appear.
+    result = run("https://example.test/", "The Guardian")
+    assert result["reason"] == "unindexed_consent_frame"
+    assert result["planner_calls"] == result["browser_inputs"] == 0
+    assert not result["passed"]
+    planner.assert_not_called()
+    assert browser.close.call_count == 2
+
+
+def test_observed_reject_remains_eligible_when_a_modal_also_contains_an_unindexed_frame(monkeypatch):
+    _, page = observed(modal="Consent message")
+    page.update(title="Example", unindexed_modal_frames=1)
+    browser = Mock()
+    browser.observe.return_value = page
+    monkeypatch.setattr("scripts.consent_probe.browser_module.Browser", Mock(return_value=browser))
+    assert preflight("https://example.test/", "Example") == page["url"]
+    browser.close.assert_called_once()
+
+
+def test_unique_observed_frame_reject_passes_read_only_preflight(monkeypatch):
+    action, page = observed(modal="Local cookie consent")
+    action.update(id="frame-1:e1", node=-1, frame_id="frame-1", frame_node=1)
+    page.update(title="Local consent fixture", unindexed_modal_frames=0)
+    browser = Mock()
+    browser.observe.return_value = page
+    monkeypatch.setattr("scripts.consent_probe.browser_module.Browser", Mock(return_value=browser))
+    assert preflight("https://example.test/", "Local consent fixture") == page["url"]
+    assert browser.frame_clicks_enabled is True
+    browser.close.assert_called_once()
+    browser.execute.assert_not_called()
+
+
+def test_consent_policy_keeps_frame_accept_all_blocked():
+    browser = ConsentOnlyBrowser.__new__(ConsentOnlyBrowser)
+    browser.receipts = []
+    action, page = observed(modal="Local cookie consent")
+    action.update(id="frame-1:e1", node=-1, frame_id="frame-1", frame_node=1)
+    browser.validate_action(action, page)
+    assert browser.permitted_action_ids == {action["id"]}
+    action["label"] = "Accept all"
+    with pytest.raises(PolicyRejected):
+        browser.validate_action(action, page)
+
+
+def test_preflight_waits_for_a_late_observed_reject_outside_the_frame(monkeypatch):
+    _, framed = observed(modal="Consent message")
+    framed.update(title="Example", actions=[], unindexed_modal_frames=1)
+    _, ready = observed(modal="Consent message")
+    ready.update(title="Example", unindexed_modal_frames=1)
+    browser = Mock()
+    browser.observe.side_effect = [framed, ready]
+    monkeypatch.setattr("scripts.consent_probe.browser_module.Browser", Mock(return_value=browser))
+    monkeypatch.setattr("scripts.consent_probe.time.sleep", Mock())
+    assert preflight("https://example.test/", "Example") == ready["url"]
+    assert browser.observe.call_count == 2
+    browser.close.assert_called_once()
 
 
 def test_runner_private_evidence_permissions_without_paid_call(monkeypatch, tmp_path):

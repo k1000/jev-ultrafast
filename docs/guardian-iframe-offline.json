@@ -1,0 +1,15 @@
+{
+  "scope": "Historical detection-only baseline before the opt-in OOPIF click implementation; offline synthetic consent-modal iframe boundary, no Guardian navigation, browser input, model API or consent choice",
+  "finding": "snapshot.js reads only the current document. A visible iframe inside the active modal may contain the consent choices but none of its controls has a top-document node identity or supported execution target.",
+  "mitigation": "Count only visible, viewport-intersecting, hit-tested iframe/frame elements in the active modal as unindexed_modal_frames. Do not read or expose frame src, content, selectors, labels or action nodes. Forward the count to Jev as context and include it in semantic and terminal freshness markers. Consent preflight gives a top-level observed Reject up to four read-only observations to appear; if the final modal still has an unindexed frame and no Reject, return unindexed_consent_frame before planner or browser input.",
+  "offline_cases": [
+    "Same-origin and cross-origin modal iframes are both unindexed by the current top-document snapshot.",
+    "Hidden, covered, offscreen and out-of-modal frames are not reported as visible modal blockers.",
+    "A modal blocker does not offer iframe controls as targets or leak a mock session-handoff URL.",
+    "Modal-frame coverage changes invalidate semantic and terminal markers.",
+    "A stubbed Jev choice receives the count without any frame action, model transport or input.",
+    "Consent preflight stops without paid calls or input after four unchanged framed observations, while still permitting a late top-level observed Reject."
+  ],
+  "verification": "Full offline pytest suite; Ruff excluding exFAT AppleDouble sidecars; Node syntax checks for snapshot.js and app.js; uv build using an internal-SSD virtualenv; git diff --check",
+  "not_proven": "At this baseline, no cross-origin frame content was read or actioned. A subsequent opt-in OOPIF fixture and implementation are documented in guardian-iframe-local-diagnostic.json. Neither phase rejects Guardian's real cookies or proves that its live iframe is currently accessible; any public-site retest still needs renewed approval and fresh independent outcome verification."
+}

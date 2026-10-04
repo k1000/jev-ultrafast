@@ -198,7 +198,9 @@ def _choose(state, goal, history, *, execution, key, diagnostic):
         "state": {
             "page": {**{k: state[k] for k in ("url", "title", "text")},
                      **({"modal_open": state["modal_open"]} if "modal_open" in state else {}),
-                     **({"modal_label": state["modal_label"]} if "modal_label" in state else {})},
+                     **({"modal_label": state["modal_label"]} if "modal_label" in state else {}),
+                     **({"unindexed_modal_frames": state["unindexed_modal_frames"]}
+                        if "unindexed_modal_frames" in state else {})},
             "elements": elements,
             "recent_actions": [
                 {k: h.get(k) for k in ("action", "kind", "text", "page_changed", "from_url", "url")}

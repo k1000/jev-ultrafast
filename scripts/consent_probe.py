@@ -22,6 +22,10 @@ GOAL = ("Decline optional cookies using an explicit Reject, Decline, or essentia
         "Stop when the consent panel is gone after rejection.")
 
 
+class UnindexedConsentFrame(RuntimeError):
+    """Visible modal content is in a frame this browser cannot index or act on."""
+
+
 def consent_verified(page, receipts, permitted_ids, initial_url):
     issued = [r for r in receipts if r.get("input_started") is True]
     return (page.get("modal_open") is False and page.get("url") == initial_url and
@@ -31,6 +35,8 @@ def consent_verified(page, receipts, permitted_ids, initial_url):
 
 class ConsentOnlyBrowser(CookieSafeBrowser):
     """Caller-owned veto; Jev still selects operation and observed target."""
+
+    frame_clicks_enabled = True
 
     def validate_action(self, action, page, text=None):
         super().validate_action(action, page, text)
@@ -49,7 +55,9 @@ class ConsentOnlyBrowser(CookieSafeBrowser):
 def preflight(url, title_fragment):
     """New owned tab; read only. Do not pay for a missing or ambiguous Reject control."""
     browser = browser_module.Browser(url)
+    browser.frame_clicks_enabled = True  # Read-only frame discovery; preflight never executes input.
     try:
+        unindexed = False
         for attempt in range(4):
             page = browser.observe(screenshot=False, response_timeout=5)
             observed_url = urlsplit(page.get("url") or "")
@@ -60,8 +68,12 @@ def preflight(url, title_fragment):
             if (consent_dialog(page) and title_fragment in (page.get("title") or "") and
                     len(choices) == 1):
                 return page["url"]
+            unindexed = (consent_dialog(page) and title_fragment in (page.get("title") or "") and
+                         page.get("unindexed_modal_frames", 0) > 0 and not choices)
             if attempt < 3:
                 time.sleep(1)
+        if unindexed:
+            raise UnindexedConsentFrame("No actionable observed rejection in modal iframe")
         return None
     finally:
         browser.close()
@@ -108,6 +120,9 @@ def run(url, title_fragment):
             return report
         finally:
             loop.Browser = original_browser
+    except UnindexedConsentFrame:
+        report["reason"] = "unindexed_consent_frame"
+        return report
     except (Exception, KeyboardInterrupt, SystemExit) as exc:
         report["error"] = type(exc).__name__
         return report

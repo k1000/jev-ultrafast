@@ -85,10 +85,22 @@
     })) { overlay=e; break; }
   }
   const modal=roleModal || overlay;
+  cache.activeModal=modal;
   const labelled=modal?.getAttribute('aria-labelledby')?.split(/\s+/).filter(Boolean)
     .map(id=>name(document.getElementById(id))).filter(Boolean).join(' ');
   const modal_label=(modal?.getAttribute('aria-label') || labelled ||
     modal?.querySelector('h1,h2,h3,h4,h5,h6')?.textContent || '').trim().replace(/\s+/g,' ').slice(0,80);
+  // Neither same-origin nor cross-origin iframe descendants are indexed by this document snapshot.
+  const unindexed_modal_frames=modal ? [
+    ...(modal.matches?.('iframe,frame')?[modal]:[]),...modal.querySelectorAll('iframe,frame')
+  ].filter(e=>{
+    if (!visible(e)) return false;
+    const r=e.getBoundingClientRect(), left=Math.max(0,r.x), top=Math.max(0,r.y);
+    const right=Math.min(innerWidth,r.x+r.width), bottom=Math.min(innerHeight,r.y+r.height);
+    if (right<=left || bottom<=top) return false;
+    const hit=document.elementFromPoint((left+right)/2,(top+bottom)/2);
+    return hit===e || !!e.contains?.(hit);
+  }).length : 0;
   const actions=[], offscreen=[], controls=[];
   let omittedOffscreen=0, omittedControls=0;
   const fact=c=>{ if (controls.length<250) controls.push(c); else omittedControls++; };
@@ -192,7 +204,7 @@
   // Compare meaning and identity. Geometry is always resolved and hit-tested just before input.
   const semantics=actions.map(({rect,...action})=>action);
   const marker=[performance.timeOrigin,location.href,scrollX,scrollY,innerWidth,innerHeight,
-    document.title,text,semantics,page_key[6],controls,modal_label];
+    document.title,text,semantics,page_key[6],controls,modal_label,unindexed_modal_frames];
   // Include both facts and offered fills (facts have a separate cap); a new competing
   // caption across any scope, or an editable peer in this group, invalidates the recipient.
   const caption=v=>(v||'').trim().replace(/\s+/g,' ');
@@ -215,15 +227,16 @@
     identity_marker[a.node+':'+a.kind]=
       [performance.timeOrigin,location.href,!!modal,a.role,a.group||'',a.kind==='fill' ?
         guards[a.node]?.slice(0,-1) : guards[a.node],peers,
-      ['fill','set_range'].includes(a.kind) ? [omittedControls,omittedActions,omittedOffscreen] : null];
+      ['fill','set_range'].includes(a.kind) ? [omittedControls,omittedActions,omittedOffscreen] : null,
+      unindexed_modal_frames];
   }
   // Progress excludes DOM IDs, geometry, viewport text and scroll. Facts remain fresh evidence.
   const semantic_marker=[performance.timeOrigin,location.origin+location.pathname,!!modal,modal_label,
-    controls.map(({node,...c})=>c),semantics.map(({node,...a})=>a)];
+    controls.map(({node,...c})=>c),semantics.map(({node,...a})=>a),unindexed_modal_frames];
   // Terminal decisions do not address nodes. Compare all meanings and values, not replaceable DOM identity.
   const terminal_marker=[...marker.slice(0,8),modal_label,semantics.map(({node,...a})=>a),
     page_key[6].map(a=>a.slice(1)),actions.map(a=>guards[a.node]?.slice(1,-1)||null),
-    controls.map(({node,...c})=>c)];
+    controls.map(({node,...c})=>c),unindexed_modal_frames];
   const omitted_actions=omittedActions+omittedOffscreen+offscreen.length-available;
   actions.forEach((a,i)=>a.id='e'+(i+1));
   if (scrollY+innerHeight<height-2) actions.push({id:'scroll_down',kind:'scroll',label:'Scroll down',delta:560});
@@ -232,7 +245,7 @@
   return {url:location.href,title:document.title,document_id:performance.timeOrigin,modal_open:!!modal,
     modal_label,
     ready_state:document.readyState,w:innerWidth,h:innerHeight,text,
-    scroll:{y:scrollY,height},actions,controls,marker,identity_marker,semantic_marker,
+    scroll:{y:scrollY,height},actions,controls,unindexed_modal_frames,marker,identity_marker,semantic_marker,
     terminal_marker,page_key,guards,omitted_actions,
     omitted_controls:omittedControls};
 })()

@@ -32,7 +32,7 @@ const slider={...text,type:'range',value:'0.1',min:'0.1',max:'0.9',step:'0.2',
 const dialog={tagName:'DIALOG',isConnected:true,parentElement:null,
   getAttribute:k=>k==='aria-label'?'Filter dialog':null,closest:()=>null,matches:()=>false,
   checkVisibility:()=>true,contains:e=>e===dismiss||(inside&&e===text),querySelector:()=>null,
-  getBoundingClientRect:()=>rect(0,0,800,600)};
+  querySelectorAll:()=>[],getBoundingClientRect:()=>rect(0,0,800,600)};
 const dismiss={tagName:'BUTTON',type:'button',value:'Dismiss',isConnected:true,labels:[],parentElement:dialog,
   getAttribute:k=>k==='aria-label'?'Dismiss':null,closest:()=>null,matches:()=>false,
   checkVisibility:()=>true,contains:()=>false,getBoundingClientRect:()=>rect(300,40,90,30)};
