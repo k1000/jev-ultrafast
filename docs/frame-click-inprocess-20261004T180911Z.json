@@ -1,0 +1,15 @@
+{
+  "frame_is_separate_target": false,
+  "label": "Reject (fixture)",
+  "local_point": [
+    79,
+    39
+  ],
+  "page_point": [
+    157,
+    155
+  ],
+  "hit_frame_is_child": true,
+  "clicks_before": "0",
+  "clicks_after": "1"
+}

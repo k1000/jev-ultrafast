@@ -1,0 +1,29 @@
+[
+  {
+    "case": "click",
+    "framed_actions": 1,
+    "unindexed_after": 0,
+    "status": "executed",
+    "phase": "mouseReleased",
+    "input_started": true,
+    "clicks_in_frame": "1"
+  },
+  {
+    "case": "moved",
+    "framed_actions": 1,
+    "unindexed_after": 0,
+    "status": "rejected_before_input",
+    "phase": "snapshot",
+    "input_started": false,
+    "clicks_in_frame": "0"
+  },
+  {
+    "case": "navigated",
+    "framed_actions": 1,
+    "unindexed_after": 0,
+    "status": "rejected_before_input",
+    "phase": "snapshot",
+    "input_started": false,
+    "clicks_in_frame": "0"
+  }
+]

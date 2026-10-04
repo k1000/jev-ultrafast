@@ -8,6 +8,7 @@ import time
 from copy import deepcopy
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 from browser_harness.admin import ensure_daemon
@@ -17,6 +18,13 @@ from browser_harness.helpers import cdp
 READ_STATE = Path(__file__).with_name("snapshot.js").read_text()
 MARKER = f"(() => {{ const state={READ_STATE}; return state?.marker ?? null; }})()"
 TERMINAL_MARKER = f"(() => {{ const state={READ_STATE}; return state?.terminal_marker ?? null; }})()"
+# Facts only: counts, roles, and short labels of observable controls inside one frame.
+FRAME_FACTS = ("(() => { const s=" + READ_STATE + "; if (!s) return null; "
+               "const o=s.controls.filter(c=>c.observable); "
+               "return {w:s.w,h:s.h,modal_open:s.modal_open,n:o.length,"
+               "controls:o.slice(0,12).map(c=>({role:c.role,label:c.label.slice(0,80)}))}; })()")
+FRAME_FACT_LIMIT = 4
+FRAME_MIN_AREA = 10_000
 FRAME_OWNER_CHECK = """function(point) {
   const rect=this.getBoundingClientRect(), style=getComputedStyle(this);
   const modal=window.__jevFast?.activeModal;
@@ -30,6 +38,9 @@ FRAME_OWNER_CHECK = """function(point) {
     x>=rect.left && x<rect.right && y>=rect.top && y<rect.bottom &&
     document.elementFromPoint(x,y)===this)};
 }"""
+
+FRAME_OWNER_ORIGIN = """function() { const r=this.getBoundingClientRect(); return {x:r.left, y:r.top}; }"""
+
 
 def _range_number(value):
     if type(value) is not str or not value or len(value) > 100:
@@ -177,6 +188,64 @@ class Browser:
             raise StalePage("Document changed during evaluation")
         return response.get("result", {}).get("value")
 
+    frame_facts_enabled = False  # Opt-in; read-only facts, never executable actions.
+
+    def frame_facts(self, page):
+        """Facts from visible frames while a modal is open (consent dialogs live there).
+
+        Out-of-process frames are read through their own CDP session, in-process cross-origin frames
+        through an isolated world. Only counts, roles and short labels are kept; frame URLs reduce to a
+        host. Nothing here is offered as an action or forwarded to the model. Best effort: a frame that
+        cannot be read becomes an error row and never breaks observation.
+        """
+        if page.get("modal_open") is not True:
+            return []
+        rows = []
+        try:
+            separate = {t["targetId"]: t for t in self.call("Target.getTargets")["targetInfos"]
+                        if t.get("type") == "iframe"}
+            tree = self.call("Page.getFrameTree")["frameTree"]
+        except Exception as exc:
+            return [{"error": type(exc).__name__}]
+        local, pending = [], [tree]
+        while pending:
+            node = pending.pop()
+            pending.extend(node.get("childFrames", []))
+            if node["frame"]["id"] not in separate and node is not tree:
+                local.append(node["frame"])
+        for target in list(separate.values())[:FRAME_FACT_LIMIT]:
+            row = {"kind": "out_of_process", "host": urlsplit(target.get("url", "")).netloc}
+            try:
+                child = self.call("Target.attachToTarget", targetId=target["targetId"], flatten=True)["sessionId"]
+                try:
+                    row.update(self._frame_row(self.call("Runtime.evaluate", _session=child, expression=FRAME_FACTS,
+                                                         returnByValue=True)))
+                finally:
+                    self.call("Target.detachFromTarget", sessionId=child)
+            except Exception as exc:
+                row["error"] = type(exc).__name__
+            rows.append(row)
+        for frame in local[:FRAME_FACT_LIMIT]:
+            row = {"kind": "in_process", "host": urlsplit(frame.get("url", "")).netloc}
+            try:
+                world = self.call("Page.createIsolatedWorld", frameId=frame["id"],
+                                  worldName="jev-frame-facts")["executionContextId"]
+                row.update(self._frame_row(self.call("Runtime.evaluate", contextId=world, expression=FRAME_FACTS,
+                                                     returnByValue=True)))
+            except Exception as exc:
+                row["error"] = type(exc).__name__
+            rows.append(row)
+        return [r for r in rows if r.get("skipped") is not True]
+
+    @staticmethod
+    def _frame_row(response):
+        value = response.get("result", {}).get("value")
+        if response.get("exceptionDetails") or not isinstance(value, dict):
+            return {"error": "unreadable"}
+        if value["w"] * value["h"] < FRAME_MIN_AREA:
+            return {"skipped": True}  # Tracker and beacon frames are not dialogs.
+        return {"controls": value["n"], "labels": value["controls"], "modal_open": value["modal_open"]}
+
     def observe(self, screenshot=True, *, response_timeout=None):
         deadline = None if response_timeout is None else time.monotonic() + _positive_seconds(response_timeout)
 
@@ -228,6 +297,8 @@ class Browser:
                 )
                 if self.frame_clicks_enabled and page.get("modal_open") and page.get("unindexed_modal_frames"):
                     self._observe_frame_clicks(page, read_call)
+                if self.frame_facts_enabled:
+                    page["frames"] = self.frame_facts(page)  # After fingerprinting; not a freshness input.
                 return page
             except StalePage:
                 if attempt == 9:
@@ -235,12 +306,17 @@ class Browser:
                 time.sleep(0.02)
         raise StalePage("Page did not settle")
 
-    def _frame_owner_valid(self, frame_id, owner_id, point, read_call=None):
+    def _frame_owner_valid(self, frame_id, owner_id, point, read_call=None, *, in_process=False):
         call = read_call or self.call
-        root = call("Page.getFrameTree")["frameTree"]["frame"]["id"]
+        tree = call("Page.getFrameTree")["frameTree"]
+        root = tree["frame"]["id"]
         targets = call("Target.getTargets")["targetInfos"]
-        if not any(t.get("type") == "iframe" and t.get("targetId") == frame_id and
-                   t.get("parentFrameId") == root for t in targets):
+        if in_process:  # A direct child that is not its own target shares the page process.
+            if (any(t.get("targetId") == frame_id for t in targets) or
+                    not any(c["frame"]["id"] == frame_id for c in tree.get("childFrames", ()))):
+                return False
+        elif not any(t.get("type") == "iframe" and t.get("targetId") == frame_id and
+                     t.get("parentFrameId") == root for t in targets):
             return False
         owner = call("DOM.getFrameOwner", frameId=frame_id).get("backendNodeId")
         if owner != owner_id:
@@ -251,28 +327,48 @@ class Browser:
         value = reply.get("result", {}).get("value")
         return isinstance(value, dict) and value.get("valid") is True
 
+    def _frame_origin(self, owner_id):
+        resolved = self.call("DOM.resolveNode", backendNodeId=owner_id)["object"]["objectId"]
+        reply = self.call("Runtime.callFunctionOn", objectId=resolved, functionDeclaration=FRAME_OWNER_ORIGIN,
+                          returnByValue=True)
+        value = reply.get("result", {}).get("value")
+        if not (isinstance(value, dict) and all(type(value.get(k)) in (int, float) for k in ("x", "y"))):
+            raise _TargetRejected("Frame origin is unavailable")
+        return {"x": value["x"], "y": value["y"]}
+
     def _observe_frame_clicks(self, page, read_call):
-        root = read_call("Page.getFrameTree")["frameTree"]["frame"]["id"]
-        targets = [t for t in read_call("Target.getTargets")["targetInfos"] if
-                   t.get("type") == "iframe" and t.get("parentFrameId") == root]
-        if not 0 < len(targets) <= 4 or len(page["actions"]) > 200:
+        tree = read_call("Page.getFrameTree")["frameTree"]
+        root = tree["frame"]["id"]
+        all_targets = read_call("Target.getTargets")["targetInfos"]
+        separate = {t["targetId"] for t in all_targets}
+        # (frame id, shares the page process). In-process frames are read through an isolated world.
+        candidates = sorted([(t["targetId"], False) for t in all_targets if
+                             t.get("type") == "iframe" and t.get("parentFrameId") == root] +
+                            [(c["frame"]["id"], True) for c in tree.get("childFrames", ())
+                             if c["frame"]["id"] not in separate])
+        if not 0 < len(candidates) <= 4 or len(page["actions"]) > 200:
             return
         sessions = getattr(self, "_frame_sessions", {})
         markers = []
-        for target in sorted(targets, key=lambda t: t["targetId"]):
-            frame_id = target["targetId"]
+        for frame_id, in_process in candidates:
             try:
                 owner = read_call("DOM.getFrameOwner", frameId=frame_id)["backendNodeId"]
-                if not self._frame_owner_valid(frame_id, owner, None, read_call):
+                if not self._frame_owner_valid(frame_id, owner, None, read_call, in_process=in_process):
                     continue
                 bound = sessions.get(frame_id)
-                if bound is not None and bound["owner"] != owner:
+                if bound is not None and (bound["owner"] != owner or
+                                          (bound.get("context") is not None) != in_process):
                     continue
-                if bound is None:
+                if bound is None and in_process:
+                    context = read_call("Page.createIsolatedWorld", frameId=frame_id,
+                                        worldName="jev-frame-click")["executionContextId"]
+                    bound = sessions[frame_id] = {"session": self.session, "owner": owner, "context": context}
+                elif bound is None:
                     session = read_call("Target.attachToTarget", targetId=frame_id, flatten=True)["sessionId"]
-                    bound = sessions[frame_id] = {"session": session, "owner": owner}
-                response = read_call("Runtime.evaluate", _session=bound["session"],
-                                     expression=READ_STATE, returnByValue=True)
+                    bound = sessions[frame_id] = {"session": session, "owner": owner, "context": None}
+                origin = self._frame_origin(owner) if in_process else None
+                where = {"contextId": bound["context"]} if in_process else {"_session": bound["session"]}
+                response = read_call("Runtime.evaluate", expression=READ_STATE, returnByValue=True, **where)
                 if response.get("exceptionDetails"):
                     continue
                 child = response.get("result", {}).get("value")
@@ -288,7 +384,7 @@ class Browser:
                     if not all(type(rect.get(k)) in (int, float) for k in ("x", "y", "w", "h")):
                         break
                     point = {"x": rect["x"] + rect["w"] / 2, "y": rect["y"] + rect["h"] / 2}
-                    if not self._frame_owner_valid(frame_id, owner, point, read_call):
+                    if not self._frame_owner_valid(frame_id, owner, point, read_call, in_process=in_process):
                         break
                     local_marker = child.get("identity_marker", {}).get(f'{action["node"]}:click')
                     if local_marker is None:
@@ -301,7 +397,8 @@ class Browser:
                               "frame_id": frame_id, "frame_node": action["node"]}
                     identities[f"{node}:click"] = [page.get("document_id"), page.get("url"),
                         page.get("modal_label"), frame_id, owner, rect,
-                        hashlib.sha256(json.dumps(local_marker, sort_keys=True).encode()).hexdigest()]
+                        hashlib.sha256(json.dumps(local_marker, sort_keys=True).encode()).hexdigest(),
+                        *([origin] if in_process else [])]  # A moved in-process frame is a new decision.
                     adapted.append(framed)
                 if len(adapted) != len(buttons) or len(page["actions"]) + len(adapted) > 250:
                     continue
@@ -398,20 +495,35 @@ class Browser:
             if action.get("frame_id"):
                 receipt["phase"] = "frame_owner"
                 bound = getattr(self, "_frame_sessions", {}).get(action["frame_id"])
+                in_process = bound is not None and bound.get("context") is not None
                 rect = action.get("rect") or {}
                 point = {"x": rect["x"] + rect["w"] / 2, "y": rect["y"] + rect["h"] / 2}
-                if (bound is None or not self._frame_owner_valid(action["frame_id"], bound["owner"], point)
+                if (bound is None or not self._frame_owner_valid(action["frame_id"], bound["owner"], point,
+                                                                 in_process=in_process)
                         or page["identity_marker"].get(f'{action["node"]}:click') is None):
                     raise _TargetRejected("Frame owner changed before input")
                 session = bound["session"]
                 routed_action = {**action, "node": action["frame_node"]}
+                origin = {}
+
                 def child_transport(method, **params):
                     if method == "Input.dispatchMouseEvent" and params.get("type") == "mousePressed":
                         receipt["phase"] = "frame_owner"
                         point = {"x": params["x"], "y": params["y"]}
-                        if not self._frame_owner_valid(action["frame_id"], bound["owner"], point):
+                        if not self._frame_owner_valid(action["frame_id"], bound["owner"], point,
+                                                       in_process=in_process):
                             raise _TargetRejected("Frame click point is no longer exposed")
-                    return self.call(method, _session=session, **params)
+                        if in_process:  # Owner has no border, padding or transform: origin is exact.
+                            origin.update(self._frame_origin(bound["owner"]))
+                    if not in_process:
+                        return self.call(method, _session=session, **params)
+                    if method == "Runtime.evaluate":
+                        params["contextId"] = bound["context"]
+                    elif method == "Input.dispatchMouseEvent":
+                        if not origin:
+                            raise _TargetRejected("Frame origin was not resolved before input")
+                        params = {**params, "x": params["x"] + origin["x"], "y": params["y"] + origin["y"]}
+                    return self.call(method, **params)
 
                 transport = child_transport
             browser_operation({"operation": "act", "session": session, "action": routed_action, "text": text},

@@ -1,0 +1,90 @@
+{
+  "site": "bbc.com",
+  "reads": [
+    {
+      "modal_open": true,
+      "top_controls_observable": 0,
+      "frames": [
+        {
+          "kind": "out_of_process",
+          "host": "cdn.privacy-mgmt.com",
+          "controls": 7,
+          "labels": [
+            {
+              "role": "button",
+              "label": "Store and/or access information on a device"
+            },
+            {
+              "role": "button",
+              "label": "Personalised advertising and content, advertising and content measurement, audie"
+            },
+            {
+              "role": "link",
+              "label": "partners"
+            },
+            {
+              "role": "link",
+              "label": "privacy policy"
+            },
+            {
+              "role": "button",
+              "label": "I do not agree"
+            },
+            {
+              "role": "button",
+              "label": "I agree"
+            },
+            {
+              "role": "button",
+              "label": "Manage options"
+            }
+          ],
+          "modal_open": false
+        }
+      ]
+    },
+    {
+      "modal_open": true,
+      "top_controls_observable": 0,
+      "frames": [
+        {
+          "kind": "out_of_process",
+          "host": "cdn.privacy-mgmt.com",
+          "controls": 7,
+          "labels": [
+            {
+              "role": "button",
+              "label": "Store and/or access information on a device"
+            },
+            {
+              "role": "button",
+              "label": "Personalised advertising and content, advertising and content measurement, audie"
+            },
+            {
+              "role": "link",
+              "label": "partners"
+            },
+            {
+              "role": "link",
+              "label": "privacy policy"
+            },
+            {
+              "role": "button",
+              "label": "I do not agree"
+            },
+            {
+              "role": "button",
+              "label": "I agree"
+            },
+            {
+              "role": "button",
+              "label": "Manage options"
+            }
+          ],
+          "modal_open": false
+        }
+      ]
+    }
+  ],
+  "input_calls": []
+}

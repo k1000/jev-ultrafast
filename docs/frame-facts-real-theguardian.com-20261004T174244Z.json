@@ -1,0 +1,82 @@
+{
+  "site": "theguardian.com",
+  "reads": [
+    {
+      "modal_open": true,
+      "top_controls_observable": 0,
+      "frames": [
+        {
+          "kind": "in_process",
+          "host": "sourcepoint.theguardian.com",
+          "controls": 6,
+          "labels": [
+            {
+              "role": "link",
+              "label": "141 partners"
+            },
+            {
+              "role": "link",
+              "label": "."
+            },
+            {
+              "role": "button",
+              "label": "Personalised content and content measurement"
+            },
+            {
+              "role": "button",
+              "label": "Accept all"
+            },
+            {
+              "role": "button",
+              "label": "Reject all and subscribe"
+            },
+            {
+              "role": "link",
+              "label": "sign in"
+            }
+          ],
+          "modal_open": false
+        }
+      ]
+    },
+    {
+      "modal_open": true,
+      "top_controls_observable": 0,
+      "frames": [
+        {
+          "kind": "in_process",
+          "host": "sourcepoint.theguardian.com",
+          "controls": 6,
+          "labels": [
+            {
+              "role": "link",
+              "label": "141 partners"
+            },
+            {
+              "role": "link",
+              "label": "."
+            },
+            {
+              "role": "button",
+              "label": "Personalised content and content measurement"
+            },
+            {
+              "role": "button",
+              "label": "Accept all"
+            },
+            {
+              "role": "button",
+              "label": "Reject all and subscribe"
+            },
+            {
+              "role": "link",
+              "label": "sign in"
+            }
+          ],
+          "modal_open": false
+        }
+      ]
+    }
+  ],
+  "input_calls": []
+}

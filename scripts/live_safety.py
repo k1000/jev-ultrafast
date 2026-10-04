@@ -6,7 +6,7 @@ from jev_ultrafast.browser import Browser, PolicyRejected
 
 _REJECT = re.compile(r"(?:reject(?: all(?: optional)?(?: cookies)?)?|"
                      r"reject non-essential|decline(?: all)?(?: optional cookies)?|"
-                     r"only necessary(?: cookies)?|essential only(?: cookies)?|do not consent|"
+                     r"only necessary(?: cookies)?|essential only(?: cookies)?|do not consent|i do not agree|"
                      r"accetta i cookie essenziali)", re.I)
 _CONSENT = re.compile(r"\b(?:cookies?|consent|privacy)\b", re.I)
 _FORBIDDEN = re.compile(r"\b(?:accept|agree|allow|sign[ -]?in|log[ -]?in|book|buy|"
